@@ -5,6 +5,7 @@ import FWCore.ParameterSet.Config as cms
 
 process = cms.Process('anomalyTriggerTesting')
 
+# import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -14,6 +15,8 @@ process.load('Configuration.StandardSequences.MagneticField_AutoFromDBCurrent_cf
 process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
+from Configuration.AlCa.GlobalTag import GlobalTag
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
 
 #custom loads for the L1 summary setup
 
@@ -21,6 +24,11 @@ process.load('L1Trigger.Configuration.CaloTriggerPrimitives_cff')
 
 process.load('EventFilter.L1TXRawToDigi.caloLayer1Stage2Digis_cfi')
 
+#load for the simulated region information?
+
+process.load('L1Trigger.L1TCaloLayer1.simCaloStage2Layer1Digis_cfi')
+
+#Set-up general process information
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
@@ -46,9 +54,34 @@ process.source = cms.Source('PoolSource',
                             )
 )
 
-process.options = process.options = cms.untracked.PSet(
+process.options = cms.untracked.PSet(
 
 )
+
+#Get some things for the simulated digi modules
+process.es_pool = cms.ESSource("PoolDBESSource",
+                               timetype = cms.string('runnumber'),
+                               toGet = cms.VPSet(
+                                   cms.PSet(record = cms.string("HcalLutMetadataRcd"),
+                                            tag = cms.string("HcalLutMetadata_HFTP_1x1")
+                                        ),
+                                   cms.PSet(record = cms.string("HcalElectronicsMapRcd"),
+                                            tag = cms.string("HcalElectronicsMap_HFTP_1x1")
+                                        )
+                               ),
+                               connect = cms.string('frontier://FrontierProd/CMS_CONDITIONS'),
+                               authenticationMethod = cms.untracked.uint32(0)
+)
+process.es_prefer_es_pool = cms.ESPrefer( "PoolDBESSource", "es_pool" )
+
+#Set some simCaloStage2Layer1Digi options
+process.simCaloStage2Layer1Digis.useECALLUT = cms.bool(True)
+process.simCaloStage2Layer1Digis.useHCALLUT = cms.bool(True)
+process.simCaloStage2Layer1Digis.useHFLUT = cms.bool(True)
+process.simCaloStage2Layer1Digis.useLSB = cms.bool(True)
+process.simCaloStage2Layer1Digis.verbose = cms.bool(True)
+process.simCaloStage2Layer1Digis.ecalToken = cms.InputTag("l1tCaloLayer1Digis")
+process.simCaloStage2Layer1Digis.hcalToken = cms.InputTag("l1tCaloLayer1Digis")
 
 #insert the anomaly trigger skunkworks 
 from L1Trigger.anomalyTriggerSkunkworks.anomalyTriggerSkunkworks_cfi import *
@@ -56,7 +89,7 @@ process.anomalyTriggerSkunkworks = anomalyTriggerSkunkworks
 
 process.L1TRawToDigi_Stage2 = cms.Task(process.caloLayer1Digis, process.caloStage2Digis)
 process.RawToDigi_short = cms.Sequence(process.L1TRawToDigi_Stage2)
-process.p = cms.Path(process.RawToDigi_short*process.l1tCaloLayer1Digis * process.anomalyTriggerSkunkworks)
+process.p = cms.Path(process.RawToDigi_short * process.l1tCaloLayer1Digis *process.simCaloStage2Layer1Digis * process.anomalyTriggerSkunkworks)
 
 process.schedule = cms.Schedule(process.p)
 

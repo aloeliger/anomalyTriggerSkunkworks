@@ -96,6 +96,29 @@ anomalyTriggerSkunkworks::~anomalyTriggerSkunkworks() {
 // ------------ method called for each event  ------------
 void anomalyTriggerSkunkworks::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup) {
   using namespace edm;
+  
+  //Okay. Our first job is to go through and make sure we have a record
+  //of the regional digies and hcal/ecal digis. We'll save those,
+  //to a file to do comparisons on in traditional tf/keras environments later
+  //to make sure nothing has gone haywire.
+  //We can also compare the code readout digis to traditional modules that do this stuff
+  //and hopefully confirm that the input reading procedure is correct
+  
+  edm::Handle< std::vector< L1CaloRegion > > regionHandle;
+  iEvent.getByToken(regionCollection, regionHandle);
+
+  edm::Handle< EcalTrigPrimDigiCollection > ecalTPHandle;
+  iEvent.getByToken(ecalCollection, ecalTPHandle);
+  
+  edm::Handle< HcalTrigPrimDigiCollection > hcalTPHandle;
+  iEvent.getByToken(hcalCollection, hcalTPHandle);
+
+  std::cout<<(*regionHandle).size()<<std::endl;
+  //std::cout<<(*ecalTPHandle).size()<<std::endl; //<- this works with source "l1tCaloLayer1Digis"
+  //std::cout<<(*hcalTPHandle).size()<<std::endl; //<- this works with source "l1tCaloLayer1Digis"
+
+  //Of course, the other big important part of the skunkworks will be to actually get the 
+  //c++ to interface with the tf/keras model, which is where this gets a bit messy
 
 }
 
