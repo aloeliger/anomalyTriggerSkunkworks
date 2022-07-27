@@ -35,6 +35,15 @@
 
 #include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
 #include "DataFormats/L1CaloTrigger/interface/L1CaloRegion.h"
+
+#include "FWCore/ServiceRegistry/interface/Service.h"
+#include "CommonTools/UtilAlgos/interface/TFileService.h"
+
+#include "PhysicsTools/TensorFlow/interface/TensorFlow.h"
+
+#include "TTree.h"
+
+#include <string>
 //
 // class declaration
 //
@@ -56,11 +65,20 @@ private:
   void analyze(const edm::Event&, const edm::EventSetup&) override;
   void endJob() override;
 
+  // ----------member data ---------------------------
   edm::EDGetTokenT<L1CaloRegionCollection> regionCollection;
   edm::EDGetTokenT<EcalTrigPrimDigiCollection> ecalCollection;
   edm::EDGetTokenT<HcalTrigPrimDigiCollection> hcalCollection;
+  
+  //store phi on the first index, eta on the second
+  std::vector< std::vector< unsigned > > * GCTEtaPhiETMap;
 
-  // ----------member data ---------------------------
+  //file service
+  edm::Service<TFileService> theFileService;
+  TTree* triggerTree;
+  //tensorflow implements
+  tensorflow::MetaGraphDef* metaGraph;
+  tensorflow::Session* session;
 };
 
 //
@@ -80,6 +98,44 @@ anomalyTriggerSkunkworks::anomalyTriggerSkunkworks(const edm::ParameterSet& iCon
   hcalCollection(consumes< HcalTrigPrimDigiCollection >(iConfig.getParameter< edm::InputTag >("hcalDigis")))
 {
   //now do what ever initialization is needed
+
+  //Okay, this requires some explanation
+  //This is going to be our primary ieta/iphi calo region trigger primitive
+  //storage device. We need to make this a vector of vectors for 2D storage
+  //And we reserve their size for speed, and hopefully to allow these
+  //to be of fixed size so that we can write this to a ROOT file.
+  GCTEtaPhiETMap = new std::vector< std::vector< unsigned > >;
+  int etaDivisions = 14; //14 eta gct/region divisions from 4 to 17
+  int phiDivisions = 18; //18 phi gct/region divisions from 0 to 17
+  GCTEtaPhiETMap->reserve(phiDivisions); 
+  //this reserves the top level eta divisions,
+  //now we need to go through and create the vectors along phi
+  //and store the actual et/tp values.
+  for(int i = 0; i<phiDivisions; ++i)
+    {
+      std::vector< unsigned > blankVector;
+      GCTEtaPhiETMap->push_back(blankVector);
+      (*GCTEtaPhiETMap)[i].reserve(etaDivisions);
+    }
+
+  //Here's where we get to be INCREDIBLY thankful for the actual computer scientists who
+  //work on CMS instead of physicists
+  //We load the model on analyzer start
+  //char* pathToModel = std::getenv("CMSSW_BASE")+ (char*)"anomalyTriggerSkunkworks/data/qmodel/"
+  std::cout<<"Loading model..."<<std::endl;
+  
+  std::string pathToModel(std::getenv("CMSSW_BASE"));
+  pathToModel.append("/src/L1Trigger/anomalyTriggerSkunkworks/data/qmodel/");
+
+  std::cout<<"Reading model from: "<<pathToModel<<" ..."<<std::endl;
+
+  metaGraph = tensorflow::loadMetaGraph(pathToModel);
+  //run a tensorflow session here
+  session = tensorflow::createSession(metaGraph, pathToModel);
+
+  //TTree for storage of digi information and anomaly scores for validation
+  triggerTree = theFileService->make< TTree >("triggerTPInfo", "(emulator) Calo L1 TP information");
+  triggerTree -> Branch("GCTEtaPhiETMap", GCTEtaPhiETMap);
 }
 
 anomalyTriggerSkunkworks::~anomalyTriggerSkunkworks() {
@@ -87,6 +143,9 @@ anomalyTriggerSkunkworks::~anomalyTriggerSkunkworks() {
   // (e.g. close files, deallocate resources etc.)
   //
   // please remove this method altogether if it would be left empty
+  
+  //delete the map
+  delete GCTEtaPhiETMap;
 }
 
 //
@@ -113,19 +172,45 @@ void anomalyTriggerSkunkworks::analyze(const edm::Event& iEvent, const edm::Even
   edm::Handle< HcalTrigPrimDigiCollection > hcalTPHandle;
   iEvent.getByToken(hcalCollection, hcalTPHandle);
 
-  std::cout<<(*regionHandle).size()<<std::endl;
+  //std::cout<<(*regionHandle).size()<<std::endl;
   //std::cout<<(*ecalTPHandle).size()<<std::endl; //<- this works with source "l1tCaloLayer1Digis"
   //std::cout<<(*hcalTPHandle).size()<<std::endl; //<- this works with source "l1tCaloLayer1Digis"
+  
+  //We need to create a tensorflow tensor too to serve as input into the model scoring.
+  tensorflow::Tensor modelInput(tensorflow::DT_FLOAT, { 1, 18, 14, 1});
+  
+  for(std::vector< L1CaloRegion >::const_iterator regionIt = regionHandle->begin();
+      regionIt != regionHandle->end();
+      ++regionIt)
+    {
+      L1CaloRegion theRegion = *regionIt;
+      /*
+      std::cout<<"*************************"<<std::endl;
+      std::cout<<"regionIt.gctEta(): "<<(*regionIt).gctEta()<<std::endl;
+      std::cout<<"regionIt.gctPhi(): "<<(*regionIt).gctPhi()<<std::endl;
+      std::cout<<"regionIt.et(): "<<(*regionIt).et()<<std::endl;
+      std::cout<<"*************************"<<std::endl;
+      */
+      //We *always* get 252 regions reporting, so we don't need to worry about clearing the vectors for every event
+      //We will just overwrite them
+      (*GCTEtaPhiETMap)[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.et(); //we take iEta 4 off of either end to account for the removed forward regions(?)
+      //modelInput.matrix< float >()(0, theRegion.gctPhi(), theRegion.gctEta()-4, 0) = theRegion.et();
+      
+    }
 
   //Of course, the other big important part of the skunkworks will be to actually get the 
   //c++ to interface with the tf/keras model, which is where this gets a bit messy
+  //Okay. How do we do this?
+  
 
+  //Fill our tree and get out of here
+  triggerTree->Fill();
 }
 
 // ------------ method called once each job just before starting event loop  ------------
 void anomalyTriggerSkunkworks::beginJob() {
   // please remove this method if not needed
-  std::cout<<"beginning anomaly trigger skunkworks"<<std::endl;
+  std::cout<<"Initializing anomaly trigger skunkworks..."<<std::endl;
 }
 
 // ------------ method called once each job just after ending the event loop  ------------

@@ -30,10 +30,10 @@ process.load('L1Trigger.L1TCaloLayer1.simCaloStage2Layer1Digis_cfi')
 
 #Set-up general process information
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(100)
 )
 
-process.MessageLogger.cerr.FwkReport.reportEvery = 1000
+process.MessageLogger.cerr.FwkReport.reportEvery = 10
 
 process.source = cms.Source('PoolSource',
                             fileNames = cms.untracked.vstring(
@@ -86,6 +86,12 @@ process.simCaloStage2Layer1Digis.hcalToken = cms.InputTag("l1tCaloLayer1Digis")
 #insert the anomaly trigger skunkworks 
 from L1Trigger.anomalyTriggerSkunkworks.anomalyTriggerSkunkworks_cfi import *
 process.anomalyTriggerSkunkworks = anomalyTriggerSkunkworks
+
+#File service for writing portions of the analyzer out
+process.TFileService = cms.Service(
+    "TFileService",
+    fileName = cms.string("anomalySkunkworks.root")
+)
 
 process.L1TRawToDigi_Stage2 = cms.Task(process.caloLayer1Digis, process.caloStage2Digis)
 process.RawToDigi_short = cms.Sequence(process.L1TRawToDigi_Stage2)

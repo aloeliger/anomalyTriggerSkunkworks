@@ -4,4 +4,7 @@
 <use name="DataFormats/EcalDigi"/>
 <use name="DataFormats/HcalDigi"/>
 <use name="DataFormats/L1CaloTrigger"/>
+<use name="FWCore/ServiceRegistry"/>
+<use name="CommonTools/UtilAlgos"/>
+<use name="PhysicsTools/TensorFlow"/>
 <flags EDM_PLUGIN="1"/>
