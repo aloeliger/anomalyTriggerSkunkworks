@@ -98,6 +98,8 @@ anomalyTriggerSkunkworks::anomalyTriggerSkunkworks(const edm::ParameterSet& iCon
   hcalCollection(consumes< HcalTrigPrimDigiCollection >(iConfig.getParameter< edm::InputTag >("hcalDigis")))
 {
   //now do what ever initialization is needed
+  std::cout<<"Initializing anomaly trigger skunkworks..."<<std::endl;
+
 
   //Okay, this requires some explanation
   //This is going to be our primary ieta/iphi calo region trigger primitive
@@ -178,6 +180,7 @@ void anomalyTriggerSkunkworks::analyze(const edm::Event& iEvent, const edm::Even
   
   //We need to create a tensorflow tensor too to serve as input into the model scoring.
   tensorflow::Tensor modelInput(tensorflow::DT_FLOAT, { 1, 18, 14, 1});
+  //std::cout<<modelInput.shape()<<std::endl;
   
   for(std::vector< L1CaloRegion >::const_iterator regionIt = regionHandle->begin();
       regionIt != regionHandle->end();
@@ -194,14 +197,14 @@ void anomalyTriggerSkunkworks::analyze(const edm::Event& iEvent, const edm::Even
       //We *always* get 252 regions reporting, so we don't need to worry about clearing the vectors for every event
       //We will just overwrite them
       (*GCTEtaPhiETMap)[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.et(); //we take iEta 4 off of either end to account for the removed forward regions(?)
-      //modelInput.matrix< float >()(0, theRegion.gctPhi(), theRegion.gctEta()-4, 0) = theRegion.et();
-      
+      //This *should* fill the tensor in the proper order to be fed to the model
+      modelInput.tensor< float, 4 >()(0, theRegion.gctPhi(), theRegion.gctEta()-4, 0) = theRegion.et();
     }
 
-  //Of course, the other big important part of the skunkworks will be to actually get the 
-  //c++ to interface with the tf/keras model, which is where this gets a bit messy
-  //Okay. How do we do this?
-  
+  std::vector<tensorflow::Tensor> outputs;
+  //tensorflow::run(session, { { "input", modelInput } }, { "output" }, &outputs);
+  tensorflow::run(session, { { "serving_default_In:0", modelInput } }, { "StatefulPartitionedCall:0" }, &outputs);
+  std::cout<<"Model output: "<<outputs[0].matrix<float>()(0, 0)<<std::endl;
 
   //Fill our tree and get out of here
   triggerTree->Fill();
@@ -210,7 +213,6 @@ void anomalyTriggerSkunkworks::analyze(const edm::Event& iEvent, const edm::Even
 // ------------ method called once each job just before starting event loop  ------------
 void anomalyTriggerSkunkworks::beginJob() {
   // please remove this method if not needed
-  std::cout<<"Initializing anomaly trigger skunkworks..."<<std::endl;
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
