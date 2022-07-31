@@ -72,6 +72,8 @@ private:
   
   //store phi on the first index, eta on the second
   std::vector< std::vector< unsigned > > * GCTEtaPhiETMap;
+  //anomaly score
+  float anomalyScore;
 
   //file service
   edm::Service<TFileService> theFileService;
@@ -138,6 +140,7 @@ anomalyTriggerSkunkworks::anomalyTriggerSkunkworks(const edm::ParameterSet& iCon
   //TTree for storage of digi information and anomaly scores for validation
   triggerTree = theFileService->make< TTree >("triggerTPInfo", "(emulator) Calo L1 TP information");
   triggerTree -> Branch("GCTEtaPhiETMap", GCTEtaPhiETMap);
+  triggerTree -> Branch("anomalyScore", &anomalyScore);
 }
 
 anomalyTriggerSkunkworks::~anomalyTriggerSkunkworks() {
@@ -204,7 +207,8 @@ void anomalyTriggerSkunkworks::analyze(const edm::Event& iEvent, const edm::Even
   std::vector<tensorflow::Tensor> outputs;
   //tensorflow::run(session, { { "input", modelInput } }, { "output" }, &outputs);
   tensorflow::run(session, { { "serving_default_In:0", modelInput } }, { "StatefulPartitionedCall:0" }, &outputs);
-  std::cout<<"Model output: "<<outputs[0].matrix<float>()(0, 0)<<std::endl;
+  //std::cout<<"Model output: "<<outputs[0].matrix<float>()(0, 0)<<std::endl;
+  anomalyScore = outputs[0].matrix<float>()(0, 0);
 
   //Fill our tree and get out of here
   triggerTree->Fill();

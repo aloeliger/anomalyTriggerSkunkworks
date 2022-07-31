@@ -95,7 +95,7 @@ process.TFileService = cms.Service(
 
 process.L1TRawToDigi_Stage2 = cms.Task(process.caloLayer1Digis, process.caloStage2Digis)
 process.RawToDigi_short = cms.Sequence(process.L1TRawToDigi_Stage2)
-process.p = cms.Path(process.RawToDigi_short * process.l1tCaloLayer1Digis *process.simCaloStage2Layer1Digis * process.anomalyTriggerSkunkworks)
+process.p = cms.Path(process.RawToDigi_short * process.l1tCaloLayer1Digis * process.simCaloStage2Layer1Digis * process.anomalyTriggerSkunkworks)
 
 process.schedule = cms.Schedule(process.p)
 
