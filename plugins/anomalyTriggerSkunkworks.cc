@@ -151,6 +151,8 @@ anomalyTriggerSkunkworks::~anomalyTriggerSkunkworks() {
   
   //delete the map
   delete GCTEtaPhiETMap;
+  //delete the metaGraph
+  delete metaGraph;
 }
 
 //
