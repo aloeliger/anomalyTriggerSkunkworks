@@ -29,10 +29,19 @@ process.load("L1Trigger.Run3Ntuplizer.l1BoostedJetStudies_cfi")
 
 process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi")
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(-1) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
+
+process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias8/RAW/v1/000/325/057/00000/2003CE91-DBBF-A34F-8880-B6B20DF0C349.root')
+                            fileNames = cms.untracked.vstring(
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/252/00000/32ED3ECF-9949-E811-9D23-FA163E081C30.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/252/00000/38E89422-9F49-E811-8436-FA163ED637E6.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/252/00000/3A8A92F4-9949-E811-996D-FA163EFF76BB.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/252/00000/7E9C97C1-9E49-E811-A25F-FA163EBB779E.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/252/00000/CC905368-9F49-E811-908D-FA163E7121A5.root',
+                            )
+                            #fileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias8/RAW/v1/000/325/057/00000/2003CE91-DBBF-A34F-8880-B6B20DF0C349.root')
                             #fileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias8/MINIAOD/PromptReco-v2/000/325/057/00000/954F1BEB-75FC-ED43-AA3A-6F032EF62093.root'),
                             #secondaryFileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias8/RAW/v1/000/325/057/00000/2003CE91-DBBF-A34F-8880-B6B20DF0C349.root')
 )
