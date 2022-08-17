@@ -35,7 +35,15 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
+                                '/store/data/Run2022C/ZeroBias/MINIAOD/PromptReco-v1/000/355/862/00000/7a488f60-2509-42a5-9e74-33e97a6930fa.root',
+                            ),
+                            secondaryFileNames = cms.untracked.vstring(
                                 '/store/data/Run2022C/ZeroBias/RAW/v1/000/355/862/00000/20d97865-1ae0-4fb1-b910-23a662c96af0.root',
+                                '/store/data/Run2022C/ZeroBias/RAW/v1/000/355/862/00000/2eb5a865-e580-4940-ac43-117c52ddbb22.root',
+                                '/store/data/Run2022C/ZeroBias/RAW/v1/000/355/862/00000/3c745020-df1b-4541-8fd0-e751480d1832.root',
+                                ' /store/data/Run2022C/ZeroBias/RAW/v1/000/355/862/00000/4f28562d-19c4-4270-8b1e-7912fe736986.root',
+                                '/store/data/Run2022C/ZeroBias/RAW/v1/000/355/862/00000/da89e91a-c30e-4853-83b2-9eebaef22984.root',
+                                '/store/data/Run2022C/ZeroBias/RAW/v1/000/355/862/00000/f5210c34-0508-4dcc-85f4-1bf78e0bc35e.root',
                                 #'/store/data/Run2018D/ZeroBias/RAW/v1/000/323/940/00000/090F7307-7EB4-CA45-A6B9-542C3AE60FD4.root',
                                 #'/store/data/Run2018D/ZeroBias/RAW/v1/000/323/940/00000/B3EFCFDD-7111-9647-B720-D2B33AFE35A2.root',
                                 #'/store/data/Run2018D/ZeroBias/RAW/v1/000/323/954/00000/10A4D333-9B72-A342-9085-CE56DC16A380.root',
@@ -82,10 +90,16 @@ process.p = cms.Path(process.RawToDigi_short *
                      #process.l1NtupleProducer
                      process.L1TCaloSummaryTestNtuplizer
 )
-#process.e = cms.EndPath(process.out)
+#Output
+process.out = cms.OutputModule("PoolOutputModule",
+    fileName = cms.untracked.string("l1TFullEvent.root"),
+    outputCommands = cms.untracked.vstring('keep *')
+)
 
-#process.schedule = cms.Schedule(process.p,process.e)
-process.schedule = cms.Schedule(process.p)
+process.e = cms.EndPath(process.out)
+
+process.schedule = cms.Schedule(process.p,process.e)
+#process.schedule = cms.Schedule(process.p)
 
 # Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete

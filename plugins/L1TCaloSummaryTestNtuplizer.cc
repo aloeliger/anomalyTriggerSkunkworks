@@ -18,6 +18,8 @@
 #include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
 #include "DataFormats/L1CaloTrigger/interface/L1CaloRegion.h"
 
+#include "DataFormats/VertexReco/interface/Vertex.h"
+
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
@@ -38,17 +40,27 @@ private:
   
   //Just some stuff to let us actually ntuplize everything
   edm::EDGetTokenT< float > anomalyToken;
+  edm::EDGetTokenT<std::vector<reco::Vertex>> vertexToken;
   float anomalyScore;
 
   edm::Service<TFileService> theFileService;
   TTree* triggerTree;
+  unsigned int run;
+  unsigned int lumi;
+  unsigned int evt;
+  int npv;
 };
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
-  anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) )
+  anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
+  vertexToken( consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc")))
 {
   //create some ntuplization brickwork
   triggerTree = theFileService->make< TTree >("L1TCaloSummaryOutput","(emulator) L1CaloSummary informatione");
+  triggerTree -> Branch("run",  &run);
+  triggerTree -> Branch("lumi", &lumi);
+  triggerTree -> Branch("evt",  &evt);
+  triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch("anomalyScore", &anomalyScore);
 }
 
@@ -63,7 +75,16 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   
   //little bit wordy, but should function?
   edm::Handle< float > anomalyHandle;
+  edm::Handle<std::vector<reco::Vertex>> vertexHandle;
   iEvent.getByToken(anomalyToken, anomalyHandle);
+  iEvent.getByToken(vertexToken, vertexHandle);
+  
+  run  = iEvent.id().run();
+  lumi = iEvent.id().luminosityBlock();
+  evt  = iEvent.id().event();
+  //npv  = iEvent.NPV();
+  npv  = vertexHandle->size();
+
   anomalyScore = *anomalyHandle;
 
   triggerTree->Fill();
