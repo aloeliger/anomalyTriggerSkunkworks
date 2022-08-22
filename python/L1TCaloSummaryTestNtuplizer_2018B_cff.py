@@ -28,6 +28,8 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.load("L1Trigger.Run3Ntuplizer.l1BoostedJetStudies_cfi")
 
 process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi")
+#We want PU info
+process.L1TCaloSummaryTestNtuplizer.includePUInfo = cms.bool(True)
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )

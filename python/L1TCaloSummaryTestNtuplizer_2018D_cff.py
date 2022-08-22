@@ -28,6 +28,8 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.load("L1Trigger.Run3Ntuplizer.l1BoostedJetStudies_cfi")
 
 process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi")
+#We want PU info
+process.L1TCaloSummaryTestNtuplizer.includePUInfo = cms.bool(True)
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
@@ -37,39 +39,46 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
                                 #'/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/325/270/00000/D75162E0-8310-1C45-8DE3-1A853C04DAA7.root', #cosmics
-                                '/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/320/674/00000/E6A17BFC-F097-E811-A72A-FA163E7FB452.root',
-                                '/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/320/674/00000/E2B40669-EF97-E811-B1C7-FA163EB78F97.root',
-                                '/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/320/674/00000/BCB1B043-FD97-E811-BA77-FA163EA968FD.root',
-                                '/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/320/674/00000/BAFCD892-F197-E811-B948-FA163E35213F.root',
-
+                                '/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/320/804/00000/10AAF080-7399-E811-A671-FA163E963D8E.root', #29314 events
+                                '/store/data/Run2018D/ZeroBias/MINIAOD/PromptReco-v2/000/320/804/00000/3865B93A-4A99-E811-9B59-FA163EE96337.root'#~90000 events
                             ),
                             secondaryFileNames = cms.untracked.vstring(
                                 #'/store/data/Run2018D/ZeroBias/RAW/v1/000/325/270/00000/D5748A03-3B4E-624E-A70F-A7CC3F4A506F.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/002632FE-6A95-E811-BFE5-FA163E11B3E0.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/04ADB8F9-7B95-E811-BD5C-FA163EC08F3E.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/14AC1E7C-7595-E811-AC7F-FA163E22267B.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/30729629-7395-E811-AB45-02163E017F02.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/40321CDE-7795-E811-9F8B-02163E01A0FF.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/5220CC6E-6495-E811-8306-FA163E5A0D37.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/58FA7BDA-7C95-E811-BE19-FA163EC3883A.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/6C165BF3-6D95-E811-B09D-FA163E20727F.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/7013C522-6A95-E811-B5BB-02163E019FD9.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/8A28354E-8195-E811-A8F7-02163E017748.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/92EE455B-7795-E811-AE9C-FA163EE3F92D.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/A2267F7A-7295-E811-BBD3-FA163EB83949.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/B01D29DE-7895-E811-99DC-02163E01A0D0.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/B4F23F15-5196-E811-9203-FA163E0BB3A6.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/B60C1F68-6D95-E811-849C-FA163E43848F.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/B8269473-6C95-E811-8264-FA163E2AA51E.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/BE77472A-6595-E811-BC19-FA163EB70861.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/C8CC122B-6795-E811-8A8B-FA163E64116F.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/C8E0DC10-7195-E811-987B-02163E010C51.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/D8FB18FC-6E95-E811-B6AA-FA163E7B5F86.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/E6F4B19F-7195-E811-BB2F-FA163E9393A6.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/EEE017BA-7F95-E811-A221-FA163EF3D9F3.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/F2C53294-7995-E811-AD1F-FA163E092C74.root',
-                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/674/00000/FE911D0C-7B95-E811-9914-FA163E9E06D4.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/E6B9B695-F196-E811-AF2B-FA163EF0557D.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/B4BF240D-F296-E811-9AAC-FA163E6788A6.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/4631A079-F296-E811-A06D-FA163ECF9759.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/62DBDA8C-F296-E811-906D-FA163E80361E.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/2C8D0ADC-F796-E811-90A0-FA163E6FB017.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/9A6C9936-F896-E811-B434-FA163E7A6C11.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/E01E515E-F896-E811-B1F1-FA163ECB9FF9.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/5A86FF7C-1797-E811-BB90-FA163ED0377A.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/DE1E6DA7-1797-E811-B7D6-FA163E8CECB8.root',
 
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/5AA2D066-F096-E811-AE6D-02163E019FAC.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/F610BA59-F096-E811-8932-FA163EF1AD57.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/82769070-0297-E811-B995-FA163E396B84.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/D88F13FB-0297-E811-9FE4-FA163E4DFDDE.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/263D3519-0497-E811-807E-FA163EEB45BD.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/627985DC-0497-E811-B0FD-FA163E355156.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/FE9A191C-0597-E811-B9C8-FA163E251E18.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/9AF51810-0797-E811-BCC9-FA163E77F338.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/285E28D9-0F97-E811-BCCB-02163E010C72.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/5A26BFCF-0F97-E811-887D-FA163E0B8998.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/2E98345A-1097-E811-AF34-FA163EEA238B.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/D2FBA57C-1097-E811-A410-FA163E97963B.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/C2A7AE9D-1397-E811-9E59-FA163E98BEC0.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/18D43DF0-1397-E811-B26B-FA163E3EB063.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/3ACCA42D-1497-E811-8CC5-FA163EFD4E69.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/7C37760D-1597-E811-A2B1-FA163EE3F004.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/F4BAC90E-1597-E811-8D75-FA163EC1DE16.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/CE00AD46-1B97-E811-A8E8-FA163EA6B93A.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/DE88A90A-1D97-E811-9991-FA163EB005BF.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/CA026DC6-2397-E811-8BB6-FA163EF1FB9C.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/4A2E3219-2497-E811-A69B-FA163E2224F0.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/E82B2C04-2697-E811-930C-02163E01A140.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/20D5821C-2697-E811-BDA4-02163E019FF7.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/98D7848C-2A97-E811-AF2E-FA163E29007B.root',
+                                '/store/data/Run2018D/ZeroBias/RAW/v1/000/320/804/00000/AE30A950-3297-E811-8971-FA163EC0DFF4.root',
                             ),
 )
 
