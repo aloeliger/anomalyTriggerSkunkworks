@@ -38,22 +38,48 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/320/00000/CE15F648-DE4B-E811-8372-FA163EBE682B.root', #17274 events, total: 17274
-                                #'/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/373/00000/E296E264-7B4D-E811-9200-02163E01A033.root', #2404 events, total: 19678 #cosmic
-                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/390/00000/98533841-7C4D-E811-A616-FA163E16957B.root', #4080 events, total: 23758
-                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/402/00000/60AA7C90-884D-E811-80CD-FA163EFD9234.root', #22389 events, total: 46147
-                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/403/00000/E8B5D61B-884D-E811-936F-02163E019F67.root', #40381 events, total: 86528
-                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/404/00000/A83978AE-884D-E811-93CA-FA163EFA1AD6.root', #27165 events, total: 113693
-                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/405/00000/6A515AC6-874D-E811-B811-FA163E9C8F11.root',
+                                '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/420/00000/063DB17F-4E4E-E811-925C-FA163E278EA6.root',
+                                # '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/320/00000/CE15F648-DE4B-E811-8372-FA163EBE682B.root', #17274 events, total: 17274
+                                # #'/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/373/00000/E296E264-7B4D-E811-9200-02163E01A033.root', #2404 events, total: 19678 #cosmic
+                                # '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/390/00000/98533841-7C4D-E811-A616-FA163E16957B.root', #4080 events, total: 23758
+                                # '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/402/00000/60AA7C90-884D-E811-80CD-FA163EFD9234.root', #22389 events, total: 46147
+                                # '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/403/00000/E8B5D61B-884D-E811-936F-02163E019F67.root', #40381 events, total: 86528
+                                # '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/404/00000/A83978AE-884D-E811-93CA-FA163EFA1AD6.root', #27165 events, total: 113693
+                                # '/store/data/Run2018A/ZeroBias/MINIAOD/PromptReco-v1/000/315/405/00000/6A515AC6-874D-E811-B811-FA163E9C8F11.root',
                             ),
                             secondaryFileNames = cms.untracked.vstring(
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/320/00000/B8D4BCA2-2A4A-E811-BAFF-FA163EBBB8E2.root',
-                                #'/store/data/Run2018A/ZeroBias/RAW/v1/000/315/373/00000/5237BDAD-C14B-E811-8EAA-FA163E0481A2.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/390/00000/A0CCEE86-E24B-E811-9765-FA163E905D20.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/402/00000/D0165A8B-EE4B-E811-AEFB-FA163EC3883A.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/403/00000/785FB013-F24B-E811-89A0-FA163EF38772.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/404/00000/AC613757-EC4B-E811-BA1A-FA163E1DC155.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/405/00000/5A407030-E94B-E811-AD64-FA163EC7BCE0.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/7A30404E-0D4D-E811-9EEE-FA163E3C37D4.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/109D7750-0D4D-E811-9723-FA163EE72804.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/109D7750-0D4D-E811-9723-FA163EE72804.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/9E851261-0E4D-E811-AC5C-FA163E0286FE.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/36E07674-0D4D-E811-BE2A-FA163ED532A6.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/92726551-0D4D-E811-B968-FA163EB0C6EB.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/C8BA7D65-0D4D-E811-96E7-FA163E884B58.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/66DC0866-0D4D-E811-B660-FA163E9A1F85.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/307E0198-0D4D-E811-BF01-FA163EEE3FEF.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/469D0031-0E4D-E811-B108-FA163E7CF739.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/0EAA2B31-0E4D-E811-B898-FA163E32EA54.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/E45F9225-0E4D-E811-B6CA-FA163E9ECA9A.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/6E243399-384C-E811-804A-02163E019F84.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/2E5811F1-0D4D-E811-B551-FA163EEE21BE.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/6295093C-0E4D-E811-BBF5-FA163EB0C6EB.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/145124F5-0D4D-E811-9FA0-FA163E80AD1D.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/4CD062F7-3E4C-E811-868B-FA163E781D28.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/8AFF2C6E-404C-E811-B77D-FA163E832FBF.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/A2D7DB3D-404C-E811-B191-02163E01A11B.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/C2DBA56F-4D4C-E811-8454-FA163EC0DFF4.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/587F666B-4D4C-E811-BBD9-FA163EB41A13.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/EA07C0D3-4D4C-E811-B7CB-FA163EF250BA.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/307CABC0-234D-E811-9987-FA163E7B3281.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/5469FC05-554C-E811-892E-FA163E06E023.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/42FBB49B-264D-E811-A1FD-FA163E946B87.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/0A37FDC5-564C-E811-AA26-FA163E40BFD6.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/FE1D959F-2C4D-E811-B400-FA163EA883BD.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/FCE8238E-2C4D-E811-91AC-FA163E5F28A9.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/1042D047-314D-E811-92A4-02163E01535A.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/5C3A56B4-364D-E811-A36F-FA163E9666C9.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/5C3A56B4-364D-E811-A36F-FA163E9666C9.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/DA25AB51-0D4D-E811-9032-FA163EA0C012.root',
                             )
 )
 
