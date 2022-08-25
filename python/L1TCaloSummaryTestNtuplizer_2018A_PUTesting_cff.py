@@ -31,7 +31,7 @@ process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi
 #We want PU info
 process.L1TCaloSummaryTestNtuplizer.includePUInfo = cms.bool(True)
 
-process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
+process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100) )
 #process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(10000) )
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
@@ -78,9 +78,14 @@ process.source = cms.Source("PoolSource",
                                 '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/FCE8238E-2C4D-E811-91AC-FA163E5F28A9.root',
                                 '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/1042D047-314D-E811-92A4-02163E01535A.root',
                                 '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/5C3A56B4-364D-E811-A36F-FA163E9666C9.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/5C3A56B4-364D-E811-A36F-FA163E9666C9.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/DA25AB51-0D4D-E811-9032-FA163EA0C012.root',
-                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/423BFA52-0D4D-E811-A382-FA163EF3CD68.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/5C3A56B4-364D-E811-A36F-FA163E9666C9.root'
+                                # '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/320/00000/B8D4BCA2-2A4A-E811-BAFF-FA163EBBB8E2.root',
+                                # #'/store/data/Run2018A/ZeroBias/RAW/v1/000/315/373/00000/5237BDAD-C14B-E811-8EAA-FA163E0481A2.root',
+                                # '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/390/00000/A0CCEE86-E24B-E811-9765-FA163E905D20.root',
+                                # '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/402/00000/D0165A8B-EE4B-E811-AEFB-FA163EC3883A.root',
+                                # '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/403/00000/785FB013-F24B-E811-89A0-FA163EF38772.root',
+                                # '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/404/00000/AC613757-EC4B-E811-BA1A-FA163E1DC155.root',
+                                # '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/405/00000/5A407030-E94B-E811-AD64-FA163EC7BCE0.root',
                             )
 )
 
@@ -99,7 +104,7 @@ process.configurationMetadata = cms.untracked.PSet(
 #Output
 process.TFileService = cms.Service(
 	"TFileService",
-	fileName = cms.string("l1TNtuple-ZeroBias-2018A.root")
+	fileName = cms.string("l1TNtuple-ZeroBias-2018A_PUScore.root")
 )
 
 process.L1TRawToDigi_Stage2 = cms.Task(process.caloLayer1Digis, process.caloStage2Digis)
@@ -108,6 +113,7 @@ process.p = cms.Path(process.RawToDigi_short *
                      process.l1tCaloLayer1Digis *
                      process.simCaloStage2Layer1Digis * 
                      process.uct2016EmulatorDigis * 
+                     #process.l1NtupleProducer
                      process.L1TCaloSummaryTestNtuplizer
 )
 #process.e = cms.EndPath(process.out)

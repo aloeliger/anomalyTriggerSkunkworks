@@ -26,7 +26,8 @@ process.load('Configuration.StandardSequences.RawToDigi_Data_cff')
 process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '112X_dataRun2_v7', '')
+#process.GlobalTag = GlobalTag(process.GlobalTag, '112X_dataRun2_v7', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '120X_dataRun2_v2', '')
 
 process.load('L1Trigger.Configuration.CaloTriggerPrimitives_cff')
 
@@ -46,7 +47,8 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.load("L1Trigger.Run3Ntuplizer.l1BoostedJetStudies_cfi")
 
 process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi")
-process.L1TCaloSummaryTestNtuplizer.includeDetailedTPInfo = cms.bool(True)
+process.L1TCaloSummaryTestNtuplizer.includeDetailedTPInfo = cms.bool(False)
+process.L1TCaloSummaryTestNtuplizer.includeBasicDebugInfo = cms.bool(True)
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.numEvents) )
 

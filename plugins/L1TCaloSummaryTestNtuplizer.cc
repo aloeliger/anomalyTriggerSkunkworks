@@ -54,7 +54,9 @@ private:
   unsigned int lumi;
   unsigned int evt;
   bool includePUInfo;
-  int npv;
+  int npv = 0;
+
+  bool includeBasicDebugInfo;
 };
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
@@ -65,6 +67,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
 {
   includePUInfo = iConfig.exists("includePUInfo") ? iConfig.getParameter<bool>("includePUInfo"): false;
   includeDetailedTPInfo = iConfig.exists("includeDetailedTPInfo")? iConfig.getParameter<bool>("includeDetailedTPInfo"): false;
+  includeBasicDebugInfo = iConfig.exists("includeBasicDebugInfo")? iConfig.getParameter<bool>("includeBasicDebugInfo"): false;
 
   //create some ntuplization brickwork
   triggerTree = theFileService->make< TTree >("L1TCaloSummaryOutput","(emulator) L1CaloSummary informatione");
@@ -86,12 +89,15 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   
   //little bit wordy, but should function?
   edm::Handle< float > anomalyHandle;
-  edm::Handle<std::vector<reco::Vertex>> vertexHandle;
+  edm::Handle< std::vector< reco::Vertex > > vertexHandle;
   iEvent.getByToken(anomalyToken, anomalyHandle);
-  
+
   run  = iEvent.id().run();
   lumi = iEvent.id().luminosityBlock();
   evt  = iEvent.id().event();
+
+
+  anomalyScore = *anomalyHandle;  
   
   //figure out primary vertices if that's a thing we want to include
   if(includePUInfo)
@@ -100,129 +106,140 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       npv  = vertexHandle->size();
     }
 
-  anomalyScore = *anomalyHandle;
+  if(includeBasicDebugInfo)
+    {
+      std::cout<<"Run: "<<run<<std::endl;
+      std::cout<<"Lumi: "<<lumi<<std::endl;
+      std::cout<<"Event: "<<evt<<std::endl;
+      std::cout<<"Anomaly Score: "<<anomalyScore<<std::endl;
+    }
 
-  edm::Handle<EcalTrigPrimDigiCollection> ecalTPs;
-  edm::Handle<HcalTrigPrimDigiCollection> hcalTPs;
-  uint32_t ecalTPData[72][56];
-  uint32_t hcalTPData[72][56];
-  for (int i = 0; i < 72; i++)
-    for (int j = 0; j < 56; j++)
-      {
-	ecalTPData[i][j] = 0;
-	hcalTPData[i][j] = 0;
-      }
-  uint32_t regional_ecalTPData[18][14];
-  uint32_t regional_hcalTPData[18][14];
-  for (int i = 0; i < 18; i++)
-    for (int j = 0; j < 14; j++)
-      {
-	regional_ecalTPData[i][j] = 0;
-	regional_hcalTPData[i][j] = 0;
-      }
+  //Sort out TP information and print it
+  //TODO write this information out to tree instead.
   if(includeDetailedTPInfo)
     {
-	iEvent.getByToken(ecalTPSource, ecalTPs);
-	iEvent.getByToken(hcalTPSource, hcalTPs);
+      edm::Handle<EcalTrigPrimDigiCollection> ecalTPs;
+      edm::Handle<HcalTrigPrimDigiCollection> hcalTPs;
+      uint32_t ecalTPData[72][56];
+      uint32_t hcalTPData[72][56];
+      for (int i = 0; i < 72; i++)
+	for (int j = 0; j < 56; j++)
+	  {
+	    ecalTPData[i][j] = 0;
+	    hcalTPData[i][j] = 0;
+	  }
+      uint32_t regional_ecalTPData[18][14];
+      uint32_t regional_hcalTPData[18][14];
+      for (int i = 0; i < 18; i++)
+	for (int j = 0; j < 14; j++)
+	  {
+	    regional_ecalTPData[i][j] = 0;
+	    regional_hcalTPData[i][j] = 0;
+	  }
+
+
+      iEvent.getByToken(ecalTPSource, ecalTPs);
+      iEvent.getByToken(hcalTPSource, hcalTPs);
 	
-	//process ecal TPs into usable form
-	for(const auto& ecalTP: *ecalTPs)
-	  {
-	    int phi = 0;
-	    int eta = 0;
-	    uint32_t et = 0;
+      //process ecal TPs into usable form
+      for(const auto& ecalTP: *ecalTPs)
+	{
+	  int phi = 0;
+	  int eta = 0;
+	  uint32_t et = 0;
 	    
-	    phi = ecalTP.id().iphi();
-	    eta = ecalTP.id().ieta();
+	  phi = ecalTP.id().iphi();
+	  eta = ecalTP.id().ieta();
 
-	    if(std::abs(eta) > 28) continue;
+	  if(std::abs(eta) > 28) continue;
 
-	    phi = (phi+2) % 72;
-	    eta < 0? eta = 28-std::abs(eta): eta+=27;
+	  phi = (phi+2) % 72;
+	  eta < 0? eta = 28-std::abs(eta): eta+=27;
 
-	    ecalTP.compressedEt() > 0xFF? et=0xFF : et = ecalTP.compressedEt();
+	  ecalTP.compressedEt() > 0xFF? et=0xFF : et = ecalTP.compressedEt();
 
-	    ecalTPData[phi][eta] = et;
-	    regional_ecalTPData[phi/4][eta/4] += et;
-	  }
-	//Do the same for HCAL
-	for(const auto& hcalTP: *hcalTPs)
-	  {
-	    int phi = 0;
-	    int eta = 0;
-	    uint32_t et = 0;
+	  ecalTPData[phi][eta] = et;
+	  regional_ecalTPData[phi/4][eta/4] += et;
+	}
+      //Do the same for HCAL
+      for(const auto& hcalTP: *hcalTPs)
+	{
+	  int phi = 0;
+	  int eta = 0;
+	  uint32_t et = 0;
 	    
-	    phi = hcalTP.id().iphi();
-	    eta = hcalTP.id().ieta();
+	  phi = hcalTP.id().iphi();
+	  eta = hcalTP.id().ieta();
 
-	    if(std::abs(eta) > 28) continue;
+	  if(std::abs(eta) > 28) continue;
 
-	    phi = (phi+2) % 72;
-	    eta < 0? eta = 28-std::abs(eta): eta+=27;
+	  phi = (phi+2) % 72;
+	  eta < 0? eta = 28-std::abs(eta): eta+=27;
 
-	    hcalTP.SOI_compressedEt() > 0xFF? et=0xFF : et = hcalTP.SOI_compressedEt();
+	  hcalTP.SOI_compressedEt() > 0xFF? et=0xFF : et = hcalTP.SOI_compressedEt();
 
-	    hcalTPData[phi][eta] = et;
-	    regional_hcalTPData[phi/4][eta/4] += et;
-	  }
+	  hcalTPData[phi][eta] = et;
+	  regional_hcalTPData[phi/4][eta/4] += et;
+	}
 
-	std::cout<<"ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
-	for(int i = 0; i < 72; i++)
-	  {
-	    for(int j = 0; j < 56; j++)
-	      {
-		std::cout<<ecalTPData[i][j]<<" ";
-	      }
-	    std::cout<<std::endl;
-	  }
-	std::cout<<"Regional ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
-	for(int i =0; i < 18; i++)
-	  {
-	    for(int j = 0; j<14; j++)
-	      {
-		std::cout<<regional_ecalTPData[i][j]<<" ";
-	      }
-	    std::cout<<std::endl;
-	  }
-	std::cout<<"HCAL TPs at L1TCalosummarytestntuplizer"<<std::endl;
-	for(int i = 0; i < 72; i++)
-	  {
-	    for(int j = 0; j < 56; j++)
-	      {
-		std::cout<<hcalTPData[i][j]<<" ";
-	      }
-	    std::cout<<std::endl;
-	  }
-	std::cout<<"Regional HCAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
-	for(int i =0; i < 18; i++)
-	  {
-	    for(int j = 0; j<14; j++)
-	      {
-		std::cout<<regional_hcalTPData[i][j]<<" ";
-	      }
-	    std::cout<<std::endl;
-	  }
-	std::cout<<"Naive summed TPs at L1TCaloSummarytestntuplizer"<<std::endl;
-	for(int i =0; i < 72; i++)
-	  {
-	    for(int j = 0; j < 56; j++)
-	      {
-		std::cout<<ecalTPData[i][j]+hcalTPData[i][j]<<" ";
-	      }
-	    std::cout<<std::endl;
-	  }
-	std::cout<<"Naive summed regional TPs at L1TCalosummarytestntuplizer"<<std::endl;
-	for(int i =0; i < 18; i++)
-	  {
-	    for(int j = 0; j<14; j++)
-	      {
-		std::cout<<regional_ecalTPData[i][j]+regional_hcalTPData[i][j]<<" ";
-	      }
-	    std::cout<<std::endl;
-	  }
+      std::cout<<"ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
+      for(int i = 0; i < 72; i++)
+	{
+	  for(int j = 0; j < 56; j++)
+	    {
+	      std::cout<<ecalTPData[i][j]<<" ";
+	    }
+	  std::cout<<std::endl;
+	}
+      std::cout<<"Regional ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
+      for(int i =0; i < 18; i++)
+	{
+	  for(int j = 0; j<14; j++)
+	    {
+	      std::cout<<regional_ecalTPData[i][j]<<" ";
+	    }
+	  std::cout<<std::endl;
+	}
+      std::cout<<"HCAL TPs at L1TCalosummarytestntuplizer"<<std::endl;
+      for(int i = 0; i < 72; i++)
+	{
+	  for(int j = 0; j < 56; j++)
+	    {
+	      std::cout<<hcalTPData[i][j]<<" ";
+	    }
+	  std::cout<<std::endl;
+	}
+      std::cout<<"Regional HCAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
+      for(int i =0; i < 18; i++)
+	{
+	  for(int j = 0; j<14; j++)
+	    {
+	      std::cout<<regional_hcalTPData[i][j]<<" ";
+	    }
+	  std::cout<<std::endl;
+	}
+      std::cout<<"Naive summed TPs at L1TCaloSummarytestntuplizer"<<std::endl;
+      for(int i =0; i < 72; i++)
+	{
+	  for(int j = 0; j < 56; j++)
+	    {
+	      std::cout<<ecalTPData[i][j]+hcalTPData[i][j]<<" ";
+	    }
+	  std::cout<<std::endl;
+	}
+      std::cout<<"Naive summed regional TPs at L1TCalosummarytestntuplizer"<<std::endl;
+      for(int i =0; i < 18; i++)
+	{
+	  for(int j = 0; j<14; j++)
+	    {
+	      std::cout<<regional_ecalTPData[i][j]+regional_hcalTPData[i][j]<<" ";
+	    }
+	  std::cout<<std::endl;
+	}
     }
 
   triggerTree->Fill();
+  npv=0;
 
 }
 

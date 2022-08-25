@@ -70,6 +70,8 @@ process.source = cms.Source("PoolSource",
                                 '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/511/00000/60CF23EC-4D6A-E811-B97E-FA163EC27161.root',
                                 '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/511/00000/B0CE29CE-4D6A-E811-9AAC-FA163E29007B.root',
                                 '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/511/00000/7088EDC7-4D6A-E811-86D9-FA163E6E9B93.root',
+                                '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/511/00000/6AF0CED4-4D6A-E811-98FC-FA163E29007B.root',
+                                '/store/data/Run2018A/ZeroBias/RAW/v1/000/315/420/00000/765A3EAC-0D4D-E811-A382-FA163EEB2BCA.root',
 
                                 # '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/434/00000/0040DCDC-4F68-E811-9526-FA163E0226BA.root',
                                 # '/store/data/Run2018B/ZeroBias/RAW/v1/000/317/434/00000/00BFABD3-4B68-E811-BBB3-FA163E852485.root',
