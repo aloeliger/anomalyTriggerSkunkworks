@@ -123,7 +123,3 @@ process = customiseEarlyDelete(process)
 # Multi-threading
 process.options.numberOfThreads=cms.untracked.uint32(8)
 process.options.numberOfStreams=cms.untracked.uint32(0)
-
-print(process.schedule)
-print(process.p)
-print([x for x in process.schedule])
