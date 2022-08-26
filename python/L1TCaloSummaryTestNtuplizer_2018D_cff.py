@@ -1,6 +1,8 @@
 import FWCore.ParameterSet.Config as cms
 
-process = cms.Process("L1TCaloSummaryTest")
+from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+
+process = cms.Process("L1TCaloSummaryTest", Run2_2018)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
