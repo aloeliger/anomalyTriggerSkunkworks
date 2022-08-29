@@ -8,8 +8,7 @@ L1TCaloSummaryTestNtuplizer = cms.EDAnalyzer('L1TCaloSummaryTestNtuplizer',
                                              #pvSrc = cms.InputTag("slimmedSecondaryVertices"),
                                              pvSrc = cms.InputTag("offlineSlimmedPrimaryVertices"),
                                              #pvSrc = cms.InputTag("offlinePrimaryVertices"),
-                                             includeDetailedTPInfo = cms.bool(False),
                                              ecalToken = cms.InputTag("l1tCaloLayer1Digis"),
                                              hcalToken = cms.InputTag("l1tCaloLayer1Digis"),
-                                             includeBasicDebugInfo = cms.bool(False)
+                                             emuRegionsToken = cms.InputTag("simCaloStage2Layer1Digis"),
 )

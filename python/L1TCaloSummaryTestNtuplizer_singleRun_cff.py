@@ -49,8 +49,7 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.load("L1Trigger.Run3Ntuplizer.l1BoostedJetStudies_cfi")
 
 process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi")
-process.L1TCaloSummaryTestNtuplizer.includeDetailedTPInfo = cms.bool(False)
-process.L1TCaloSummaryTestNtuplizer.includeBasicDebugInfo = cms.bool(False)
+process.L1TCaloSummaryTestNtuplizer.verboseDebug = cms.bool(True)
 
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(options.numEvents) )
 
