@@ -190,7 +190,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   for(const L1CaloRegion& theRegion: *emuRegions)
     {
       tauBits[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.tauVeto();
-      egBits[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.mip(); //This is the EG bit, as define in the L1 Calo Region return ((m_data >> 12) & 0x1) != 0;, 12th bit in the data, which is where this gets stored in the region summary 0x00000400
+      egBits[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.overFlow(); //This is the EG bit, as define in the L1 Calo Region return ((m_data >> 10) & 0x1) != 0;, 12th bit in the data, which is where this gets stored in the region summary 0x00000400
     }
   
   //Do event reporting if requested
