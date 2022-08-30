@@ -9,6 +9,8 @@ ROOT.gStyle.SetPaintTextFormat('1.2f')
 
 treeTuples = makeTreeTuples()
 
+nXbins = 20
+nYbins = 10
 PUScoreHistograms = []
 rowNormalHistograms = []
 columnNormalHistograms = []
@@ -16,7 +18,7 @@ for i in range(len(treeTuples)):
     variableExpression = "npv:anomalyScore>>"
     histName = "PUScore"+treeTuples[i][0]
     individualPUCanvas = ROOT.TCanvas('PUCanvas'+treeTuples[i][0],'PUCanvas'+treeTuples[i][0])
-    treeTuples[i][2].Draw(variableExpression+histName+"(40,0.0,10.0, 10,1,51)")
+    treeTuples[i][2].Draw(variableExpression+histName+"("+str(nXbins)+",0.0,10.0, "+str(nYbins)+",1,51)")
     PUHist = ROOT.gDirectory.Get(histName).Clone()
     PUHist.GetYaxis().SetTitle("Primary Vertices")
     PUHist.GetXaxis().SetTitle("Anomaly Score")
@@ -24,22 +26,22 @@ for i in range(len(treeTuples)):
     columnNormalHist = PUHist.Clone()
     PUHist.Scale(1.0/PUHist.Integral())
     #Let's row normalize
-    for j in range(1,11):
+    for j in range(1,1+nYbins):
         rowSum = 0.0
-        for k in range(1,41):
+        for k in range(1,1+nXbins):
             rowSum += rowNormalHist.GetBinContent(k, j)
             
-        for k in range(1,41):
+        for k in range(1,1+nXbins):
             binContent = rowNormalHist.GetBinContent(k, j)
             try:
                 rowNormalHist.SetBinContent(k, j, binContent/rowSum)
             except ZeroDivisionError:
                 continue
-    for j in range(1,41):
+    for j in range(1,1+nXbins):
         columnSum = 0.0
-        for k in range(1,11):
-            columnSum ++ columnNormalHist.GetBinContent(j, k)
-        for k in range(1, 11):
+        for k in range(1,1+nYbins):
+            columnSum += columnNormalHist.GetBinContent(j, k)
+        for k in range(1, 1+nYbins):
             binContent = columnNormalHist.GetBinContent(j, k)
             try:
                 columnNormalHist.SetBinContent(j,k, binContent/columnSum)
