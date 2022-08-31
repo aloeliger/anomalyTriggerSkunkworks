@@ -4,29 +4,50 @@ from L1Trigger.anomalyTriggerSkunkworks.plotSettings.PUScoreSettings import make
 import ROOT
 import os
 import math
+import argparse
+
+parser = argparse.ArgumentParser(description = 'Create rate/efficiency plots for given series of weightings')
+parser.add_argument('--condition',
+                    nargs='?',
+                    help='conditions to put on the tree before drawing any plots',
+                    default='')
+parser.add_argument('--binLabel',
+                    nargs='?',
+                    help='LaTeX label to put on the bin after drawing')
+parser.add_argument('--nBins',
+                    nargs='?',
+                    help='Number of bins to calculate the efficiency plot on',
+                    type = int,
+                    default=50)
+parser.add_argument('--fileExtension',
+                    nargs='?',
+                    help='String to append to the filename to differentiate it')
+
+args=parser.parse_args()
 
 ROOT.gStyle.SetOptStat(0)
 
 treeTuples = makeTreeTuples()
 
 ratePlots = []
+nBins = args.nBins
 for i in range(len(treeTuples)):
     variable = 'anomalyScore>>'
     histName = 'fineAnomalyHist'+treeTuples[i][0]
-    treeTuples[i][2].Draw(variable+histName+'(50, 0.0, 10.0)')
+    treeTuples[i][2].Draw(variable+histName+'('+str(nBins)+', 0.0, 10.0)', args.condition)
     theHist = ROOT.gDirectory.Get(histName).Clone()    
     theHist.Scale(1.0/theHist.Integral())
     efficiencyHistName = 'efficiency'+treeTuples[i][0]
     theEfficiencyHist = ROOT.TH1F(efficiencyHistName, 
                                   efficiencyHistName,
-                                  50, 0.0, 10.0)
-    for j in range(50):
-        theEfficiencyHist.SetBinContent(50-j, theHist.Integral(50-j, 50))
+                                  nBins, 0.0, 10.0)
+    for j in range(nBins):
+        theEfficiencyHist.SetBinContent(nBins-j, theHist.Integral(nBins-j, nBins))
         errSum = 0.0
-        for k in range(i,50):
+        for k in range(i,nBins):
             errSum += theHist.GetBinError(k)**2
         err = math.sqrt(errSum)
-        theEfficiencyHist.SetBinError(50-j,err)
+        theEfficiencyHist.SetBinError(nBins-j,err)
     theEfficiencyHist.SetLineColor(treeTuples[i][4])
     theEfficiencyHist.SetLineWidth(2)
     theEfficiencyHist.SetMarkerStyle(20+i)
@@ -73,6 +94,8 @@ rateAverage.GetYaxis().SetTitleSize(0.05)
 rateAverage.GetYaxis().SetTitleOffset(0.7)
 rateAverage.GetYaxis().SetLabelSize(0.06)
 rateAverage.GetYaxis().CenterTitle()
+rateAverage.SetMaximum(50e3)
+rateAverage.SetMinimum(1)
 
 cmsLatex = ROOT.TLatex()
 cmsLatex.SetTextSize(0.06)
@@ -81,10 +104,17 @@ cmsLatex.SetTextFont(61)
 cmsLatex.SetTextAlign(11)
 cmsLatex.DrawLatex(0.1,0.92,"CMS")
 cmsLatex.SetTextFont(52)
-cmsLatex.DrawLatex(0.1+0.06,0.92,"Simulation")
-cmsLatex.DrawLatex(0.1+0.18,0.92,"Preliminary")
+cmsLatex.DrawLatex(0.1+0.06,0.92,"Preliminary")
+#cmsLatex.DrawLatex(0.1+0.18,0.92,"Preliminary")
 
-theLegend = ROOT.TLegend(0.5, 0.61, 0.9, 0.9)
+if args.binLabel != None:
+    binLabel = ROOT.TLatex()
+    binLabel.SetNDC(True)
+    binLabel.SetTextFont(52)
+    binLabel.SetTextAlign(11)
+    binLabel.DrawLatex(0.5,0.92,args.binLabel)
+
+theLegend = ROOT.TLegend(0.65, 0.61, 0.9, 0.9)
 
 theLegend.AddEntry(rateAverage, 'Average of Datasets', 'pl')
 for i in range(len(ratePlots)):
@@ -116,4 +146,6 @@ averageRateRatio.GetXaxis().SetLabelSize(0.1)
 averageRateRatio.GetYaxis().SetTitle('Ratio to Average')
 averageRateRatio.GetYaxis().SetRangeUser(0.0, 2.6)
 
-theEfficiencyCanvas.SaveAs('caloL1Emu_anomalyTrigger_EfficiencyDistribution.png')
+fileName = 'caloL1Emu_anomalyTrigger_EfficiencyDistribution.png' if args.fileExtension==None else 'caloL1Emu_anomalyTrigger_EfficiencyDistribution_'+args.fileExtension+'.png'
+
+theEfficiencyCanvas.SaveAs(fileName)

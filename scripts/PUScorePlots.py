@@ -3,6 +3,8 @@ from L1Trigger.anomalyTriggerSkunkworks.plotSettings.PUScoreSettings import make
 import ROOT
 import os
 import math
+import argparse
+
 
 ROOT.gStyle.SetOptStat(0)
 ROOT.gStyle.SetPaintTextFormat('1.2f')
@@ -20,6 +22,7 @@ for i in range(len(treeTuples)):
     individualPUCanvas = ROOT.TCanvas('PUCanvas'+treeTuples[i][0],'PUCanvas'+treeTuples[i][0])
     treeTuples[i][2].Draw(variableExpression+histName+"("+str(nXbins)+",0.0,10.0, "+str(nYbins)+",1,51)")
     PUHist = ROOT.gDirectory.Get(histName).Clone()
+    PUHist.SetTitle('')
     PUHist.GetYaxis().SetTitle("Primary Vertices")
     PUHist.GetXaxis().SetTitle("Anomaly Score")
     rowNormalHist = PUHist.Clone()
@@ -47,18 +50,41 @@ for i in range(len(treeTuples)):
                 columnNormalHist.SetBinContent(j,k, binContent/columnSum)
             except ZeroDivisionError:
                 continue
-            
     PUHist.Draw("COLZ TEXT")
+    cmsLatex = ROOT.TLatex()
+    cmsLatex.SetTextSize(0.06)
+    cmsLatex.SetNDC(True)
+    cmsLatex.SetTextFont(61)
+    cmsLatex.SetTextAlign(11)
+    cmsLatex.DrawLatex(0.1,0.92,"CMS")
+    cmsLatex.SetTextFont(52)
+    cmsLatex.DrawLatex(0.1+0.08,0.92,"Preliminary")
     individualPUCanvas.SaveAs('PUvsScore_'+treeTuples[i][0]+'.png')
     
     individualRowNormalCanvas = ROOT.TCanvas('rowNormalPU'+treeTuples[i][0], 'rowNormalPU'+treeTuples[i][0])
     rowNormalHist.Draw("COLZ TEXT")
     rowNormalHist.GetXaxis().SetTitle("Anomaly Score (Row Normalized)")
+    cmsLatex = ROOT.TLatex()
+    cmsLatex.SetTextSize(0.06)
+    cmsLatex.SetNDC(True)
+    cmsLatex.SetTextFont(61)
+    cmsLatex.SetTextAlign(11)
+    cmsLatex.DrawLatex(0.1,0.92,"CMS")
+    cmsLatex.SetTextFont(52)
+    cmsLatex.DrawLatex(0.1+0.08,0.92,"Preliminary")
     individualRowNormalCanvas.SaveAs("rowNormalPUvsScore_"+treeTuples[i][0]+'.png')
 
     individualColumnNormalCanvas = ROOT.TCanvas('columnNormalPU'+treeTuples[i][0], 'columnNormalPU'+treeTuples[i][0])
     columnNormalHist.Draw("COLZ TEXT")
     columnNormalHist.GetXaxis().SetTitle("Anomaly Score (Column Normalized)")
+    cmsLatex = ROOT.TLatex()
+    cmsLatex.SetTextSize(0.06)
+    cmsLatex.SetNDC(True)
+    cmsLatex.SetTextFont(61)
+    cmsLatex.SetTextAlign(11)
+    cmsLatex.DrawLatex(0.1,0.92,"CMS")
+    cmsLatex.SetTextFont(52)
+    cmsLatex.DrawLatex(0.1+0.08,0.92,"Preliminary")
     individualColumnNormalCanvas.SaveAs("columnNormalPUvsScore_"+treeTuples[i][0]+'.png')
     
     PUScoreHistograms.append(PUHist)
@@ -73,5 +99,13 @@ for i in range(1, len(PUScoreHistograms)):
 averagePUScore.Scale(1.0/averagePUScore.Integral())
 
 averagePUScore.Draw('COLZ TEXT')
+cmsLatex = ROOT.TLatex()
+cmsLatex.SetTextSize(0.06)
+cmsLatex.SetNDC(True)
+cmsLatex.SetTextFont(61)
+cmsLatex.SetTextAlign(11)
+cmsLatex.DrawLatex(0.1,0.92,"CMS")
+cmsLatex.SetTextFont(52)
+cmsLatex.DrawLatex(0.1+0.08,0.92,"Preliminary")
 
 averagePUCanvas.SaveAs('PUvsScore_average.png')
