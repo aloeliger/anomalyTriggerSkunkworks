@@ -22,6 +22,16 @@ parser.add_argument('--nBins',
 parser.add_argument('--fileExtension',
                     nargs='?',
                     help='String to append to the filename to differentiate it')
+#L1 Group method
+#Frac events accepted compared to zero bias * zeroBias rate
+#zero bias rate = nBunches * LHC Frequency
+#               = 2544     * 11245.6e-3 kHz
+#               = 28607 kHz = 28.607e3 kHz
+parser.add_argument('--zeroThresholdTriggerRate',
+                    nargs='?',
+                    help='Assumed rate if the triggering threshold is zero in kHz. Defaults to LHC BX rate (40MHz = 40e3 kHZ)',
+                    type = float,
+                    default=40.0e3)
 
 args=parser.parse_args()
 
@@ -61,9 +71,9 @@ rateAverage.SetMarkerStyle(8)
 rateAverage.SetLineColor(ROOT.kBlack)
 
 #Scale to the system rate
-rateAverage.Scale(40.0e3)
+rateAverage.Scale(args.zeroThresholdTriggerRate)
 for hist in ratePlots:
-    hist.Scale(40.0e3)
+    hist.Scale(args.zeroThresholdTriggerRate)
     
 theEfficiencyCanvas = ROOT.TCanvas('theEfficiencyCanvas','theEfficiencyCanvas')
 theEfficiencyCanvas.Divide(1,2)
