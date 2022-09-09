@@ -8,7 +8,7 @@ from FWCore.ParameterSet.VarParsing import VarParsing
 
 options = VarParsing()
 options.register('numEvents', 10000, VarParsing.multiplicity.singleton, VarParsing.varType.int, 'Number of Events to Process')
-options.register('loadFile','', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'File to load and run. Can be local if prefixed with file:')
+options.register('inputFiles','', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'File to load and run. Can be local if prefixed with file:')
 options.register('outputFile', 'out.root', VarParsing.multiplicity.singleton, VarParsing.varType.string, 'File to write the output to.')
 options.register('useECALLUT',True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, 'enable or disable usage of the ECAL LUTs at the simCaloStage2Layer1Digis (CaloL1 Emulation) side')
 options.register('useHCALLUT',True, VarParsing.multiplicity.singleton, VarParsing.varType.bool, 'enable or disable usage of the HCAL LUTs at the simCaloStage2Layer1Digis (CaloL1 Emulation) side')
@@ -57,7 +57,7 @@ process.MessageLogger.cerr.FwkReport.reportEvery = 100
 
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(
-                                options.loadFile,
+                                options.inputFiles,
                             ),
 )
 
@@ -87,8 +87,7 @@ process.p = cms.Path(process.RawToDigi_short *
                      process.simCaloStage2Layer1Digis * 
                      process.uct2016EmulatorDigis * 
                      #process.l1NtupleProducer
-                     process.L1TCaloSummaryTestNtuplizer
-)
+                     process.L1TCaloSummaryTestNtuplizer)
 #Output
 process.out = cms.OutputModule("PoolOutputModule",
     fileName = cms.untracked.string("l1TFullEvent.root"),

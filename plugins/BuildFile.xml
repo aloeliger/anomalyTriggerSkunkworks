@@ -4,8 +4,13 @@
 <use name="DataFormats/EcalDigi"/>
 <use name="DataFormats/HcalDigi"/>
 <use name="DataFormats/L1CaloTrigger"/>
+<use name="DataFormats/L1Trigger"/>
 <use name="DataFormats/VertexReco"/>
 <use name="FWCore/ServiceRegistry"/>
 <use name="CommonTools/UtilAlgos"/>
 <use name="PhysicsTools/TensorFlow"/>
+<use name="HLTrigger/HLTcore"/>
+<use name="CondFormats/DataRecord"/>
+<use name="CondFormats/L1TObjects"/>
+<use name="DataFormats/L1TGlobal"/>
 <flags EDM_PLUGIN="1"/>
