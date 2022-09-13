@@ -3,6 +3,7 @@ import FWCore.ParameterSet.Config as cms
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 
 process = cms.Process("L1TCaloSummaryTest", Run2_2018)
+
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
@@ -32,6 +33,8 @@ process.load("L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi
 #We want PU info
 process.L1TCaloSummaryTestNtuplizer.includePUInfo = cms.bool(True)
 
+process.load('L1Trigger.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
+
 process.maxEvents = cms.untracked.PSet( input = cms.untracked.int32(100000) )
 
 process.MessageLogger.cerr.FwkReport.reportEvery = 100
@@ -49,7 +52,7 @@ process.options = cms.untracked.PSet(
 process.configurationMetadata = cms.untracked.PSet(
     annotation = cms.untracked.string('step2 nevts:1'),
     name = cms.untracked.string('Applications'),
-    version = cms.untracked.string('$Revision: 1.19 $')
+     version = cms.untracked.string('$Revision: 1.19 $')
 )
 
 
@@ -65,8 +68,8 @@ process.p = cms.Path(process.RawToDigi_short *
                      process.l1tCaloLayer1Digis *
                      process.simCaloStage2Layer1Digis * 
                      process.uct2016EmulatorDigis * 
-                     process.L1TCaloSummaryTestNtuplizer
-)
+                     process.L1TCaloSummaryTestNtuplizer *
+                     process.L1TTriggerBitsNtuplizer)
 
 process.schedule = cms.Schedule(process.p)
 
