@@ -1,0 +1,88 @@
+from L1Trigger.anomalyTriggerSkunkworks.L1TComparisonConfigs.comparison_base_cff import process
+import FWCore.ParameterSet.Config as cms
+
+import FWCore.ParameterSet.VarParsing as VarParsing
+options = VarParsing.VarParsing ('analysis')
+options.parseArguments()
+
+process.source.fileNames = cms.untracked.vstring(
+    "/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/571/00000/14725F70-9296-E811-ADC1-FA163E141D15.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/571/00000/9C5A812B-7C96-E811-9607-FA163E4DD092.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/571/00000/167FACC7-7F96-E811-B223-FA163E45844D.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/571/00000/601E5482-8496-E811-A7F2-FA163EF4C6B1.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/571/00000/6653A016-9196-E811-A936-FA163EF1AD57.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/571/00000/4AA0E360-8296-E811-96FF-A4BF0112E038.root",
+)
+process.source.fileNames = cms.untracked.vstring(options.inputFiles)
+
+process.source.secondaryFileNames = cms.untracked.vstring(
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/FA20AD0B-8F94-E811-904B-FA163E85F2D7.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/765BAF0C-8F94-E811-91CC-FA163E697C1C.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/365AEB0C-8F94-E811-996E-FA163EDDCB64.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/945D730A-8F94-E811-A777-FA163E2908BD.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/E8F9420E-8F94-E811-A24A-FA163E390D83.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/AC80520E-8F94-E811-82EE-FA163EB95E71.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/54132389-9094-E811-B5C8-02163E019F53.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/A8A09822-9194-E811-90DF-FA163E091FA1.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/CA4A677E-9094-E811-A448-02163E019F9D.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/E001A9F6-9094-E811-9023-02163E01773E.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/9A0883C5-9094-E811-A88A-02163E0161DE.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4899ED7F-9194-E811-97AA-FA163E7D8850.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/DC8BFD85-9094-E811-9449-02163E01318B.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/54A606BC-9194-E811-8D02-02163E010EC2.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/50E5AD0E-8F94-E811-B8A2-FA163ED91E66.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C00EA717-8F94-E811-8089-02163E01A063.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/A8DBB049-8F94-E811-9E7A-FA163E860FE8.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/B81FF87F-9094-E811-A0F9-FA163EB2E79E.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C2C6B37C-9094-E811-B32C-FA163EE5B712.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/2C6F34CA-9194-E811-B62C-FA163E3FE3C5.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/EC3CB40F-8F94-E811-B39C-FA163E12E196.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/8CA6C10C-8F94-E811-B6E1-FA163E9AB79F.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/1026610F-8F94-E811-AB26-FA163E02027F.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/EC59E00C-8F94-E811-AF91-FA163E340675.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C842FD3E-8F94-E811-9550-FA163E0079ED.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/881C7888-9094-E811-B7E1-02163E010FB0.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/FA6FD47F-9094-E811-99EA-FA163E6CC8AA.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C4ED46CE-9194-E811-8195-FA163E014692.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/98ECF1AB-5D95-E811-BA23-FA163E28C9AF.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/2882D00D-8F94-E811-A9F1-FA163EF87070.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4AE413EB-8F94-E811-987F-FA163EEC74A2.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/B052E90F-8F94-E811-902B-FA163E9ED5E5.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4ED12B7D-9094-E811-A539-02163E010DCC.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4C62B0E5-9194-E811-891A-FA163ED7F3BC.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/E4915613-9294-E811-B60E-FA163E7DCDDC.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/5CE7E184-9094-E811-9E5A-02163E015BE0.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/9E6F95F1-9194-E811-AF36-FA163E5E8A0A.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4C3E1E58-8F94-E811-ACB0-02163E00BDFF.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C255D914-8F94-E811-A478-02163E016478.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/1A24830D-8F94-E811-AACC-FA163E133883.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/5672C60D-8F94-E811-85C7-FA163E472D18.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/BAB1630E-8F94-E811-A603-FA163E0169F1.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/B676547E-9094-E811-A38E-FA163E60490E.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C627360F-8F94-E811-81CC-02163E010C74.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/DAE3D57F-9094-E811-940B-02163E010D1C.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/80B31AF6-9194-E811-B89A-FA163E8DD450.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/B830EC0D-8F94-E811-80F0-FA163EBDD8C3.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4A437F17-8F94-E811-984B-FA163E5D2FA4.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/4014C67B-9094-E811-B24C-FA163E696A85.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/C83DF57C-9094-E811-B8DA-FA163EDDCB64.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/9243AD7C-9094-E811-9AD1-FA163E1290D7.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/6875A388-9094-E811-BCFF-02163E0165FB.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/E0A922FC-9194-E811-AC1A-FA163E4FF015.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/5030ED0B-8F94-E811-A8EF-FA163E59625C.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/426BA40E-8F94-E811-8E85-FA163E70E286.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/0441920B-8F94-E811-8F4A-FA163E8A9748.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/A47BFD0B-8F94-E811-99B9-FA163EE15BB2.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/E23B5E0C-8F94-E811-B87E-A4BF0114CB20.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/6A987C18-8F94-E811-A90F-FA163EB8AAE7.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/E64B7612-8F94-E811-BD64-02163E017F65.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/FA22FE7F-9094-E811-8B8B-FA163EA984DF.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/76342490-9094-E811-BCD8-FA163E47A7A4.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/40043883-9094-E811-9985-FA163EE8A797.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/827C5F7E-9094-E811-93F5-FA163E740D18.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/A6748384-9094-E811-AEA8-02163E013047.root",
+    "/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/571/00000/B897B16F-9294-E811-A592-FA163E2A7247.root",
+)
+process.TFileService.fileName=cms.string(options.outputFile)
+
+#process.TFileService.fileName = cms.string("l1TNtuple_TriggerBitsComparison_2018D_320571.root")
