@@ -42,10 +42,10 @@ private:
 
   edm::EDGetTokenT<EcalTrigPrimDigiCollection> ecalTPSource;
   edm::EDGetTokenT<HcalTrigPrimDigiCollection> hcalTPSource;
-  uint32_t ecalTPData[72][56];
-  uint32_t hcalTPData[72][56];
-  uint32_t regional_ecalTPData[18][14];
-  uint32_t regional_hcalTPData[18][14];
+  unsigned short int ecalTPData[72][56];
+  unsigned short int hcalTPData[72][56];
+  unsigned short int regional_ecalTPData[18][14];
+  unsigned short int regional_hcalTPData[18][14];
 
 
 
@@ -86,10 +86,10 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch("anomalyScore", &anomalyScore);
-  triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/i");
-  triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/i");
-  triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/i");
-  triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/i");
+  triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/s");
+  triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/s");
+  triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
+  triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
   triggerTree -> Branch("tauBits", &tauBits, "tauBits[18][14]/O");
   triggerTree -> Branch("egBits", &egBits, "tauBits[18][14]/O");
 }
