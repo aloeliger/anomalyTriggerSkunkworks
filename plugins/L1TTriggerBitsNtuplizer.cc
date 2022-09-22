@@ -60,16 +60,16 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
 
   //REALLY need a better way of doing this
   triggerResults ={
-    {"L1_SingleMu20", false},
-    {"L1_SingleJet120", false},
-    {"L1_SingleJet60", false},
+    {"L1_SingleMu22", false},
+    {"L1_SingleJet180", false},
+    {"L1_HTT450er", false},
   };
 
   //setup the bits tree
   l1BitsTree = theFileService->make<TTree>("L1TTriggerBits","Emulator L1 Trigger Bits");
-  l1BitsTree->Branch("L1_SingleMu20", &triggerResults["L1_SingleMu20"], "L1_SingleMu20/O");
-  l1BitsTree->Branch("L1_SingleJet120", &triggerResults["L1_SingleJet120"], "L1_SingleJet120/O");
-  l1BitsTree->Branch("L1_SingleJet60", &triggerResults["L1_SingleJet60"], "L1_SingleJet60/O");
+  l1BitsTree->Branch("L1_SingleMu22", &triggerResults["L1_SingleMu22"], "L1_SingleMu22/O");
+  l1BitsTree->Branch("L1_SingleJet180", &triggerResults["L1_SingleJet180"], "L1_SingleJet180/O");
+  l1BitsTree->Branch("L1_HTT450er", &triggerResults["L1_HTT450er"], "L1_HTT450er/O");
   
 }
 
@@ -87,9 +87,9 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
 
   //REALLY need a better way of doing this
   triggerResults ={
-    {"L1_SingleMu20", false},
-    {"L1_SingleJet120", false},
-    {"L1_SingleJet60", false},
+    {"L1_SingleMu22", false},
+    {"L1_SingleJet180", false},
+    {"L1_HTT450er", false},
   };
 
 
