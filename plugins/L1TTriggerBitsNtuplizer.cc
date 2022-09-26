@@ -24,6 +24,7 @@
 #include "TTree.h"
 
 #include <string>
+#include <map>
 
 class L1TTriggerBitsNtuplizer : public edm::one::EDAnalyzer< edm::one::SharedResources >
 {
@@ -34,7 +35,7 @@ public:
 private: 
   void beginJob() override {};
   void analyze(const edm::Event&, const edm::EventSetup&) override;
-  void endJob() override{};
+  void endJob() override {};
 
   edm::Service<TFileService> theFileService;
   TTree* l1BitsTree;
@@ -42,7 +43,12 @@ private:
   edm::ESGetToken<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd> L1TUtmTriggerMenuEventToken;
   const L1TUtmTriggerMenu* l1GtMenu;
   const std::map<std::string, L1TUtmAlgorithm>* algorithmMap;
-  std::map<std::string, bool> triggerResults;
+  //bool L1_SingleMu22;
+  //bool L1_SingleJet180;
+  //bool L1_HTTer450;
+  //bool L1_ZeroBias;
+
+  std::map< string, std::unique_ptr<bool> > triggerResults;
 
   bool verboseDebug;
 
@@ -59,21 +65,21 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
   verboseDebug = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
 
   //REALLY need a better way of doing this
-  triggerResults ={
-    {"L1_SingleMu22", false},
-    {"L1_SingleJet180", false},
-    {"L1_HTT450er", false},
-  };
+  //L1_SingleMu22 = false;
+  //L1_SingleJet180 = false;
+  //L1_HTTer450 = false;
+  //L1_ZeroBias = false;
 
   //setup the bits tree
   l1BitsTree = theFileService->make<TTree>("L1TTriggerBits","Emulator L1 Trigger Bits");
-  l1BitsTree->Branch("L1_SingleMu22", &triggerResults["L1_SingleMu22"], "L1_SingleMu22/O");
-  l1BitsTree->Branch("L1_SingleJet180", &triggerResults["L1_SingleJet180"], "L1_SingleJet180/O");
-  l1BitsTree->Branch("L1_HTT450er", &triggerResults["L1_HTT450er"], "L1_HTT450er/O");
-  
+  //l1BitsTree->Branch("L1_SingleMu22", &L1_SingleMu22, "L1_SingleMu22/O");
+  //l1BitsTree->Branch("L1_SingleJet180", &L1_SingleJet180, "L1_SingleJet180/O");
+  //l1BitsTree->Branch("L1_HTTer450", &L1_HTTer450, "L1_HTTer450/O");
+  //l1BitsTree->Branch("L1_ZeroBias", &L1_ZeroBias, "L1_ZeroBias/O");
 }
 
 L1TTriggerBitsNtuplizer::~L1TTriggerBitsNtuplizer()
+
 {
 }
 
@@ -85,20 +91,24 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
   l1GtMenu = &menuRcd.get(L1TUtmTriggerMenuEventToken);
   algorithmMap = &(l1GtMenu->getAlgorithmMap());
 
-  //REALLY need a better way of doing this
-  triggerResults ={
-    {"L1_SingleMu22", false},
-    {"L1_SingleJet180", false},
-    {"L1_HTT450er", false},
-  };
-
+  //Okay. What we would like to do, is on the 
+  //First event, get all of the L1 path names
+  //Assign variables for them
+  //So use a map of L1Name and a pointer to a boolean.
+  //We can provide the pointer to the branching function
 
   iEvent.getByToken(gtAlgBlkToken, gtAlgBlkHandle);
   //First we make sure we even have a valid AlgBlk, otherwise we are going nowhere fast
   if(gtAlgBlkHandle.isValid())
     {
-      //Want BX0? Event the l1GtUtils doesn't seem sure about this?
+      //Want BX0? Even the l1GtUtils doesn't seem sure about this?
       std::vector<GlobalAlgBlk>::const_iterator algBlk = gtAlgBlkHandle->begin(0);
+      //
+      if(verboseDebug)
+	{
+	  std::cout<<"BxVector First BX: "<<gtAlgBlkHandle->getFirstBX()<<std::endl;
+	  std::cout<<"BxVector Last BX: "<<gtAlgBlkHandle->getLastBX()<<std::endl;
+	}
       if(algBlk != gtAlgBlkHandle->end(0))
 	{
 	  //Now let's see if we can loop over the bits in the path and see if we can print out
@@ -112,15 +122,23 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
 	      bool initialDecision = algBlk->getAlgoDecisionInitial(algBit);
 	      bool intermDecision = algBlk->getAlgoDecisionInterm(algBit);
 	      bool decisionFinal = algBlk->getAlgoDecisionFinal(algBit);
-	      //Not sure if this is dangerous. 
-	      //Sure seems like it should be
-	      //But I don't want to write specific configuring things
-	      //Or do individual cases.
-	      try {triggerResults[algName] = decisionFinal;}
-	      catch(std::range_error){}
+	      //This is unfortunately super specific. This should be rewritten if possible.
+	      //if (algName == "L1_SingleMu22") L1_SingleMu22 = decisionFinal;
+	      //if (algName == "L1_SingleJet180") L1_SingleJet180 = decisionFinal;
+	      //if (algName == "L1_HTTer450") L1_HTTer450 = decisionFinal;
+	      //if (algName == "L1_ZeroBias") L1_ZeroBias = decisionFinal;
+	      if(triggerResults.find(algName) == triggerResults.end())
+		{
+		  //The algorithm name was not in the triger map record.
+		  //Create a new map entry for this bit
+		  triggerResults.insert(std::pair< string, std::unique_ptr<bool> >(algName, std::make_unique<bool>()));
+		  l1BitsTree->Branch(algName.c_str(), triggerResults[algName].get(), (algName+"/O").c_str()); //this feels like it shouldn't work
+		}
+	      *triggerResults[algName] = decisionFinal;
 	      if (verboseDebug)
 		{
 		  std::cout<<"L1 Path: "<<algName<<" Bit: "<<algBit<<" Initial Decision: "<<initialDecision<<" Interm Decision: "<<intermDecision<<" Final Decision: "<<decisionFinal<<std::endl;
+		  std::cout<<"trigger result: "<<triggerResults[algName].get()<<" "<<*triggerResults[algName]<<std::endl; 
 		}
 	    }
 
