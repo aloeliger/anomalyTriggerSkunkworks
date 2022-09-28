@@ -48,6 +48,10 @@ private:
   //bool L1_HTTer450;
   //bool L1_ZeroBias;
 
+  unsigned int run;
+  unsigned int lumi;
+  unsigned int evt;
+
   std::map< string, std::unique_ptr<bool> > triggerResults;
 
   bool verboseDebug;
@@ -72,6 +76,9 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
 
   //setup the bits tree
   l1BitsTree = theFileService->make<TTree>("L1TTriggerBits","Emulator L1 Trigger Bits");
+  l1BitsTree -> Branch("run", &run);
+  l1BitsTree -> Branch("lumi", &lumi);
+  l1BitsTree -> Branch("evt", &evt);
   //l1BitsTree->Branch("L1_SingleMu22", &L1_SingleMu22, "L1_SingleMu22/O");
   //l1BitsTree->Branch("L1_SingleJet180", &L1_SingleJet180, "L1_SingleJet180/O");
   //l1BitsTree->Branch("L1_HTTer450", &L1_HTTer450, "L1_HTTer450/O");
@@ -86,6 +93,11 @@ L1TTriggerBitsNtuplizer::~L1TTriggerBitsNtuplizer()
 void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
+  
+  run  = iEvent.id().run();
+  lumi = iEvent.id().luminosityBlock();
+  evt  = iEvent.id().event();
+
   //Start the laborious process of accessing the in-event L1 Menu
   auto menuRcd = iSetup.get<L1TUtmTriggerMenuRcd>();
   l1GtMenu = &menuRcd.get(L1TUtmTriggerMenuEventToken);
