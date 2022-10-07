@@ -131,6 +131,7 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
 	    {
 	      std::string algName = itAlgo->first;
 	      int algBit = itAlgo->second.getIndex();
+	      int prescaleColumn = algBlk->getPreScColumn();
 	      bool initialDecision = algBlk->getAlgoDecisionInitial(algBit);
 	      bool intermDecision = algBlk->getAlgoDecisionInterm(algBit);
 	      bool decisionFinal = algBlk->getAlgoDecisionFinal(algBit);
@@ -151,6 +152,7 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
 		{
 		  std::cout<<"L1 Path: "<<algName<<" Bit: "<<algBit<<" Initial Decision: "<<initialDecision<<" Interm Decision: "<<intermDecision<<" Final Decision: "<<decisionFinal<<std::endl;
 		  std::cout<<"trigger result: "<<triggerResults[algName].get()<<" "<<*triggerResults[algName]<<std::endl; 
+		  std::cout<<"Prescale Column retrieval? "<<prescaleColumn<<std::endl;
 		}
 	    }
 
