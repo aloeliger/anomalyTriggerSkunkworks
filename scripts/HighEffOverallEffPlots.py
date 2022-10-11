@@ -274,7 +274,7 @@ def main(args):
     AD3Hist = ROOT.TH1F('AD3Hist','AD3Hist', numLumis, 0.0, float(numLumis))
     AD6Hist = ROOT.TH1F('AD6Hist','AD6Hist', numLumis, 0.0, float(numLumis))
     AD7Hist = ROOT.TH1F('AD7Hist','AD7Hist', numLumis, 0.0, float(numLumis))
-    AD8Hist = ROOT.TH1F('AD8Hist','AD8Hist', numLumis, 0.0, float(numLumis))
+    AD6p5Hist = ROOT.TH1F('AD6p5Hist','AD6p5Hist', numLumis, 0.0, float(numLumis))
 
     pureSingleMuonHist = ROOT.TH1F('pureSingleMuonHist','pureSingleMuonHist', numLumis, 0.0, float(numLumis))
     pureSingleJetHist = ROOT.TH1F('pureSingleJetHist', 'pureSingleJetHist', numLumis, 0.0, float(numLumis))
@@ -282,7 +282,7 @@ def main(args):
     pureAD3Hist = ROOT.TH1F('pureAD3Hist','pureAD3Hist', numLumis, 0.0, float(numLumis))
     pureAD6Hist = ROOT.TH1F('pureAD6Hist','pureAD6Hist', numLumis, 0.0, float(numLumis))
     pureAD7Hist = ROOT.TH1F('pureAD7Hist','pureAD7Hist', numLumis, 0.0, float(numLumis))
-    pureAD8Hist = ROOT.TH1F('pureAD8Hist','pureAD8Hist', numLumis, 0.0, float(numLumis))
+    pureAD6p5Hist = ROOT.TH1F('pureAD6p5Hist','pureAD6p5Hist', numLumis, 0.0, float(numLumis))
 
     binToFill = 1
     for lumi in lumis:
@@ -294,7 +294,7 @@ def main(args):
         AD3Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 3.0') / theTree.GetEntries(f'lumi=={lumi}')
         AD6Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 6.0') / theTree.GetEntries(f'lumi=={lumi}')
         AD7Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 7.0') / theTree.GetEntries(f'lumi=={lumi}')
-        AD8Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 8.0') / theTree.GetEntries(f'lumi=={lumi}')
+        AD6p5Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 6.5') / theTree.GetEntries(f'lumi=={lumi}')
 
         singleMuonRate = convertEffToRate(singleMuonEff)
         singleJetRate = convertEffToRate(singleJetEff)
@@ -302,7 +302,7 @@ def main(args):
         AD3Rate = convertEffToRate(AD3Eff)
         AD6Rate = convertEffToRate(AD6Eff)
         AD7Rate = convertEffToRate(AD7Eff)
-        AD8Rate = convertEffToRate(AD8Eff)
+        AD6p5Rate = convertEffToRate(AD6p5Eff)
 
         print()
         print(f'\t L1_SingleMu22 eff: {singleMuonEff}')
@@ -311,7 +311,7 @@ def main(args):
         print(f'\t AD3 eff: {AD3Eff}')
         print(f'\t AD6 eff: {AD6Eff}')
         print(f'\t AD7 eff: {AD7Eff}')
-        print(f'\t AD8 eff: {AD8Eff}')
+        print(f'\t AD6p5 eff: {AD6p5Eff}')
         print()
 
         print()
@@ -321,7 +321,7 @@ def main(args):
         print(f'\t AD3 rate: {AD3Rate}')
         print(f'\t AD6 rate: {AD6Rate}')
         print(f'\t AD7 rate: {AD7Rate}')
-        print(f'\t AD8 rate: {AD8Rate}')
+        print(f'\t AD6p5 rate: {AD6p5Rate}')
         print()
         
         pureSingleMuonEff = theTree.GetEntries(f'lumi=={lumi} && L1_SingleMu22 == 1 && '+noUnprescaledBitPassesExceptMe('L1_SingleMu22')) / theTree.GetEntries(f'lumi=={lumi}')
@@ -330,7 +330,7 @@ def main(args):
         pureAD3Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 3.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
         pureAD6Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 6.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
         pureAD7Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 7.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
-        pureAD8Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 8.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
+        pureAD6p5Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 6.5 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
 
 
         pureSingleMuonRate = convertEffToRate(pureSingleMuonEff)
@@ -339,7 +339,7 @@ def main(args):
         pureAD3Rate = convertEffToRate(pureAD3Eff)
         pureAD6Rate = convertEffToRate(pureAD6Eff)
         pureAD7Rate = convertEffToRate(pureAD7Eff)
-        pureAD8Rate = convertEffToRate(pureAD8Eff)
+        pureAD6p5Rate = convertEffToRate(pureAD6p5Eff)
 
         print()
         print(f'\t pure L1_SingleMu22 eff: {pureSingleMuonEff}')
@@ -347,7 +347,7 @@ def main(args):
         print(f'\t pure L1_DoubleIsoTau34er2p1 eff: {pureDoubleTauEff}')
         print(f'\t pure AD3 eff: {pureAD3Eff}')
         print(f'\t pure AD7 eff: {pureAD7Eff}')
-        print(f'\t pure AD8 eff: {pureAD8Eff}')
+        print(f'\t pure AD6p5 eff: {pureAD6p5Eff}')
         print(f'\t pure AD6 eff: {pureAD6Eff}')
         print()
 
@@ -357,7 +357,7 @@ def main(args):
         print(f'\t pure L1_DoubleIsoTau34er2p1 rate: {pureDoubleTauRate}')
         print(f'\t pure AD3 rate: {pureAD3Rate}')
         print(f'\t pure AD7 rate: {pureAD7Rate}')
-        print(f'\t pure AD8 rate: {pureAD8Rate}')
+        print(f'\t pure AD6p5 rate: {pureAD6p5Rate}')
         print(f'\t pure AD6 rate: {pureAD6Rate}')
         print()
 
@@ -366,7 +366,7 @@ def main(args):
         doubleTauHist.SetBinContent(binToFill, doubleTauEff)
         AD3Hist.SetBinContent(binToFill, AD3Eff)
         AD7Hist.SetBinContent(binToFill, AD7Eff)
-        AD8Hist.SetBinContent(binToFill, AD8Eff)
+        AD6p5Hist.SetBinContent(binToFill, AD6p5Eff)
         AD6Hist.SetBinContent(binToFill, AD6Eff)
         
         pureSingleMuonHist.SetBinContent(binToFill, pureSingleMuonEff)
@@ -374,7 +374,7 @@ def main(args):
         pureDoubleTauHist.SetBinContent(binToFill, pureDoubleTauEff)
         pureAD3Hist.SetBinContent(binToFill, pureAD3Eff)
         pureAD7Hist.SetBinContent(binToFill, pureAD7Eff)
-        pureAD8Hist.SetBinContent(binToFill, pureAD8Eff)
+        pureAD6p5Hist.SetBinContent(binToFill, pureAD6p5Eff)
         pureAD6Hist.SetBinContent(binToFill, pureAD6Eff)
         
         binToFill += 1
@@ -386,7 +386,7 @@ def main(args):
     doubleTauHist.Write()
     AD3Hist.Write()
     AD7Hist.Write()
-    AD8Hist.Write()
+    AD6p5Hist.Write()
     AD6Hist.Write()
 
     pureSingleMuonHist.Write()
@@ -394,7 +394,7 @@ def main(args):
     pureDoubleTauHist.Write()
     pureAD3Hist.Write()
     pureAD7Hist.Write()
-    pureAD8Hist.Write()
+    pureAD6p5Hist.Write()
     pureAD6Hist.Write()
     
     theFile.Write()

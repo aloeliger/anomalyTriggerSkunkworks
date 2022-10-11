@@ -208,19 +208,18 @@ def main(args):
             'singleJet': 'singleJetHist',
             'doubleTau': 'doubleTauHist',
             'AD3': 'AD3Hist',
-            'AD4': 'AD4Hist',
-            'AD5': 'AD5Hist',
             'AD6': 'AD6Hist',
+            'AD7': 'AD7Hist',
+            'AD6p5': 'AD6p5Hist',
         },
         'pure': {
             'singleMuon': 'pureSingleMuonHist',
             'singleJet': 'pureSingleJetHist',
             'doubleTau': 'pureDoubleTauHist',
             'AD3': 'pureAD3Hist',
-            'AD4': 'pureAD4Hist',
-            'AD5': 'pureAD5Hist',
             'AD6': 'pureAD6Hist',
-
+            'AD7': 'pureAD7Hist',
+            'AD6p5': 'pureAD6p5Hist',
         },
     }
 
@@ -231,18 +230,18 @@ def main(args):
             'singleJet': ROOT.kRed,
             'doubleTau': ROOT.kViolet,
             'AD3': ROOT.kBlue,
-            'AD4': ROOT.kBlue-10,
-            'AD5': ROOT.kBlue+3,
             'AD6': ROOT.kCyan+3,
+            'AD7': ROOT.kGreen,
+            'AD6p5': ROOT.kBlue+3,
         },
         'legendEntry':{
             'singleMuon': 'L1_SingleMu22',
             'singleJet': 'L1_SingleJet180',
             'doubleTau': 'L1_DoubleIsoTau34er2p1',
             'AD3': 'Calo Anomaly Score > 3',
-            'AD4': 'Calo Anomaly Score > 4',
-            'AD5': 'Calo Anomaly Score > 5',
             'AD6': 'Calo Anomaly Score > 6',
+            'AD7': 'Calo Anomaly Score > 7',
+            'AD6p5': 'Calo Anomaly Score > 6.5',
         },
     }
 
