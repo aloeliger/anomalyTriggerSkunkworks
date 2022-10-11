@@ -213,9 +213,9 @@ def main(args):
     #print('condition: '+noUnprescaledBitPassesExceptMe('L1_SingleJet180'))
 
 
-    print('total events with L1_HTT450er', theTree.GetEntries('L1_HTT450er==1'))
-    print('total events with no unprescaled bit (not counting L1_HTT450er)', theTree.GetEntries(noUnprescaledBitPassesExceptMe('L1_HTT450er')))
-    print('total events with L1_HTT450er and no other bit: ', theTree.GetEntries('L1_HTT450er==1 && '+noUnprescaledBitPassesExceptMe('L1_HTT450er')))
+    print('total events with L1_DoubleIsoTau36er2p1', theTree.GetEntries('L1_DoubleIsoTau36er2p1==1'))
+    print('total events with no unprescaled bit (not counting L1_DoubleIsoTau36er2p1)', theTree.GetEntries(noUnprescaledBitPassesExceptMe('L1_DoubleIsoTau36er2p1')))
+    print('total events with L1_DoubleIsoTau36er2p1 and no other bit: ', theTree.GetEntries('L1_DoubleIsoTau36er2p1==1 && '+noUnprescaledBitPassesExceptMe('L1_DoubleIsoTau36er2p1')))
     #print('condition: '+noUnprescaledBitPassesExceptMe('L1_HTT450er'))
 
 
@@ -233,7 +233,7 @@ def main(args):
 
     singleMuonHist = ROOT.TH1F('singleMuonHist','singleMuonHist', numLumis, 0.0, float(numLumis))
     singleJetHist = ROOT.TH1F('singleJetHist', 'singleJetHist', numLumis, 0.0, float(numLumis))
-    HTHist = ROOT.TH1F('HTHist', 'HTHist', numLumis, 0.0, float(numLumis))
+    doubleTauHist = ROOT.TH1F('doubleTauHist', 'doubleTauHist', numLumis, 0.0, float(numLumis))
     AD3Hist = ROOT.TH1F('AD3Hist','AD3Hist', numLumis, 0.0, float(numLumis))
     AD4Hist = ROOT.TH1F('AD4Hist','AD4Hist', numLumis, 0.0, float(numLumis))
     AD5Hist = ROOT.TH1F('AD5Hist','AD5Hist', numLumis, 0.0, float(numLumis))
@@ -245,7 +245,7 @@ def main(args):
         
         singleMuonEff = theTree.GetEntries(f'lumi=={lumi} && L1_SingleMu22 > 0 && '+noUnprescaledBitPassesExceptMe('L1_SingleMu22')) / theTree.GetEntries(f'lumi=={lumi}')
         singleJetEff = theTree.GetEntries(f'lumi=={lumi} && L1_SingleJet180 > 0 && '+noUnprescaledBitPassesExceptMe('L1_SingleJet180')) / theTree.GetEntries(f'lumi=={lumi}')
-        HTEff = theTree.GetEntries(f'lumi=={lumi} && L1_HTT450er > 0 && '+noUnprescaledBitPassesExceptMe('L1_HTT450er')) / theTree.GetEntries(f'lumi=={lumi}')
+        doubleTauEff = theTree.GetEntries(f'lumi=={lumi} && L1_DoubleIsoTau36er2p1 > 0 && '+noUnprescaledBitPassesExceptMe('L1_DoubleIsoTau36er2p1')) / theTree.GetEntries(f'lumi=={lumi}')
         AD3Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 3.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
         AD4Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 4.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
         AD5Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 5.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
@@ -253,7 +253,7 @@ def main(args):
 
         singleMuonRate = convertEffToRate(singleMuonEff)
         singleJetRate = convertEffToRate(singleJetEff)
-        HTRate = convertEffToRate(HTEff)
+        doubleTauRate = convertEffToRate(doubleTauEff)
         AD3Rate = convertEffToRate(AD3Eff)
         AD4Rate = convertEffToRate(AD4Eff)
         AD5Rate = convertEffToRate(AD5Eff)
@@ -261,7 +261,7 @@ def main(args):
 
         singleMuonHist.SetBinContent(binToFill, singleMuonRate)
         singleJetHist.SetBinContent(binToFill, singleJetRate)
-        HTHist.SetBinContent(binToFill, HTRate)
+        doubleTauHist.SetBinContent(binToFill, doubleTauRate)
         AD3Hist.SetBinContent(binToFill, AD3Rate)
         AD4Hist.SetBinContent(binToFill, AD4Rate)
         AD5Hist.SetBinContent(binToFill, AD5Rate)
@@ -273,7 +273,7 @@ def main(args):
 
     singleMuonHist.Write()
     singleJetHist.Write()
-    HTHist.Write()
+    doubleTauHist.Write()
     AD3Hist.Write()
     AD4Hist.Write()
     AD5Hist.Write()

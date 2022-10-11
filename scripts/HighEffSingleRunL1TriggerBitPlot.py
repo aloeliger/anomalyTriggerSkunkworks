@@ -31,7 +31,7 @@ def main(args):
 
     singleMuonHist = ROOT.TH1F('singleMuonHist','singleMuonHist', numLumis, 0.0, float(numLumis))
     singleJetHist = ROOT.TH1F('singleJetHist', 'singleJetHist', numLumis, 0.0, float(numLumis))
-    HTHist = ROOT.TH1F('HTHist', 'HTHist', numLumis, 0.0, float(numLumis))
+    doubleTauHist = ROOT.TH1F('doubleTauHist', 'doubleTauHist', numLumis, 0.0, float(numLumis))
     AD3Hist = ROOT.TH1F('AD3Hist','AD3Hist', numLumis, 0.0, float(numLumis))
     AD4Hist = ROOT.TH1F('AD4Hist','AD4Hist', numLumis, 0.0, float(numLumis))
     AD5Hist = ROOT.TH1F('AD5Hist','AD5Hist', numLumis, 0.0, float(numLumis))
@@ -42,7 +42,7 @@ def main(args):
     for lumi in lumis:
         singleMuonEff = theL1Tree.GetEntries('lumi==%i && L1_SingleMu22 > 0' % lumi) / theL1Tree.GetEntries('lumi==%i' % lumi)
         singleJetEff = theL1Tree.GetEntries('lumi==%i && L1_SingleJet180 > 0' % lumi) / theL1Tree.GetEntries('lumi==%i' % lumi)
-        HTEff = theL1Tree.GetEntries('lumi==%i && L1_HTT450er > 0' % lumi) / theL1Tree.GetEntries('lumi==%i' % lumi)
+        doubleTauEff = theL1Tree.GetEntries('lumi==%i && L1_DoubleIsoTau36er2p1 > 0' % lumi) / theL1Tree.GetEntries('lumi==%i' % lumi)
         AD3Eff = theCaloTree.GetEntries('lumi==%i && anomalyScore > 3.0' % lumi) / theCaloTree.GetEntries('lumi == %i' % lumi)
         AD4Eff = theCaloTree.GetEntries('lumi==%i && anomalyScore > 4.0' % lumi) / theCaloTree.GetEntries('lumi == %i' % lumi)
         AD5Eff = theCaloTree.GetEntries('lumi==%i && anomalyScore > 5.0' % lumi) / theCaloTree.GetEntries('lumi == %i' % lumi)
@@ -50,7 +50,7 @@ def main(args):
 
         singleMuonRate = convertEffToRate(singleMuonEff)
         singleJetRate = convertEffToRate(singleJetEff)
-        HTRate = convertEffToRate(HTEff)
+        doubleTauRate = convertEffToRate(doubleTauEff)
         AD3Rate = convertEffToRate(AD3Eff)
         AD4Rate = convertEffToRate(AD4Eff)
         AD5Rate = convertEffToRate(AD5Eff)
@@ -58,7 +58,7 @@ def main(args):
 
         singleMuonHist.SetBinContent(binToFill, singleMuonRate)
         singleJetHist.SetBinContent(binToFill, singleJetRate)
-        HTHist.SetBinContent(binToFill, HTRate)
+        doubleTauHist.SetBinContent(binToFill, doubleTauRate)
         AD3Hist.SetBinContent(binToFill, AD3Rate)
         AD4Hist.SetBinContent(binToFill, AD4Rate)
         AD5Hist.SetBinContent(binToFill, AD5Rate)
@@ -78,7 +78,7 @@ def main(args):
 
     singleMuonHist.Write()
     singleJetHist.Write()
-    HTHist.Write()
+    doubleTauHist.Write()
     AD3Hist.Write()
     AD4Hist.Write()
     AD5Hist.Write()
