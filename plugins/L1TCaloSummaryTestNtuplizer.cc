@@ -37,8 +37,10 @@ private:
   
   //Just some stuff to let us actually ntuplize everything
   edm::EDGetTokenT< float > anomalyToken;
+  edm::EDGetTokenT< float > bitAccurateAnomalyToken;
   edm::EDGetTokenT<std::vector<reco::Vertex>> vertexToken;
   float anomalyScore;
+  float bitAccurateAnomalyScore;
 
   edm::EDGetTokenT<EcalTrigPrimDigiCollection> ecalTPSource;
   edm::EDGetTokenT<HcalTrigPrimDigiCollection> hcalTPSource;
@@ -67,6 +69,7 @@ private:
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
   anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
+  bitAccurateAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("bitAccurateScoreSource")) ),
   vertexToken( consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
   ecalTPSource(consumes<EcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("ecalToken"))),
   hcalTPSource(consumes<HcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("hcalToken"))),
@@ -86,6 +89,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch("anomalyScore", &anomalyScore);
+  triggerTree -> Branch("bitAccurateAnomalyScore", &bitAccurateAnomalyScore);
   triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/s");
   triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/s");
   triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
@@ -105,14 +109,17 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
 
   //little bit wordy, but should function?
   edm::Handle< float > anomalyHandle;
+  edm::Handle< float > bitAccurateAnomalyHandle;
   edm::Handle< std::vector< reco::Vertex > > vertexHandle;
   iEvent.getByToken(anomalyToken, anomalyHandle);
+  iEvent.getByToken(bitAccurateAnomalyToken, bitAccurateAnomalyHandle);
 
   run  = iEvent.id().run();
   lumi = iEvent.id().luminosityBlock();
   evt  = iEvent.id().event();
 
   anomalyScore = *anomalyHandle;  
+  bitAccurateAnomalyScore = *bitAccurateAnomalyHandle;
   
   //figure out primary vertices if that's a thing we want to include
   if(includePUInfo)

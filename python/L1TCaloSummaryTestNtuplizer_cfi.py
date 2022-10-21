@@ -4,6 +4,7 @@ import FWCore.ParameterSet.Config as cms
 
 L1TCaloSummaryTestNtuplizer = cms.EDAnalyzer('L1TCaloSummaryTestNtuplizer',
                                              scoreSource = cms.InputTag("uct2016EmulatorDigis:anomalyScore"),
+                                             bitAccurateScoreSource = cms.InputTag("uct2016EmulatorDigis:bitAccurateAnomalyScore"),
                                              includePUInfo = cms.bool(False),
                                              verboseDebug = cms.bool(False),
                                              #pvSrc = cms.InputTag("slimmedSecondaryVertices"),
