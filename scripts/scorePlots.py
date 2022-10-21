@@ -67,7 +67,7 @@ cmsLatex.SetTextFont(52)
 cmsLatex.DrawLatex(0.1+0.06,0.92,"Preliminary")
 #cmsLatex.DrawLatex(0.1+0.18,0.92,"Preliminary")
 
-theLegend = ROOT.TLegend(0.65, 0.61, 0.9, 0.9)
+theLegend = ROOT.TLegend(0.75, 0.61, 0.9, 0.9)
 
 theLegend.AddEntry(averageAnomalyScoreHistogram, 'ZeroBias 2018 Average', 'pl')
 for i in range(len(anomalyScoreHistograms)):
