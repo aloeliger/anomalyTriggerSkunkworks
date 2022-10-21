@@ -205,6 +205,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       std::cout<<"Lumi: "<<lumi<<std::endl;
       std::cout<<"Event: "<<evt<<std::endl;
       std::cout<<"Anomaly Score: "<<anomalyScore<<std::endl;
+      std::cout<<"Bit accurate anomaly score: "<<bitAccurateAnomalyScore<<std::endl;
       if(includePUInfo) std::cout<<"NPV: "<<npv<<std::endl;
       std::cout<<"ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i = 0; i < 72; i++)
