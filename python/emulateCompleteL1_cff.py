@@ -20,7 +20,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 #we're just testing if we can get the full emulation sequence up and running on 
 # a raw file. THen we have to go through and decipher what trigger bits are what.
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(-1)
+    input = cms.untracked.int32(options.maxEvents)
 )
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
