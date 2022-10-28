@@ -1,6 +1,7 @@
 import ROOT
 import os
 import argparse
+import re
 
 def createHistogramForAnomalyScore(tree, histogramExpression, histogramName, histogramBinning, anomalyScore, condition=None):
     if condition == None:
@@ -28,10 +29,11 @@ def createHistogramSweep(tree, histogramExpression, histogramName, histogramBinn
 def main(args):
     ROOT.gROOT.SetBatch(True)
 
-    theFile = ROOT.TFile('AnomalyScoreThresholdTests.root','RECREATE')
+    theFile = ROOT.TFile(args.outputFile,'RECREATE')
 
     caloSummaryChain = ROOT.TChain('L1TCaloSummaryTestNtuplizer/L1TCaloSummaryOutput')
     upgradeChain = ROOT.TChain('l1UpgradeEmuTree/L1UpgradeTree')
+    #upgradeChain = ROOT.TChain('l1UpgradeTree/L1UpgradeTree')
 
     filePath = '/hdfs/store/user/aloeliger/L1TriggerBitTest/allv5/'
 
@@ -65,13 +67,15 @@ def main(args):
         ('sumType', 'sumType','(8,0.0,8.0)',  None),
         ('sumEt', 'sumEt','(50,0.0,40.0)',  None),
         ('sumPhi', 'sumPhi','(30, -3.14, 3.14)',  None),
-        ('sumEt', 'MET', '(50.0, 0.0, 40.0)', 'sumType == 2'),
-        ('sumEt', 'HT', '(50.0, 0.0, 40.0)', 'sumType == 1'),
-        ('sumEt', 'ET', '(50.0, 0.0, 40.0)', 'sumType == 0'),
+        ('sumEt[29]', 'MET', '(50.0, 0.0, 500.0)', 'sumType == 2'), #29 is the central BX index for this sumEt type
+        ('sumEt[27]', 'HT', '(50.0, 0.0, 500.0)', 'sumType == 1'), #27 is the central BX index for this sumEt type
+        ('sumEt[24]', 'ET', '(50.0, 0.0, 800.0)', 'sumType == 0'), #24 is the central BX index for this sumEt type
     ]
 
     for histoTuple in basicHistograms:
-        print(f'{histoTuple[0]}...')
+        print(f'{histoTuple[1]}...')
+        if not re.search(args.re, histoTuple[1]):
+            continue
         basicHisto, AD3Histo, AD6Histo, AD6p5Histo, AD7Histo = createHistogramSweep(caloSummaryChain, histoTuple[0], histoTuple[1], histoTuple[2])
         histoList.append(basicHisto)
         histoList.append(AD3Histo)
@@ -86,6 +90,14 @@ def main(args):
 
 if __name__=='__main__':
     parser = argparse.ArgumentParser(description='Draw plots for ephemeral zero bias based on certain anomaly score thresholds')
+    parser.add_argument('--re',
+                        default='.*',
+                        nargs='?',
+                        help='Regular expression for the histograms to be drawn to match (based on the name)')
+    parser.add_argument('--outputFile',
+                        default = 'AnomalyScoreThresholdTests.root',
+                        nargs='?',
+                        help='Name for the file to store results in')
 
     args = parser.parse_args()
 
