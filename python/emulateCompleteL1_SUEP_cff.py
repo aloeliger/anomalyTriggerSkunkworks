@@ -28,7 +28,7 @@ process.maxEvents = cms.untracked.PSet(
 
 #Define out input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('file:/afs/hep.wisc.edu/cms/aloeliger/anomalyTriggerWork/CMSSW_12_4_5/src/MCProduction/SUEPProduction/realisticTest.root'),
+                            fileNames = cms.untracked.vstring(options.inputFiles),
                             duplicateCheckMode = cms.untracked.string('noDuplicateCheck')
 )
 
