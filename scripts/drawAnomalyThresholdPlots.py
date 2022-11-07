@@ -93,6 +93,7 @@ def main(args):
                 baseHistogram.GetYaxis().SetTitle("Density (Normalized to 1)")
             else:
                 baseHistogram.GetYaxis().SetTitle("Events (Unnormalized)")
+            baseHistogram.GetXaxis().SetLabelSize(0.1)
 
             theLegend = ROOT.TLegend(0.7, 0.7, 0.9, 0.9)
             theLegend.AddEntry(baseHistogram, 'No AD threshold', 'lp')
