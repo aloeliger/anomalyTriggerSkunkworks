@@ -107,15 +107,21 @@ process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi
 process.L1TCaloSummaryTestNtuplizer.verboseDebug = cms.bool(True)
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
 process.L1TCaloSummaryTestNtuplizer.hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis')
+
 process.load('L1Trigger.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
 process.L1TTriggerBitsNtuplizer.verboseDebug = cms.bool(True)
+
+process.load('L1Trigger.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
+process.boostedJetTriggerNtuplizer.verboseDebug = cms.bool(True)
+
 process.TFileService = cms.Service(
 	"TFileService",
 	#fileName = cms.string("l1TNtuple-test.root")
         fileName = cms.string(options.outputFile)
 )
 process.NtuplePath = cms.Path(process.L1TCaloSummaryTestNtuplizer +
-                             process.L1TTriggerBitsNtuplizer)
+                              process.L1TTriggerBitsNtuplizer +
+                              process.boostedJetTriggerNtuplizer)
 process.schedule.append(process.NtuplePath)
 
 
