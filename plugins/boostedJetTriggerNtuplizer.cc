@@ -91,6 +91,7 @@ void boostedJetTriggerNtuplizer::analyze(const edm::Event& iEvent, const edm::Ev
   jetPts.clear();
   jetEtas.clear();
   jetPhis.clear();
+  triggerFires=false;
 }
 
 DEFINE_FWK_MODULE(boostedJetTriggerNtuplizer);
