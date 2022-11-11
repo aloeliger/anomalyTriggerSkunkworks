@@ -35,7 +35,7 @@ public:
 private: 
   void beginJob() override {};
   void analyze(const edm::Event&, const edm::EventSetup&) override;
-  void endJob() override {};
+  void endJob() override; 
 
   edm::Service<TFileService> theFileService;
   TTree* l1BitsTree;
@@ -51,6 +51,7 @@ private:
   unsigned int run;
   unsigned int lumi;
   unsigned int evt;
+  unsigned int nBits = 0;
 
   std::map< string, std::unique_ptr<bool> > triggerResults;
 
@@ -146,6 +147,7 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
 		  //Create a new map entry for this bit
 		  triggerResults.insert(std::pair< string, std::unique_ptr<bool> >(algName, std::make_unique<bool>()));
 		  l1BitsTree->Branch(algName.c_str(), triggerResults[algName].get(), (algName+"/O").c_str()); //this feels like it shouldn't work
+		  nBits++;
 		}
 	      *triggerResults[algName] = decisionFinal;
 	      if (verboseDebug)
@@ -167,6 +169,12 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
       std::cout<<"Found Invalid AlgBlk!"<<std::endl;
     }
   l1BitsTree->Fill();
+}
+
+void L1TTriggerBitsNtuplizer::endJob()
+{
+  if (verboseDebug)
+    std::cout<<"Number of bits ntuplized: "<<nBits<<std::endl;
 }
 
 DEFINE_FWK_MODULE(L1TTriggerBitsNtuplizer);
