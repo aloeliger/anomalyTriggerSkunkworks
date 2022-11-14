@@ -45,6 +45,10 @@ private:
   std::vector<float> jetPts;
   std::vector<float> jetEtas;
   std::vector<float> jetPhis;
+
+  unsigned int run;
+  unsigned int lumi;
+  unsigned int evt;
 };
 
 boostedJetTriggerNtuplizer::boostedJetTriggerNtuplizer(const edm::ParameterSet& iConfig):
@@ -53,6 +57,9 @@ boostedJetTriggerNtuplizer::boostedJetTriggerNtuplizer(const edm::ParameterSet& 
   verboseDebug  = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
 
   boostedJetTree = theFileService->make< TTree >("boostedJetTrigger", "Output of the L1TCaloSummary boosted jet process");
+  boostedJetTree -> Branch("run", &run);
+  boostedJetTree -> Branch("lumi", &lumi);
+  boostedJetTree -> Branch("evt", &evt);
   boostedJetTree -> Branch("numberOfJets", &numberOfJets);
   boostedJetTree -> Branch("triggerFires", &triggerFires);
   boostedJetTree -> Branch("jetPts", &jetPts);
@@ -68,8 +75,14 @@ void boostedJetTriggerNtuplizer::analyze(const edm::Event& iEvent, const edm::Ev
 {
   using namespace edm;
 
+  run  = iEvent.id().run();
+  lumi = iEvent.id().luminosityBlock();
+  evt  = iEvent.id().event();
+
   edm::Handle<l1extra::L1JetParticleCollection> boostedJetCollectionHandle;
   iEvent.getByToken(boostedJetCollection, boostedJetCollectionHandle);
+
+  triggerFires = false;
 
   numberOfJets = boostedJetCollectionHandle->size();
   for(const l1extra::L1JetParticle& theJet: *boostedJetCollectionHandle)
