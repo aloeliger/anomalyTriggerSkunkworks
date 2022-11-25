@@ -5,6 +5,9 @@ import argparse
 
 from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
 
+from tqdm import tqdm
+import time
+
 unPreScaledBits = [
     'L1_SingleMu22',
     'L1_SingleMu25',
@@ -179,23 +182,33 @@ def main(args):
     
     caloSummaryChain = ROOT.TChain('L1TCaloSummaryTestNtuplizer/L1TCaloSummaryOutput')
     l1BitChain = ROOT.TChain('L1TTriggerBitsNtuplizer/L1TTriggerBits')
+    boostedJetChain = ROOT.TChain('boostedJetTriggerNtuplizer/boostedJetTrigger')
 
-    filePath = '/hdfs/store/user/aloeliger/L1TriggerBitTest/allv4/'
+    filePath = '/hdfs/store/user/aloeliger/L1TriggerBitTest/allv6/'
 
 
     #We need the files that we have stored away on hdfs
     for name in os.listdir(filePath):
         caloSummaryChain.Add(filePath+name)
         l1BitChain.Add(filePath+name)
+        boostedJetChain.Add(filePath+name)
 
     #caloSummaryChain.AddFriend(l1BitChain)
 
 
     #print(caloSummaryChain.GetEntries(f'run=={args.theRun}'))
+    startTime = time.perf_counter()
     theTree = caloSummaryChain.CopyTree(f'run=={args.theRun}')
     theL1Tree = l1BitChain.CopyTree(f'run=={args.theRun}')
+    theBoostedTree = boostedJetChain.CopyTree(f'run=={args.theRun}')
+    stopTime = time.perf_counter()
+    print(f'Run cutting completed in {stopTime-startTime:.2f} Seconds')
+
     theTree.AddFriend(theL1Tree)
+    theBoostedTree.AddFriend(theL1Tree)
+
     lumis = getListOfUniqueEntries(theTree, 'lumi')
+    lumis.sort()
     numLumis = len(lumis)
     print('total lumi: ',numLumis)
 
@@ -231,41 +244,46 @@ def main(args):
     print('total events with anomaly score > 6.0: ', theTree.GetEntries('anomalyScore>6.0'))
     print('total events with anomaly score > 6.0, and no bits: ',theTree.GetEntries('anomalyScore>6.0&& '+noUnprescaledBitPasses()))
 
-    singleMuonHist = ROOT.TH1F('singleMuonHist','singleMuonHist', numLumis, 0.0, float(numLumis))
-    singleJetHist = ROOT.TH1F('singleJetHist', 'singleJetHist', numLumis, 0.0, float(numLumis))
-    doubleTauHist = ROOT.TH1F('doubleTauHist', 'doubleTauHist', numLumis, 0.0, float(numLumis))
-    AD3Hist = ROOT.TH1F('AD3Hist','AD3Hist', numLumis, 0.0, float(numLumis))
-    AD4Hist = ROOT.TH1F('AD4Hist','AD4Hist', numLumis, 0.0, float(numLumis))
-    AD5Hist = ROOT.TH1F('AD5Hist','AD5Hist', numLumis, 0.0, float(numLumis))
-    AD6Hist = ROOT.TH1F('AD6Hist','AD6Hist', numLumis, 0.0, float(numLumis))
+    singleMuonHist = ROOT.TH1F('pureSingleMuonHist','pureSingleMuonHist', numLumis, 0.0, float(numLumis))
+    singleJetHist = ROOT.TH1F('pureSingleJetHist', 'pureSingleJetHist', numLumis, 0.0, float(numLumis))
+    doubleTauHist = ROOT.TH1F('pureDoubleTauHist', 'pureDoubleTauHist', numLumis, 0.0, float(numLumis))
+    AD3Hist = ROOT.TH1F('pureAD3Hist','pureAD3Hist', numLumis, 0.0, float(numLumis))
+    AD6p5Hist = ROOT.TH1F('pureAD6p5Hist','pureAD6p5Hist', numLumis, 0.0, float(numLumis))
+    AD7Hist = ROOT.TH1F('pureAD7Hist','pureAD7Hist', numLumis, 0.0, float(numLumis))
+    AD6Hist = ROOT.TH1F('pureAD6Hist','pureAD6Hist', numLumis, 0.0, float(numLumis))
+    boostedHist = ROOT.TH1F('pureBoostedHist', 'pureBoostedHist', numLumis, 0.0, float(numLumis))
     
     #okay. Now for each lumi we would like to get the efficiency of each of the triggers
     binToFill = 1
-    for lumi in lumis:
+    for lumi in tqdm(lumis, desc='Lumis'):
         
         singleMuonEff = theTree.GetEntries(f'lumi=={lumi} && L1_SingleMu22 > 0 && '+noUnprescaledBitPassesExceptMe('L1_SingleMu22')) / theTree.GetEntries(f'lumi=={lumi}')
         singleJetEff = theTree.GetEntries(f'lumi=={lumi} && L1_SingleJet180 > 0 && '+noUnprescaledBitPassesExceptMe('L1_SingleJet180')) / theTree.GetEntries(f'lumi=={lumi}')
-        doubleTauEff = theTree.GetEntries(f'lumi=={lumi} && L1_DoubleIsoTau36er2p1 > 0 && '+noUnprescaledBitPassesExceptMe('L1_DoubleIsoTau36er2p1')) / theTree.GetEntries(f'lumi=={lumi}')
+        doubleTauEff = theTree.GetEntries(f'lumi=={lumi} && L1_DoubleIsoTau34er2p1 > 0 && '+noUnprescaledBitPassesExceptMe('L1_DoubleIsoTau34er2p1')) / theTree.GetEntries(f'lumi=={lumi}')
         AD3Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 3.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
-        AD4Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 4.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
-        AD5Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 5.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
+        AD6p5Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 6.5 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
+        AD7Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 7 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
         AD6Eff = theTree.GetEntries(f'lumi=={lumi} && anomalyScore > 6.0 && '+noUnprescaledBitPasses()) / theTree.GetEntries(f'lumi=={lumi}')
+        boostedEff = theBoostedTree.GetEntries(f'lumi=={lumi} && jetPts > 120 && '+noUnprescaledBitPasses()) / theBoostedTree.GetEntries(f'lumi == {lumi}')
 
         singleMuonRate = convertEffToRate(singleMuonEff)
         singleJetRate = convertEffToRate(singleJetEff)
         doubleTauRate = convertEffToRate(doubleTauEff)
         AD3Rate = convertEffToRate(AD3Eff)
-        AD4Rate = convertEffToRate(AD4Eff)
-        AD5Rate = convertEffToRate(AD5Eff)
+        AD6p5Rate = convertEffToRate(AD6p5Eff)
+        AD7Rate = convertEffToRate(AD7Eff)
         AD6Rate = convertEffToRate(AD6Eff)
+        boostedRate = convertEffToRate(boostedEff)
+
 
         singleMuonHist.SetBinContent(binToFill, singleMuonRate)
         singleJetHist.SetBinContent(binToFill, singleJetRate)
         doubleTauHist.SetBinContent(binToFill, doubleTauRate)
         AD3Hist.SetBinContent(binToFill, AD3Rate)
-        AD4Hist.SetBinContent(binToFill, AD4Rate)
-        AD5Hist.SetBinContent(binToFill, AD5Rate)
+        AD6p5Hist.SetBinContent(binToFill, AD6p5Rate)
+        AD7Hist.SetBinContent(binToFill, AD7Rate)
         AD6Hist.SetBinContent(binToFill, AD6Rate)
+        boostedHist.SetBinContent(binToFill, boostedRate)
         
         binToFill += 1
 
@@ -275,9 +293,14 @@ def main(args):
     singleJetHist.Write()
     doubleTauHist.Write()
     AD3Hist.Write()
-    AD4Hist.Write()
-    AD5Hist.Write()
+    AD6p5Hist.Write()
+    AD7Hist.Write()
     AD6Hist.Write()
+    boostedHist.Write()
+
+    theTree.Write()
+    theL1Tree.Write()
+    theBoostedTree.Write()
     
     theFile.Write()
     theFile.Close()

@@ -211,6 +211,7 @@ def main(args):
             'AD6': 'AD6Hist',
             'AD7': 'AD7Hist',
             'AD6p5': 'AD6p5Hist',
+            'boosted': 'boostedHist'
         },
         'pure': {
             'singleMuon': 'pureSingleMuonHist',
@@ -220,6 +221,7 @@ def main(args):
             'AD6': 'pureAD6Hist',
             'AD7': 'pureAD7Hist',
             'AD6p5': 'pureAD6p5Hist',
+            'boosted': 'pureBoostedHist'
         },
     }
 
@@ -233,6 +235,7 @@ def main(args):
             'AD6': ROOT.kCyan+3,
             'AD7': ROOT.kGreen,
             'AD6p5': ROOT.kBlue+3,
+            'boosted': ROOT.kYellow+2
         },
         'legendEntry':{
             'singleMuon': 'L1_SingleMu22',
@@ -242,12 +245,13 @@ def main(args):
             'AD6': 'Calo Anomaly Score > 6',
             'AD7': 'Calo Anomaly Score > 7',
             'AD6p5': 'Calo Anomaly Score > 6.5',
+            'boosted': 'Boosted Jet trigger',
         },
     }
 
     
     histograms = getHistograms(theFile, histogramNames)
-    histograms = convertDictFromEffToRate(histograms)
+    #histograms = convertDictFromEffToRate(histograms)
     if args.smoothPlots:
         histograms = smoothDictWithRunningAverage(histograms, args.runningAveragePeriod)
 
