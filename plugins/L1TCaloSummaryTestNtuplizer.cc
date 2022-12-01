@@ -38,11 +38,11 @@ private:
   //Just some stuff to let us actually ntuplize everything
   edm::EDGetTokenT< float > anomalyToken;
   edm::EDGetTokenT< float > bitAccurateAnomalyToken;
-  edm::EDGetTokenT< float > precompiledModelAnomalyToken;
+  //edm::EDGetTokenT< float > precompiledModelAnomalyToken;
   edm::EDGetTokenT<std::vector<reco::Vertex>> vertexToken;
   float anomalyScore;
   float bitAccurateAnomalyScore;
-  float precompiledModelAnomalyScore;
+  //float precompiledModelAnomalyScore;
 
   edm::EDGetTokenT<EcalTrigPrimDigiCollection> ecalTPSource;
   edm::EDGetTokenT<HcalTrigPrimDigiCollection> hcalTPSource;
@@ -72,7 +72,7 @@ private:
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
   anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
   bitAccurateAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("bitAccurateScoreSource")) ),
-  precompiledModelAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("precompiledModelScoreSource")) ),
+  //precompiledModelAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("precompiledModelScoreSource")) ),
   vertexToken( consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
   ecalTPSource(consumes<EcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("ecalToken"))),
   hcalTPSource(consumes<HcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("hcalToken"))),
@@ -93,7 +93,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch("anomalyScore", &anomalyScore);
   triggerTree -> Branch("bitAccurateAnomalyScore", &bitAccurateAnomalyScore);
-  triggerTree -> Branch("precompiledModelAnomalyScore", &precompiledModelAnomalyScore);
+  //triggerTree -> Branch("precompiledModelAnomalyScore", &precompiledModelAnomalyScore);
   triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/s");
   triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/s");
   triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
@@ -114,11 +114,11 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   //little bit wordy, but should function?
   edm::Handle< float > anomalyHandle;
   edm::Handle< float > bitAccurateAnomalyHandle;
-  edm::Handle< float > precompiledModelAnomalyHandle;
+  //edm::Handle< float > precompiledModelAnomalyHandle;
   edm::Handle< std::vector< reco::Vertex > > vertexHandle;
   iEvent.getByToken(anomalyToken, anomalyHandle);
   iEvent.getByToken(bitAccurateAnomalyToken, bitAccurateAnomalyHandle);
-  iEvent.getByToken(precompiledModelAnomalyToken, precompiledModelAnomalyHandle);
+  //iEvent.getByToken(precompiledModelAnomalyToken, precompiledModelAnomalyHandle);
 
   run  = iEvent.id().run();
   lumi = iEvent.id().luminosityBlock();
@@ -126,7 +126,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
 
   anomalyScore = *anomalyHandle;  
   bitAccurateAnomalyScore = *bitAccurateAnomalyHandle;
-  precompiledModelAnomalyScore = *precompiledModelAnomalyHandle;
+  //precompiledModelAnomalyScore = *precompiledModelAnomalyHandle;
   
   //figure out primary vertices if that's a thing we want to include
   if(includePUInfo)

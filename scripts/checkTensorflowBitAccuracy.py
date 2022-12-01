@@ -48,15 +48,15 @@ def main(args):
     anomalyScoreHisto = ROOT.TH1F("anomalyScore", "anomalyScore", numEvents, 0.0, numEvents)
     bitAccurateAnomalyScoreHisto = ROOT.TH1F("bitAccurateAnomalyScore", "bitAccurateAnomalyScore", numEvents, 0.0, numEvents)
     numberOfBitsWrongHisto = ROOT.TH1I('numerOfBitsWrong', 'numberOfBitsWrong', 12, 0, 12)
-    mostSignificantBitWrongHisto = ROOT.TH1I('mostSignificantBitWrong', 'mostSignificantBitWrong', 11, 0, 11)
+    mostSignificantBitWrongHisto = ROOT.TH1I('mostSignificantBitWrong', 'mostSignificantBitWrong', 12, 0, 12)
     for i in trange(numEvents):
         theTree.GetEntry(i)
         anomalyScoreHisto.Fill(i, theTree.anomalyScore)
         bitAccurateAnomalyScoreHisto.Fill(i, theTree.bitAccurateAnomalyScore)
         #Let's cheeck the bit accuracy of these two things.
         #if theTree.anomalyScore != theTree.bitAccurateAnomalyScore:
-        anomalyScoreBits = convertNumToAPFixedBitString(theTree.anomalyScore, numberIntegerBits=5, numberFloatBits=6)
-        bitAccurateAnomalyScoreBits = convertNumToAPFixedBitString(theTree.bitAccurateAnomalyScore, numberIntegerBits=5, numberFloatBits=6)
+        anomalyScoreBits = convertNumToAPFixedBitString(theTree.anomalyScore, numberIntegerBits=10, numberFloatBits=2)
+        bitAccurateAnomalyScoreBits = convertNumToAPFixedBitString(theTree.bitAccurateAnomalyScore, numberIntegerBits=10, numberFloatBits=2)
         #print('********************')
         #print('Anomaly score: ',theTree.anomalyScore,': ', anomalyScoreBits)
         #print('Bit accurate anomaly score: ',theTree.bitAccurateAnomalyScore, ': ', bitAccurateAnomalyScoreBits)
@@ -113,8 +113,8 @@ def main(args):
     bitAccurateSubtractionHisto.GetYaxis().SetTitle("Difference w.r.t Bit Accurate Implementation")
     bitAccurateSubtractionHisto.GetXaxis().SetTitle("Event")
 
-    bitAccurateSubtractionHisto.SetMaximum(.1)
-    bitAccurateSubtractionHisto.SetMinimum(-0.1)
+    bitAccurateSubtractionHisto.SetMaximum(max(0.1, anomalyScoreSubtractionHisto.GetMaximum()))
+    bitAccurateSubtractionHisto.SetMinimum(min(-0.1, anomalyScoreSubtractionHisto.GetMinimum()))
 
     theCanvas.SaveAs("tensorFlowAccuracy.png")
 
