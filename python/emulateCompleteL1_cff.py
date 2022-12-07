@@ -103,6 +103,13 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
 process.schedule.append(process.CaloSummaryPath)
 
+process.load('L1Trigger.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
+process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
+process.schedule.append(process.uGTEmulationPath)
+#from L1Trigger.L1TGlobal.uGTADEmulator_cfi import uGTADEmulator
+#uGTEmulationPath = cms.Path(uGTADEmulator)
+#process.schedule.append(uGTEmulationPath)
+
 process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
 process.L1TCaloSummaryTestNtuplizer.hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis')
@@ -124,9 +131,9 @@ process.NtuplePath = cms.Path(process.L1TCaloSummaryTestNtuplizer +
 process.schedule.append(process.NtuplePath)
 
 
-#print(process.schedule)
-#print("**************************************************")
-#print([x for x in process.schedule])
+print(process.schedule)
+print("**************************************************")
+print([x for x in process.schedule])
 
 #Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
