@@ -119,15 +119,20 @@ process.L1TTriggerBitsNtuplizer.verboseDebug= cms.bool(False)
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 
+process.load('L1Trigger.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
+
 
 process.TFileService = cms.Service(
 	"TFileService",
 	#fileName = cms.string("l1TNtuple-test.root")
         fileName = cms.string(options.outputFile)
 )
-process.NtuplePath = cms.Path(process.L1TCaloSummaryTestNtuplizer +
-                              process.L1TTriggerBitsNtuplizer +
-                              process.boostedJetTriggerNtuplizer)
+process.NtuplePath = cms.Path(
+                                process.L1TCaloSummaryTestNtuplizer +
+                                process.L1TTriggerBitsNtuplizer +
+                                process.boostedJetTriggerNtuplizer +
+                                process.uGTModelNtuplizer
+                              )
 process.schedule.append(process.NtuplePath)
 
 
