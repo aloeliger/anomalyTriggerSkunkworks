@@ -47,7 +47,7 @@ uGTModelNtuplizer::uGTModelNtuplizer(const edm::ParameterSet& iConfig):
     triggerTree -> Branch("run", &run);
     triggerTree -> Branch("lumi", &lumi);
     triggerTree -> Branch("evt", &evt);
-    triggerTree -> Branch("anomalyScore", &anomalyScore);
+    triggerTree -> Branch("uGTAnomalyScore", &anomalyScore);
 }
 
 void uGTModelNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
