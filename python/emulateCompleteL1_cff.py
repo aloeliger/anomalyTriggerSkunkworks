@@ -24,6 +24,9 @@ process.maxEvents = cms.untracked.PSet(
 )
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
+#attempt to get rid of muon shower warning
+process.MessageLogger.suppressWarning = cms.untracked.vstring('l1UpgradeTree','l1UpgradeEmuTree','l1UpgradeTfMuonShowerTree')
+
 #Define out input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(options.inputFiles)
@@ -72,9 +75,9 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads = 4
-process.options.numberOfStreams = 0
-process.options.numberOfConcurrentLuminosityBlocks = 2
+process.options.numberOfThreads = 1
+process.options.numberOfStreams = 1
+process.options.numberOfConcurrentLuminosityBlocks = 1
 process.options.eventSetup.numberOfConcurrentIOVs = 1
 if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
 
