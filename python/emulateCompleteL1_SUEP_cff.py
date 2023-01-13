@@ -24,7 +24,7 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(-1)
 )
-#process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #Define out input source
 process.source = cms.Source("PoolSource",
