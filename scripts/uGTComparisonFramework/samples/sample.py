@@ -7,6 +7,7 @@ class sample():
         self.triggerBitsChain = TChain('L1TTriggerBitsNtuplizer/L1TTriggerBits')
         self.boostedJetChain = TChain('boostedJetTriggerNtuplizer/boostedJetTrigger')
         self.upgradeTree = TChain('l1UpgradeEmuTree/L1UpgradeTree')
+        self.eventChain = TChain('l1EventTree/L1EventTree')
 
         allChains = [
             self.chain,
@@ -14,6 +15,7 @@ class sample():
             self.triggerBitsChain,
             self.boostedJetChain,
             self.upgradeTree,
+            self.eventChain
         ]
 
         for fileName in files:
