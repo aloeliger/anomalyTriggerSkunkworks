@@ -27,19 +27,21 @@ def main(args):
         zeroBiasAccepts.Add(getattr(theFile, f'{data[i]}Numerator').Clone())
         zeroBiasTotal.Add(getattr(theFile, f'{data[i]}Denominator').Clone())
 
-    ROOT.gStyle.SetPaintTextFormat('1.4g')
+    ROOT.gStyle.SetPaintTextFormat('1.2g')
 
     for sample in signals:
         theCanvas = ROOT.TCanvas(f'{sample}',f'{sample}')
         theCanvas.SetBottomMargin(0.33)
         theCanvas.SetGridx()
         theCanvas.SetGridy()
+        theCanvas.SetLogy()
 
         sampleAccepts = getattr(theFile, f'{sample}Numerator').Clone()
         sampleTotals = getattr(theFile, f'{sample}Denominator').Clone()
 
         theAcceptancePlot = sampleAccepts.Clone()
-        theAcceptancePlot.Divide(sampleTotals.Clone())
+        #theAcceptancePlot.Divide(sampleTotals.Clone())
+        theAcceptancePlot.Scale(1.0 / sampleTotals.GetBinContent(1))
 
         #theAcceptancePlot.SetMaximum(1.2)
         #theAcceptancePlot.SetMinimum(0.0)
@@ -47,9 +49,10 @@ def main(args):
         theAcceptancePlot.SetLineColor(ROOT.kRed)
         theAcceptancePlot.SetLineWidth(2)
 
-        theAcceptancePlot.Draw('HIST TEXT0')
+        theAcceptancePlot.Draw()
+        theAcceptancePlot.Draw('SAME HIST TEXT0')
 
-        theAcceptancePlot.GetYaxis().SetRangeUser(0.0, 1.2)
+        #theAcceptancePlot.GetYaxis().SetRangeUser(0.0, 1.2)
 
         theAcceptancePlot.GetYaxis().SetTitle('Fraction Acceptance')
         theAcceptancePlot.LabelsOption('v','x')
@@ -72,19 +75,22 @@ def main(args):
 
         #Now we do an actual efficiency plot
         effPlot = sampleAccepts.Clone()
-        effPlot.Divide(sampleTotals.Clone())
+        #effPlot.Divide(sampleTotals.Clone())
+        effPlot.Scale(1.0/sampleTotals.GetBinContent(1))
 
         dataAcceptance = zeroBiasAccepts.Clone()
-        dataAcceptance.Divide(zeroBiasTotal.Clone())
+        #dataAcceptance.Divide(zeroBiasTotal.Clone())
+        dataAcceptance.Scale(1.0/zeroBiasTotal.GetBinContent(1))
 
         effPlot.Divide(dataAcceptance)
 
         effPlot.SetLineColor(ROOT.kRed)
         effPlot.SetLineWidth(2)
 
-        effPlot.Draw('HIST TEXT0')
+        effPlot.Draw()
+        effPlot.Draw('SAME HIST TEXT0')
 
-        effPlot.GetYaxis().SetRangeUser(0.0, 1.2*effPlot.GetMaximum())
+        #effPlot.GetYaxis().SetRangeUser(0.0, 1.2*effPlot.GetMaximum())
         effPlot.GetYaxis().SetTitle('Signal Accptance to Background Acceptance')
         effPlot.LabelsOption('v', 'x')
         effPlot.SetTitle('')

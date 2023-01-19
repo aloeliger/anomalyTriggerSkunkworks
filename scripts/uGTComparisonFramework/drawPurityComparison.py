@@ -47,24 +47,25 @@ def main(args):
         'HTETorMETTriggers': 'HT/ET/MET Triggers',
     }
 
-    ROOT.gStyle.SetPaintTextFormat('1.4g')
+    ROOT.gStyle.SetPaintTextFormat('1.2g')
 
     for triggerGroup in tqdm(triggerGroups):
         theCanvas = ROOT.TCanvas(f'{triggerGroup}',f'{triggerGroup}')
         theCanvas.SetBottomMargin(0.33)
         theCanvas.SetGridx()
         theCanvas.SetGridy()
+        theCanvas.SetLogy()
 
         thePlot = getattr(theFile, f'{triggerGroup}')
 
-        thePlot.SetMaximum(1.2)
-        thePlot.SetMinimum(0.0)
+        #thePlot.SetMaximum(1.2)
+        #thePlot.SetMinimum(0.0)
 
         thePlot.SetLineColor(ROOT.kRed)
         thePlot.SetLineWidth(2)
 
-        #thePlot.Draw()
-        thePlot.Draw('HIST TEXT0')
+        thePlot.Draw()
+        thePlot.Draw('SAME HIST TEXT0')
 
         thePlot.GetYaxis().SetTitle('Fraction')
         thePlot.LabelsOption('>v','x')
@@ -89,17 +90,18 @@ def main(args):
     theCanvas.SetBottomMargin(0.33)
     theCanvas.SetGridx()
     theCanvas.SetGridy()
+    theCanvas.SetLogy()
 
     anyOverlapPlot = theFile.anyOverlap
     
-    anyOverlapPlot.SetMaximum(1.2)
-    anyOverlapPlot.SetMinimum(0.0)
+    #anyOverlapPlot.SetMaximum(1.2)
+    #anyOverlapPlot.SetMinimum(0.0)
 
     anyOverlapPlot.SetLineColor(ROOT.kRed)
     anyOverlapPlot.SetLineWidth(2)
 
-    #anyOverlapPlot.Draw()
-    anyOverlapPlot.Draw('HIST TEXT0')
+    anyOverlapPlot.Draw()
+    anyOverlapPlot.Draw('SAME HIST TEXT0')
 
     anyOverlapPlot.GetYaxis().SetTitle('Fraction')
     anyOverlapPlot.LabelsOption('>v', 'x')

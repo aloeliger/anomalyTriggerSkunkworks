@@ -10,24 +10,26 @@ def main(args):
 
     #We have to spell out which L1 variables we want because there are non 1:1 collections in the tree
     variablesToCompare = {
+    #    'bitAccurateAnomalyScore': 'bitAccurateAnomalyScore'
         'nEGs' : 'nEGs',
-        'egEt[0]' : 'leading_egEt',
-        'egEta[0]' : 'leading_egEta',
-        'egIso[0]' : 'leading_egIso',
-        'nTaus' : 'nTaus',
-        'tauEt[0]' : 'leading_tauEt',
-        'tauEta[0]' : 'leading_tauEta',
-        'tauIso[0]' : 'leading_tauIso',
-        'nJets' : 'nJets',
-        'jetEt[0]' : 'leading_jetEt',
-        'jetEta[0]' : 'leading_jetEta',
-        'nMuons' : 'nMuons',
-        'muonEt[0]' : 'leading_muonEt',
-        'muonEta[0]' : 'leading_muonEta',
-        'muonIso[0]' : 'leading_muonIso',
+    #    'egEt[0]' : 'leading_egEt',
+    #    'egEta[0]' : 'leading_egEta',
+    #    'egIso[0]' : 'leading_egIso',
+    #    'nTaus' : 'nTaus',
+    #    'tauEt[0]' : 'leading_tauEt',
+    #    'tauEta[0]' : 'leading_tauEta',
+    #    'tauIso[0]' : 'leading_tauIso',
+    #    'nJets' : 'nJets',
+    #    'jetEt[0]' : 'leading_jetEt',
+    #    'jetEta[0]' : 'leading_jetEta',
+    #    'nMuons' : 'nMuons',
+    #    'muonEt[0]' : 'leading_muonEt',
+    #    'muonEta[0]' : 'leading_muonEta',
+    #    'muonIso[0]' : 'leading_muonIso',
     }
 
     limits = {
+    #    'bitAccurateAnomalyScore': (20,0.0,7.0),
         'nEGs' : (13, 0.0, 13.0),
         'egEt[0]' : (100, 0.0, 100.0),
         'egEta[0]' : (100, -2.4, 2.4),
@@ -46,10 +48,10 @@ def main(args):
     }
 
     samples = {
-        'RunA': runASample,
+        #'RunA': runASample,
         'RunB': runBSample,
-        'RunC': runCSample,
-        'RunD': runDSample,
+        #'RunC': runCSample,
+        #'RunD': runDSample,
     }
 
     triggerVariables = {
@@ -67,6 +69,7 @@ def main(args):
         tempuGTPlots = []
         for sample in tqdm(samples, desc='Data samples', leave=False):
             sampleChain = samples[sample]
+            sampleChain.chain.GetEntries()
             for trigger in triggerVariables:
                 if trigger == 'CICADA':
                     triggerLimits = (50, 0.0, 7.0)
@@ -74,19 +77,21 @@ def main(args):
                     triggerLimits = (50, 0.0, 1000.0)
                 plotName = f'{trigger}_{variablesToCompare[var]}_{sample}'
                 drawString = f'{triggerVariables[trigger]}:{var}>>{plotName}({limits[var][0]},{limits[var][1]},{limits[var][2]},{triggerLimits[0]},{triggerLimits[1]},{triggerLimits[2]})'
-                #print(f'Draw string: {drawString}')
-                sampleChain.chain.Draw(drawString)
+                print(f'Draw string: {drawString}')
+                selectedEvents = sampleChain.chain.Draw(drawString)
+                print(selectedEvents)
                 thePlot = ROOT.gPad.GetPrimitive(plotName).Clone()
-                #print(thePlot.GetNbinsX())
-                #print(thePlot.GetXaxis().GetXmax())
-                #print(thePlot.GetXaxis().GetXmin())
+                print(thePlot.GetNbinsX())
+                print(thePlot.GetXaxis().GetXmax())
+                print(thePlot.GetXaxis().GetXmin())
+                print(thePlot.GetEntries())
                 if trigger == 'CICADA':
                     tempCICADAPlots.append(thePlot.Clone())
                 elif trigger == 'uGT':
                     tempuGTPlots.append(thePlot.Clone())
         CICADAPlot = tempCICADAPlots[0].Clone()
         uGTPlot = tempuGTPlots[0].Clone()
-        for i in range(1,4):
+        for i in range(1,len(samples)):
             CICADAPlot.Add(tempCICADAPlots[i])
             uGTPlot.Add(tempuGTPlots[i])
         uGTCorrelationPlots.append(uGTPlot.Clone())

@@ -1,6 +1,5 @@
 import argparse
 
-from samples.dataSamples import runASample, runBSample, runCSample, runDSample
 from samples.SUEPSamples import suepSample
 from samples.VBFHToTauTauSample import vbfHToTauTauSample
 from samples.HTo2LongLivedTo4bSample import HTo2LongLivedTo4bSample
@@ -8,11 +7,12 @@ from samples.TTSample import ttSample
 from samples.GluGluToHHTo4B_node_cHHH1_sample import GluGluHTo4B_cHHH1_sample
 from samples.GluGluToHHTo4B_node_cHHH5_sample import GluGluHTo4B_cHHH5_sample
 
-from tqdm import trange,tqdm
+from tqdm import tqdm, trange
 import ROOT
 from triggers.unPrescaledTriggers import *
 
-def getAnomalyTriggerEvents(runSample, triggerGroup, totalEntries):
+
+def getAnomalyTriggerCutString(triggerGroup):
     triggerGroup = triggerGroup[0]
     if 'CICADA' in triggerGroup:
         variableName = 'anomalyScore'
@@ -35,18 +35,10 @@ def getAnomalyTriggerEvents(runSample, triggerGroup, totalEntries):
             threshold = 8811.72
         elif '0p5kHz' in triggerGroup:
             threshold = 9202.39
-
     cutString = f'{variableName} >= {threshold}'
-    triggeredEntries = float(runSample.chain.GetEntries(cutString))
+    return cutString
 
-    # try:
-    #     eff = float(triggeredEntries)/float(totalEntries)
-    # except ZeroDivisionError:
-    #     eff = 0.0
-
-    return triggeredEntries
-
-def getTriggerEvents(runSample, triggerGroup, totalEntries):
+def getTriggerCutString(runSample, triggerGroup):
     cutString = f'{triggerGroup[0]} == 1'
     listOfBranches = [x.GetName() for x in list(runSample.triggerBitsChain.GetListOfBranches())]
     #print(listOfBranches)
@@ -56,27 +48,17 @@ def getTriggerEvents(runSample, triggerGroup, totalEntries):
         if triggerGroup[i] in listOfBranches:
             cutString+=f'|| {triggerGroup[i]} == 1'
         else:
-            print(f'Skipping trigger {triggerGroup[i]} in current sample')
-    triggeredEntries = runSample.chain.GetEntries(cutString)
-
-    # try:
-    #     eff = float(triggeredEntries)/float(totalEntries)
-    # except ZeroDivisionError:
-    #     eff = 0.0
-
-    return triggeredEntries
+            #print(f'Skipping trigger {triggerGroup[i]} in current sample')
+            pass
+    return cutString
 
 def main(args):
     samples = {
-        'RunA': runASample,
-        'RunB': runBSample,
-        'RunC': runCSample,
-        'RunD': runDSample,
         'SUEP': suepSample,
         'VBFHTT': vbfHToTauTauSample,
         'HLongLived': HTo2LongLivedTo4bSample,
         'TT': ttSample,
-        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,triggerGroups
+        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
         'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
     }
     triggerGroups = {
@@ -97,7 +79,8 @@ def main(args):
         'pureTauTriggers': pureTauTriggers,
         'jetsPlusHTTriggers': jetsPlusHTTriggers,
         'HTETorMETTriggers': HTETorMETTriggers,
-    }
+    } 
+
     axisLabels = {
         'CICADA3kHz' : 'CICADA (3 kHz)',
         'CICADA2kHz' : 'CICADA (2 kHz)',
@@ -117,59 +100,64 @@ def main(args):
         'jetsPlusHTTriggers': 'Jets(+HT) Triggers',
         'HTETorMETTriggers': 'HT/ET/MET Triggers',
     }
-    numeratorPlots = {}
-    denominatorPlots = {}
 
-    for sampleKey in tqdm(samples):
-        sample = samples[sampleKey]
-        numeratorPlot = ROOT.TH1F(
-            f'{sampleKey}Numerator',
-            f'{sampleKey}Numerator',
-            len(triggerGroups.keys()),
-            0.0,
-            float(len(triggerGroups.keys()))
-        )
-        denominatorPlot = ROOT.TH1F(
-            f'{sampleKey}Denominator',
-            f'{sampleKey}Denominator',
-            len(triggerGroups.keys()),
-            0.0,
-            float(len(triggerGroups.keys()))
-        )
-        totalEntries = sample.GetEntries()
-        for triggerGroup in tqdm(triggerGroups, leave=False):
-            if 'CICADA' in triggerGroup or 'uGT' in triggerGroup:
-                numeratorPlot.Fill(
-                    axisLabels[triggerGroup],
-                    getAnomalyTriggerEvents(sample, triggerGroups[triggerGroup], totalEntries)
+    plots = {}
+
+    for sampleKey in tqdm(samples, desc='Sample'):
+        theSample = samples[sampleKey]
+        for i in trange(len(triggerGroups.keys()), leave=False, desc='Primary Trigger'): #primary trigger
+            for j in trange(i+1, len(triggerGroups.keys()), leave=False, desc='Secondary Trigger'): #secondary trigger
+                primaryTrigger = list(triggerGroups.keys())[i]
+                secondaryTrigger = list(triggerGroups.keys())[j]
+                
+                if 'CICADA' in primaryTrigger and 'CICADA' in secondaryTrigger:
+                    continue
+                if 'uGT' in primaryTrigger and 'uGT' in secondaryTrigger:
+                    continue
+                
+                plotName = f'{primaryTrigger}_{secondaryTrigger}_{sampleKey}'
+                thePlot = ROOT.TH1F(
+                    plotName,
+                    plotName,
+                    4,
+                    0.0,
+                    4.0,
                 )
-            else:
-                numeratorPlot.Fill(
-                    axisLabels[triggerGroup],
-                    getTriggerEvents(sample, triggerGroups[triggerGroup], totalEntries)
-                )
-            denominatorPlot.Fill(
-                axisLabels[triggerGroup],
-                totalEntries
-            )
-        #efficiencyPlots[sampleKey] = efficiencyPlot
-        numeratorPlots[sampleKey] = numeratorPlot
-        denominatorPlots[sampleKey] = denominatorPlot
-    
+
+                if 'CICADA' in primaryTrigger or 'uGT' in primaryTrigger:
+                    primaryTriggerCutString = getAnomalyTriggerCutString(triggerGroups[primaryTrigger])
+                else:
+                    primaryTriggerCutString = getTriggerCutString(theSample, triggerGroups[primaryTrigger])
+                
+                if 'CICADA' in secondaryTrigger or 'uGT' in secondaryTrigger:
+                    secondaryTriggerCutString = getAnomalyTriggerCutString(triggerGroups[secondaryTrigger])
+                else:
+                    secondaryTriggerCutString = getTriggerCutString(theSample, triggerGroups[secondaryTrigger])
+                
+
+                onlyPrimaryTriggerEvents = theSample.chain.GetEntries(primaryTriggerCutString+' && !('+secondaryTriggerCutString+')')
+                onlySecondaryTriggerEvents = theSample.chain.GetEntries('!('+primaryTriggerCutString+') && '+secondaryTriggerCutString)
+                bothTriggerEvents = theSample.chain.GetEntries(primaryTriggerCutString+' && '+secondaryTriggerCutString)
+                neitherTriggerEvents = theSample.chain.GetEntries('!('+primaryTriggerCutString+') && !('+secondaryTriggerCutString+')')
+                
+                thePlot.Fill(f'Only {axisLabels[primaryTrigger]}', onlyPrimaryTriggerEvents)
+                thePlot.Fill(f'Only {axisLabels[secondaryTrigger]}', onlySecondaryTriggerEvents)
+                thePlot.Fill(f'Both Triggers', bothTriggerEvents)
+                thePlot.Fill(f'Neither Trigger', neitherTriggerEvents)
+
+                plots[plotName] = thePlot
     theFile = ROOT.TFile(args.theFile, 'RECREATE')
-    for sampleKey in numeratorPlots:
-        #efficiencyPlots[sampleKey].Write()
-        numeratorPlots[sampleKey].Write()
-    for sampleKey in denominatorPlots:
-        denominatorPlots[sampleKey].Write()
+    for plot in plots:
+        plots[plot].Write()
     theFile.Write()
     theFile.Close()
 
+
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description='Do efficiency Comparisons between samples')
-    
-    parser.add_argument('--theFile',default='sampleFile.root',nargs='?',help='Output plot file')
-    
+    parser = argparse.ArgumentParser(description='Look at individual signals, and groups of triggers')
+
+    parser.add_argument('--theFile', default='individualSignalEfficiencyFile.root',nargs='?',help='Output plot file')
+
     args = parser.parse_args()
 
     main(args)
