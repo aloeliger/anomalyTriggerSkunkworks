@@ -19,6 +19,8 @@ def main(args):
         'TT': 't#bar{t}',
         'GluGluHH4b_cHHH1': 'HH#rightarrow 4b (ggH, cHHH1)',
         'GluGluHH4B_cHHH5': 'HH#rightarrow 4b (ggH, cHHH5)',
+        'SUSY': 'SUSY gg #rightarrow bbH #rightarrow bb',
+        'ZToEE': 'Z #rightarrow ee'
     }
 
     zeroBiasAccepts = getattr(theFile, f'{data[0]}Numerator').Clone()
@@ -43,27 +45,30 @@ def main(args):
         #theAcceptancePlot.Divide(sampleTotals.Clone())
         theAcceptancePlot.Scale(1.0 / sampleTotals.GetBinContent(1))
 
+        errorHisto = theAcceptancePlot.Clone()
+
         #theAcceptancePlot.SetMaximum(1.2)
         #theAcceptancePlot.SetMinimum(0.0)
 
         theAcceptancePlot.SetLineColor(ROOT.kRed)
         theAcceptancePlot.SetLineWidth(2)
 
-        theAcceptancePlot.Draw()
+        errorHisto.SetFillColor(ROOT.kGray)
+        errorHisto.SetFillStyle(3244)
+        errorHisto.Draw('E2')
         theAcceptancePlot.Draw('SAME HIST TEXT0')
 
         #theAcceptancePlot.GetYaxis().SetRangeUser(0.0, 1.2)
 
-        theAcceptancePlot.GetYaxis().SetTitle('Fraction Acceptance')
-        theAcceptancePlot.LabelsOption('v','x')
+        errorHisto.GetYaxis().SetTitle('Fraction Acceptance')
+        errorHisto.LabelsOption('v','x')
+        errorHisto.SetTitle('')
 
         cmsLatex = ROOT.TLatex()
         cmsLatex.SetTextSize(0.06)
         cmsLatex.SetNDC(True)
         cmsLatex.SetTextAlign(11)
         cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
-
-        theAcceptancePlot.SetTitle('')
 
         sampleLatex  = ROOT.TLatex()
         sampleLatex.SetTextSize(0.06)
@@ -84,16 +89,20 @@ def main(args):
 
         effPlot.Divide(dataAcceptance)
 
+        effErrorHisto = effPlot.Clone()
+
         effPlot.SetLineColor(ROOT.kRed)
         effPlot.SetLineWidth(2)
 
-        effPlot.Draw()
+        effErrorHisto.SetFillColor(ROOT.kGray)
+        effErrorHisto.SetFillStyle(3244)
+        effErrorHisto.Draw('E2')
         effPlot.Draw('SAME HIST TEXT0')
 
         #effPlot.GetYaxis().SetRangeUser(0.0, 1.2*effPlot.GetMaximum())
-        effPlot.GetYaxis().SetTitle('Signal Accptance to Background Acceptance')
-        effPlot.LabelsOption('v', 'x')
-        effPlot.SetTitle('')
+        effErrorHisto.GetYaxis().SetTitle('Signal Accptance to Background Acceptance')
+        effErrorHisto.LabelsOption('v', 'x')
+        effErrorHisto.SetTitle('')
 
         cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
         sampleLatex.DrawLatex(0.9,0.92, '#font[41]{'+signals[sample]+'}')

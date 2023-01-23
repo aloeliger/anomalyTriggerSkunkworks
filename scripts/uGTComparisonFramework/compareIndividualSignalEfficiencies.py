@@ -6,6 +6,8 @@ from samples.HTo2LongLivedTo4bSample import HTo2LongLivedTo4bSample
 from samples.TTSample import ttSample
 from samples.GluGluToHHTo4B_node_cHHH1_sample import GluGluHTo4B_cHHH1_sample
 from samples.GluGluToHHTo4B_node_cHHH5_sample import GluGluHTo4B_cHHH5_sample
+from samples.SUSYSamples import SusyGluGluToBBHToBBSample
+from samples.ZToEESamples import ZToEESample
 
 from tqdm import tqdm, trange
 import ROOT
@@ -54,12 +56,14 @@ def getTriggerCutString(runSample, triggerGroup):
 
 def main(args):
     samples = {
-        'SUEP': suepSample,
-        'VBFHTT': vbfHToTauTauSample,
-        'HLongLived': HTo2LongLivedTo4bSample,
-        'TT': ttSample,
-        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
-        'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
+        # 'SUEP': suepSample,
+        # 'VBFHTT': vbfHToTauTauSample,
+        # 'HLongLived': HTo2LongLivedTo4bSample,
+        # #'TT': ttSample, #This is sort of too big to do this kind of analysis on.
+        # 'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
+        # 'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
+        'SUSY': SusyGluGluToBBHToBBSample,
+        'ZToEE': ZToEESample,
     }
     triggerGroups = {
         'CICADA3kHz' : ['CICADA3kHz'],

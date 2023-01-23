@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-samples=('GluGluToHHTo4B_node_cHHH1' 'GluGluToHHTo4B_node_cHHH5' 'HTo2LongLivedTo4b' 'TT' 'VBFHToTauTau', 'SUSYGluGluToBBHToBB_NarrowWidth_M-350')
-#samples=('SUSYGluGluToBBHToBB_NarrowWidth_M-350')
+samples=('GluGluToHHTo4B_node_cHHH1' 'GluGluToHHTo4B_node_cHHH5' 'HTo2LongLivedTo4b' 'TT' 'VBFHToTauTau', 'SUSYGluGluToBBHToBB_NarrowWidth_M-350' 'ZToEE')
+#samples=('ZToEE')
 
 for sample in "${samples[@]}"; do
 

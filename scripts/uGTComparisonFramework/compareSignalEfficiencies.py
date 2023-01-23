@@ -7,6 +7,8 @@ from samples.HTo2LongLivedTo4bSample import HTo2LongLivedTo4bSample
 from samples.TTSample import ttSample
 from samples.GluGluToHHTo4B_node_cHHH1_sample import GluGluHTo4B_cHHH1_sample
 from samples.GluGluToHHTo4B_node_cHHH5_sample import GluGluHTo4B_cHHH5_sample
+from samples.SUSYSamples import SusyGluGluToBBHToBBSample
+from samples.ZToEESamples import ZToEESample
 
 from tqdm import trange,tqdm
 import ROOT
@@ -78,6 +80,8 @@ def main(args):
         'TT': ttSample,
         'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,triggerGroups
         'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
+        'SUSY': SusyGluGluToBBHToBBSample,
+        'ZToEE': ZToEESample,
     }
     triggerGroups = {
         'CICADA3kHz' : ['CICADA3kHz'],
