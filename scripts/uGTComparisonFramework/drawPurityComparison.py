@@ -58,25 +58,28 @@ def main(args):
 
         thePlot = getattr(theFile, f'{triggerGroup}')
 
+        errHisto = thePlot.Clone()
+
         #thePlot.SetMaximum(1.2)
         #thePlot.SetMinimum(0.0)
 
         thePlot.SetLineColor(ROOT.kRed)
         thePlot.SetLineWidth(2)
 
-        thePlot.Draw()
+        errHisto.SetFillColor(ROOT.kGray)
+        errHisto.SetFillStyle(3244)
+        errHisto.Draw('E2')
         thePlot.Draw('SAME HIST TEXT0')
 
-        thePlot.GetYaxis().SetTitle('Fraction')
-        thePlot.LabelsOption('>v','x')
+        errHisto.GetYaxis().SetTitle('Fraction')
+        errHisto.LabelsOption('v','x')
+        errHisto.SetTitle('')
 
         cmsLatex = ROOT.TLatex()
         cmsLatex.SetTextSize(0.06)
         cmsLatex.SetNDC(True)
         cmsLatex.SetTextAlign(11)
         cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
-
-        thePlot.SetTitle('')
 
         triggerGroupLatex = ROOT.TLatex()
         triggerGroupLatex.SetTextSize(0.06)
@@ -93,6 +96,7 @@ def main(args):
     theCanvas.SetLogy()
 
     anyOverlapPlot = theFile.anyOverlap
+    overlapErrPlot = anyOverlapPlot.Clone()
     
     #anyOverlapPlot.SetMaximum(1.2)
     #anyOverlapPlot.SetMinimum(0.0)
@@ -100,19 +104,20 @@ def main(args):
     anyOverlapPlot.SetLineColor(ROOT.kRed)
     anyOverlapPlot.SetLineWidth(2)
 
-    anyOverlapPlot.Draw()
+    overlapErrPlot.SetFillColor(ROOT.kGray)
+    overlapErrPlot.SetFillStyle(3244)
+    overlapErrPlot.Draw('E2')
     anyOverlapPlot.Draw('SAME HIST TEXT0')
 
-    anyOverlapPlot.GetYaxis().SetTitle('Fraction')
-    anyOverlapPlot.LabelsOption('>v', 'x')
+    overlapErrPlot.GetYaxis().SetTitle('Fraction')
+    overlapErrPlot.LabelsOption('v', 'x')
+    overlapErrPlot.SetTitle('')
 
     cmsLatex = ROOT.TLatex()
     cmsLatex.SetTextSize(0.06)
     cmsLatex.SetNDC(True)
     cmsLatex.SetTextAlign(11)
     cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
-
-    anyOverlapPlot.SetTitle('')
 
     triggerGroupLatex = ROOT.TLatex()
     triggerGroupLatex.SetTextSize(0.06)

@@ -1,5 +1,6 @@
 import argparse
 from samples.dataSamples import runASample,runBSample,runCSample,runDSample
+
 from tqdm import trange, tqdm
 import math
 import ROOT
@@ -23,6 +24,7 @@ def main(args):
     uGTMaxes = []
     uGTMins = []
 
+    print('Determining maximum and minimum score...')
     for run in tqdm(runs):
         caloMaxes.append(runs[run].chain.GetMaximum('anomalyScore'))
         caloMins.append(runs[run].chain.GetMinimum('anomalyScore'))
@@ -40,7 +42,7 @@ def main(args):
     #uGTMin = 0.0
 
     print('Looping over runs...')
-    for runName in runs:
+    for runName in tqdm(runs):
         runSample = runs[runName]
         caloScorePlots[runName] = ROOT.TH1F(
             f'{runName}CaloScores',
@@ -57,12 +59,14 @@ def main(args):
             uGTMax,
         )
 
-        entriesToProcess = int(min(runSample.GetEntries(), 5e5))
+        #entriesToProcess = int(min(runSample.GetEntries(), 5e5))
 
-        for i in trange(entriesToProcess):
-            runSample.GetEntry(i)
-            caloScorePlots[runName].Fill(runSample.chain.anomalyScore)
-            uGTScorePlots[runName].Fill(runSample.chain.uGTAnomalyScore)
+        # for i in trange(entriesToProcess):
+        #     runSample.GetEntry(i)
+        #     caloScorePlots[runName].Fill(runSample.chain.anomalyScore)
+        #     uGTScorePlots[runName].Fill(runSample.chain.uGTAnomalyScore)
+        runSample.chain.Draw(f'anomalyScore>>{runName}CaloScores')
+        runSample.chain.Draw(f'uGTAnomalyScore>>{runName}uGTScores')
         caloScorePlots[runName].Scale(1.0/caloScorePlots[runName].Integral())
         uGTScorePlots[runName].Scale(1.0/uGTScorePlots[runName].Integral())
     

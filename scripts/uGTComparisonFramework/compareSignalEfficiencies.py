@@ -14,7 +14,7 @@ from tqdm import trange,tqdm
 import ROOT
 from triggers.unPrescaledTriggers import *
 
-def getAnomalyTriggerEvents(runSample, triggerGroup, totalEntries):
+def getAnomalyTriggerEvents(runSample, triggerGroup):
     triggerGroup = triggerGroup[0]
     if 'CICADA' in triggerGroup:
         variableName = 'anomalyScore'
@@ -48,7 +48,7 @@ def getAnomalyTriggerEvents(runSample, triggerGroup, totalEntries):
 
     return triggeredEntries
 
-def getTriggerEvents(runSample, triggerGroup, totalEntries):
+def getTriggerEvents(runSample, triggerGroup):
     cutString = f'{triggerGroup[0]} == 1'
     listOfBranches = [x.GetName() for x in list(runSample.triggerBitsChain.GetListOfBranches())]
     #print(listOfBranches)
@@ -78,7 +78,7 @@ def main(args):
         'VBFHTT': vbfHToTauTauSample,
         'HLongLived': HTo2LongLivedTo4bSample,
         'TT': ttSample,
-        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,triggerGroups
+        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
         'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
         'SUSY': SusyGluGluToBBHToBBSample,
         'ZToEE': ZToEESample,
@@ -111,8 +111,7 @@ def main(args):
         'uGT2kHz' : 'uGT AD (2 kHz)',
         'uGT1kHz' : 'uGT AD (1 kHz)',
         'uGT0p5kHz' : 'uGT AD (0.5 kHz)',
-        'pureMuonTriggers': 'Pure Muon Triggers',
-        'muonPlusEGTriggers': 'Muon+EG Triggers',
+        'pureMuonTriggers': 'Pure MucompareStability',
         'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers',
         'pureEGTriggers': 'Pure EG Triggers',
         'EGPlusHTOrJet': 'EG+HT/Jet Triggers',
@@ -145,12 +144,12 @@ def main(args):
             if 'CICADA' in triggerGroup or 'uGT' in triggerGroup:
                 numeratorPlot.Fill(
                     axisLabels[triggerGroup],
-                    getAnomalyTriggerEvents(sample, triggerGroups[triggerGroup], totalEntries)
+                    getAnomalyTriggerEvents(sample, triggerGroups[triggerGroup])
                 )
             else:
                 numeratorPlot.Fill(
                     axisLabels[triggerGroup],
-                    getTriggerEvents(sample, triggerGroups[triggerGroup], totalEntries)
+                    getTriggerEvents(sample, triggerGroups[triggerGroup])
                 )
             denominatorPlot.Fill(
                 axisLabels[triggerGroup],
