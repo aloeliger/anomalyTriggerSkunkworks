@@ -13,30 +13,23 @@ from tqdm import tqdm, trange
 import ROOT
 from triggers.unPrescaledTriggers import *
 
+from anomalyTriggerThresholds.thresholdHelper import thresholdHelper
+import re
 
-def getAnomalyTriggerCutString(triggerGroup):
+
+def getAnomalyTriggerCutString(theThresholdHelper, triggerGroup):
     triggerGroup = triggerGroup[0]
     if 'CICADA' in triggerGroup:
+        trigger = 'CICADA'
         variableName = 'anomalyScore'
-        if '3kHz' in triggerGroup:
-            threshold = 5.83
-        elif '2kHz' in triggerGroup:
-            threshold = 5.95
-        elif '1kHz' in triggerGroup:
-            threshold=6.20
-        elif '0p5kHz' in triggerGroup:
-            threshold=6.55
-    
     elif 'uGT' in triggerGroup:
+        trigger = 'uGT'
         variableName = 'uGTAnomalyScore'
-        if '3kHz' in triggerGroup:
-            threshold = 7710.76
-        elif '2kHz' in triggerGroup:
-            threshold = 8243.48
-        elif '1kHz' in triggerGroup:
-            threshold = 8811.72
-        elif '0p5kHz' in triggerGroup:
-            threshold = 9202.39
+
+    rateString = re.search('[0-9]+(p[0-9]+)?', triggerGroup).group(0)
+    rate = rateString.replace('p', '.').replace('.0','')
+    threshold = theThresholdHelper.getTriggerThreshold(trigger,rate)
+
     cutString = f'{variableName} >= {threshold}'
     return cutString
 
@@ -56,12 +49,12 @@ def getTriggerCutString(runSample, triggerGroup):
 
 def main(args):
     samples = {
-        # 'SUEP': suepSample,
-        # 'VBFHTT': vbfHToTauTauSample,
-        # 'HLongLived': HTo2LongLivedTo4bSample,
+        'SUEP': suepSample,
+        'VBFHTT': vbfHToTauTauSample,
+        'HLongLived': HTo2LongLivedTo4bSample,
         # #'TT': ttSample, #This is sort of too big to do this kind of analysis on.
-        # 'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
-        # 'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
+        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
+        'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
         'SUSY': SusyGluGluToBBHToBBSample,
         'ZToEE': ZToEESample,
     }
@@ -85,6 +78,8 @@ def main(args):
         'HTETorMETTriggers': HTETorMETTriggers,
     } 
 
+    theThresholdHelper = thresholdHelper()
+
     axisLabels = {
         'CICADA3kHz' : 'CICADA (3 kHz)',
         'CICADA2kHz' : 'CICADA (2 kHz)',
@@ -94,15 +89,15 @@ def main(args):
         'uGT2kHz' : 'uGT AD (2 kHz)',
         'uGT1kHz' : 'uGT AD (1 kHz)',
         'uGT0p5kHz' : 'uGT AD (0.5 kHz)',
-        'pureMuonTriggers': 'Pure Muon Triggers',
-        'muonPlusEGTriggers': 'Muon+EG Triggers',
-        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers',
-        'pureEGTriggers': 'Pure EG Triggers',
-        'EGPlusHTOrJet': 'EG+HT/Jet Triggers',
-        'tauPlusOthers': 'Tau Plus Other Triggers',
-        'pureTauTriggers': 'Pure Tau Triggers',
-        'jetsPlusHTTriggers': 'Jets(+HT) Triggers',
-        'HTETorMETTriggers': 'HT/ET/MET Triggers',
+        'pureMuonTriggers': 'Pure Muon Triggers (~9 kHz)',
+        'muonPlusEGTriggers': 'Muon + EG Triggers (~2.5 kHz)',
+        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers (~1.5 kHz)',
+        'pureEGTriggers': 'Pure EG Triggers (~15 kHz)',
+        'EGPlusHTOrJet': 'EG+HT/Jet Triggers (~6 kHz)',
+        'tauPlusOthers': 'Tau Plus Other Triggers (5 kHz)',
+        'pureTauTriggers': 'Pure Tau Triggers (~7 kHz)',
+        'jetsPlusHTTriggers': 'Jets(+HT) Triggers (~4 kHz)',
+        'HTETorMETTriggers': 'HT/ET/MET Triggers (~2 kHz)',
     }
 
     plots = {}
@@ -129,12 +124,12 @@ def main(args):
                 )
 
                 if 'CICADA' in primaryTrigger or 'uGT' in primaryTrigger:
-                    primaryTriggerCutString = getAnomalyTriggerCutString(triggerGroups[primaryTrigger])
+                    primaryTriggerCutString = getAnomalyTriggerCutString(theThresholdHelper, triggerGroups[primaryTrigger])
                 else:
                     primaryTriggerCutString = getTriggerCutString(theSample, triggerGroups[primaryTrigger])
                 
                 if 'CICADA' in secondaryTrigger or 'uGT' in secondaryTrigger:
-                    secondaryTriggerCutString = getAnomalyTriggerCutString(triggerGroups[secondaryTrigger])
+                    secondaryTriggerCutString = getAnomalyTriggerCutString(theThresholdHelper, triggerGroups[secondaryTrigger])
                 else:
                     secondaryTriggerCutString = getTriggerCutString(theSample, triggerGroups[secondaryTrigger])
                 

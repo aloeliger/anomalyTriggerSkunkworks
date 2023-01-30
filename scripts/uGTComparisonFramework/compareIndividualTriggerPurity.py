@@ -4,6 +4,9 @@ from tqdm import tqdm
 import ROOT
 from triggers.unPrescaledTriggers import *
 
+from anomalyTriggerThresholds.thresholdHelper import thresholdHelper
+import re
+
 def main(args):
     ROOT.gStyle.SetOptStat(0)
     runs = {
@@ -12,6 +15,7 @@ def main(args):
         'RunC': runCSample,
         'RunD': runDSample,
     }
+    theThresholdHelper = thresholdHelper()
 
     anomalyTriggers = [
         'CICADA3kHz',
@@ -54,24 +58,14 @@ def main(args):
                 #Across four different runs
                 if 'CICADA' in anomalyTrigger:
                     anomalyVariable = 'anomalyScore'
-                    if '3kHz' in anomalyTrigger:
-                        threshold = 5.83
-                    elif '2kHz' in anomalyTrigger:
-                        threshold = 5.95
-                    elif '1kHz' in anomalyTrigger:
-                        threshold = 6.20
-                    elif '0p5kHz' in anomalyTrigger:
-                        threshold = 6.55
+                    trigger = 'CICADA'
                 elif 'uGT' in anomalyTrigger:
                     anomalyVariable = 'uGTAnomalyScore'
-                    if '3kHz' in anomalyTrigger:
-                        threshold = 7710.76
-                    elif '2kHz' in anomalyTrigger:
-                        threshold = 8243.48
-                    elif '1kHz' in anomalyTrigger:
-                        threshold = 8811.72
-                    elif '0p5kHz' in anomalyTrigger:
-                        threshold = 9202.39
+                    trigger = 'uGT'
+                rateString = re.search('[0-9]+(p[0-9]+)?', anomalyTrigger).group(0)
+                rate = rateString.replace('p', '.').replace('.0', '')
+                threshold = theThresholdHelper.getTriggerThreshold(trigger, rate)
+
                 anomalyPasses = f'{anomalyVariable} >= {threshold}'
                 anomalyFails = f'{anomalyVariable} < {threshold}'
                 triggerPasses = f'{triggerName} == 1'

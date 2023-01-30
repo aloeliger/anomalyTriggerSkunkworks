@@ -3,7 +3,9 @@ from samples.dataSamples import runASample, runBSample, runCSample, runDSample
 from tqdm import trange, tqdm
 import math
 import ROOT
+import re
 from triggers.unPrescaledTriggers import *
+from anomalyTriggerThresholds.thresholdHelper import thresholdHelper
 
 def createOverlapFractionDict(triggerCounts, triggerOverlaps):
     overlapFractionDict = {}
@@ -14,29 +16,17 @@ def createOverlapFractionDict(triggerCounts, triggerOverlaps):
             overlapFractionDict[triggerGroup] = 0.0
     return overlapFractionDict
 
-def anomalyTriggerGroupFires(runSample, anomalyTriggerGroup):
+def anomalyTriggerGroupFires(theThresholdHelper, runSample, anomalyTriggerGroup):
     triggerGroupFires = False
     if 'CICADA' in anomalyTriggerGroup[0]:
+        trigger = 'CICADA'
         varToCheck = runSample.chain.anomalyScore
-        if '3kHz' in anomalyTriggerGroup[0]:
-            threshold = 5.83
-        elif '2kHz' in anomalyTriggerGroup[0]:
-            threshold = 5.95
-        elif '1kHz' in anomalyTriggerGroup[0]:
-            threshold = 6.20
-        elif '0p5kHz' in anomalyTriggerGroup[0]:
-            threshold = 6.55
-
     elif 'uGT' in anomalyTriggerGroup[0]:
+        trigger = 'uGT'
         varToCheck = runSample.chain.uGTAnomalyScore
-        if '3kHz' in anomalyTriggerGroup[0]:
-            threshold = 7710.76
-        elif '2kHz' in anomalyTriggerGroup[0]:
-            threshold = 8243.48
-        elif '1kHz' in anomalyTriggerGroup[0]:
-            threshold = 8811.72
-        elif '0p5kHz' in anomalyTriggerGroup[0]:
-            threshold = 9202.39
+    rateString = re.search('[0-9]+(p[0-9]+)?', anomalyTriggerGroup[0]).group(0)
+    rate = rateString.replace('p', '.').replace('.0', '')
+    threshold = theThresholdHelper.getTriggerThreshold(trigger,rate)
 
     triggerGroupFires = (varToCheck >= threshold)
     
@@ -64,6 +54,7 @@ def main(args):
         'RunC': runCSample,
         'RunD': runDSample,
     }
+    theThresholdHelper = thresholdHelper()
 
     triggerGroups = {
         'CICADA3kHz' : ['CICADA3kHz'],
@@ -120,13 +111,13 @@ def main(args):
             for triggerGroup in triggerGroups:
                 if 'CICADA' in triggerGroup or 'uGT' in triggerGroup:
                     anyOverlap = False
-                    if anomalyTriggerGroupFires(runSample, triggerGroups[triggerGroup]):
+                    if anomalyTriggerGroupFires(theThresholdHelper, runSample, triggerGroups[triggerGroup]):
                         triggerCounts[triggerGroup] += 1
                         for differentTriggerGroup in triggerGroups:
                             if differentTriggerGroup == triggerGroup:
                                 continue
                             if 'CICADA' in differentTriggerGroup or 'uGT' in differentTriggerGroup:
-                                if anomalyTriggerGroupFires(runSample, triggerGroups[differentTriggerGroup]):
+                                if anomalyTriggerGroupFires(theThresholdHelper, runSample, triggerGroups[differentTriggerGroup]):
                                     triggerOverlaps[triggerGroup][differentTriggerGroup] += 1
                             else:
                                 if triggerGroupFires(runSample, triggerGroups[differentTriggerGroup]):
@@ -141,7 +132,7 @@ def main(args):
                             if differentTriggerGroup == triggerGroup:
                                 continue
                             if 'CICADA' in differentTriggerGroup or 'uGT' in differentTriggerGroup:
-                                if anomalyTriggerGroupFires(runSample, triggerGroups[differentTriggerGroup]):
+                                if anomalyTriggerGroupFires(theThresholdHelper, runSample, triggerGroups[differentTriggerGroup]):
                                     triggerOverlaps[triggerGroup][differentTriggerGroup] += 1
                             else:
                                 if triggerGroupFires(runSample, triggerGroups[differentTriggerGroup]):
@@ -161,15 +152,15 @@ def main(args):
         'uGT2kHz' : 'uGT AD (2 kHz)',
         'uGT1kHz' : 'uGT AD (1 kHz)',
         'uGT0p5kHz' : 'uGT AD (0.5 kHz)',
-        'pureMuonTriggers': 'Pure Muon Triggers',
-        'muonPlusEGTriggers': 'Muon+EG Triggers',
-        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers',
-        'pureEGTriggers': 'Pure EG Triggers',
-        'EGPlusHTOrJet': 'EG+HT/Jet Triggers',
-        'tauPlusOthers': 'Tau Plus Other Triggers',
-        'pureTauTriggers': 'Pure Tau Triggers',
-        'jetsPlusHTTriggers': 'Jets(+HT) Triggers',
-        'HTETorMETTriggers': 'HT/ET/MET Triggers',
+        'pureMuonTriggers': 'Pure Muon Triggers (~9 kHz)',
+        'muonPlusEGTriggers': 'Muon + EG Triggers (~2.5 kHz)',
+        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers (~1.5 kHz)',
+        'pureEGTriggers': 'Pure EG Triggers (~15 kHz)',
+        'EGPlusHTOrJet': 'EG+HT/Jet Triggers (~6 kHz)',
+        'tauPlusOthers': 'Tau Plus Other Triggers (5 kHz)',
+        'pureTauTriggers': 'Pure Tau Triggers (~7 kHz)',
+        'jetsPlusHTTriggers': 'Jets(+HT) Triggers (~4 kHz)',
+        'HTETorMETTriggers': 'HT/ET/MET Triggers (~2 kHz)',
     }
     
     plotSetup = {}

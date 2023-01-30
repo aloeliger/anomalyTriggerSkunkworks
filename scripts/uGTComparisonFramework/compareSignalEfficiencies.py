@@ -14,29 +14,23 @@ from tqdm import trange,tqdm
 import ROOT
 from triggers.unPrescaledTriggers import *
 
-def getAnomalyTriggerEvents(runSample, triggerGroup):
+import json
+
+from anomalyTriggerThresholds.thresholdHelper import thresholdHelper
+import re
+
+def getAnomalyTriggerEvents(theThresholdHelper, runSample, triggerGroup):
     triggerGroup = triggerGroup[0]
     if 'CICADA' in triggerGroup:
+        trigger = 'CICADA'
         variableName = 'anomalyScore'
-        if '3kHz' in triggerGroup:
-            threshold = 5.83
-        elif '2kHz' in triggerGroup:
-            threshold = 5.95
-        elif '1kHz' in triggerGroup:
-            threshold=6.20
-        elif '0p5kHz' in triggerGroup:
-            threshold=6.55
-    
     elif 'uGT' in triggerGroup:
+        trigger='uGT'
         variableName = 'uGTAnomalyScore'
-        if '3kHz' in triggerGroup:
-            threshold = 7710.76
-        elif '2kHz' in triggerGroup:
-            threshold = 8243.48
-        elif '1kHz' in triggerGroup:
-            threshold = 8811.72
-        elif '0p5kHz' in triggerGroup:
-            threshold = 9202.39
+    rateString = re.search('[0-9]+(p[0-9]+)?', triggerGroup).group(0)
+    rate = rateString.replace('p', '.').replace('.0','')
+    threshold = theThresholdHelper.getTriggerThreshold(trigger,rate)
+
 
     cutString = f'{variableName} >= {threshold}'
     triggeredEntries = float(runSample.chain.GetEntries(cutString))
@@ -83,6 +77,7 @@ def main(args):
         'SUSY': SusyGluGluToBBHToBBSample,
         'ZToEE': ZToEESample,
     }
+    theThresholdHelper = thresholdHelper()
     triggerGroups = {
         'CICADA3kHz' : ['CICADA3kHz'],
         'CICADA2kHz' : ['CICADA2kHz'],
@@ -111,15 +106,19 @@ def main(args):
         'uGT2kHz' : 'uGT AD (2 kHz)',
         'uGT1kHz' : 'uGT AD (1 kHz)',
         'uGT0p5kHz' : 'uGT AD (0.5 kHz)',
-        'pureMuonTriggers': 'Pure MucompareStability',
-        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers',
-        'pureEGTriggers': 'Pure EG Triggers',
-        'EGPlusHTOrJet': 'EG+HT/Jet Triggers',
-        'tauPlusOthers': 'Tau Plus Other Triggers',
-        'pureTauTriggers': 'Pure Tau Triggers',
-        'jetsPlusHTTriggers': 'Jets(+HT) Triggers',
-        'HTETorMETTriggers': 'HT/ET/MET Triggers',
+        'pureMuonTriggers': 'Pure Muon Triggers (~9 kHz)',
+        'muonPlusEGTriggers': 'Muon + EG Triggers (~2.5 kHz)',
+        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers (~1.5 kHz)',
+        'pureEGTriggers': 'Pure EG Triggers (~15 kHz)',
+        'EGPlusHTOrJet': 'EG+HT/Jet Triggers (~6 kHz)',
+        'tauPlusOthers': 'Tau Plus Other Triggers (5 kHz)',
+        'pureTauTriggers': 'Pure Tau Triggers (~7 kHz)',
+        'jetsPlusHTTriggers': 'Jets(+HT) Triggers (~4 kHz)',
+        'HTETorMETTriggers': 'HT/ET/MET Triggers (~2 kHz)',
     }
+    with open(args.jsonFile, 'r') as jsonFile:
+        thresholdData = json.load(jsonFile)
+        
     numeratorPlots = {}
     denominatorPlots = {}
 
@@ -144,7 +143,7 @@ def main(args):
             if 'CICADA' in triggerGroup or 'uGT' in triggerGroup:
                 numeratorPlot.Fill(
                     axisLabels[triggerGroup],
-                    getAnomalyTriggerEvents(sample, triggerGroups[triggerGroup])
+                    getAnomalyTriggerEvents(theThresholdHelper, sample, triggerGroups[triggerGroup])
                 )
             else:
                 numeratorPlot.Fill(
@@ -172,7 +171,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Do efficiency Comparisons between samples')
     
     parser.add_argument('--theFile',default='sampleFile.root',nargs='?',help='Output plot file')
-    
+    parser.add_argument('--jsonFile', default='./anomalyTriggerThresholds/triggerThresholds.json', help='Json file that defines the thresholds for anomaly triggers')
+
     args = parser.parse_args()
 
     main(args)

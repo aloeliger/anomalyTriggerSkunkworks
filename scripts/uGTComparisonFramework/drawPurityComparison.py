@@ -36,15 +36,15 @@ def main(args):
         'uGT2kHz' : 'uGT AD (2 kHz)',
         'uGT1kHz' : 'uGT AD (1 kHz)',
         'uGT0p5kHz' : 'uGT AD (0.5 kHz)',
-        'pureMuonTriggers': 'Pure Muon Triggers',
-        'muonPlusEGTriggers': 'Muon+EG Triggers',
-        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers',
-        'pureEGTriggers': 'Pure EG Triggers',
-        'EGPlusHTOrJet': 'EG+HT/Jet Triggers',
-        'tauPlusOthers': 'Tau Plus Other Triggers',
-        'pureTauTriggers': 'Pure Tau Triggers',
-        'jetsPlusHTTriggers': 'Jets(+HT) Triggers',
-        'HTETorMETTriggers': 'HT/ET/MET Triggers',
+        'pureMuonTriggers': 'Pure Muon Triggers (~9 kHz)',
+        'muonPlusEGTriggers': 'Muon + EG Triggers (~2.5 kHz)'
+        'muonPlusJetMETOrHT': 'Muon+Jet/MET/HT Triggers (~1.5 kHz)',
+        'pureEGTriggers': 'Pure EG Triggers (~15 kHz)',
+        'EGPlusHTOrJet': 'EG+HT/Jet Triggers (~6 kHz)',
+        'tauPlusOthers': 'Tau Plus Other Triggers (5 kHz)',
+        'pureTauTriggers': 'Pure Tau Triggers (~7 kHz)',
+        'jetsPlusHTTriggers': 'Jets(+HT) Triggers (~4 kHz)',
+        'HTETorMETTriggers': 'HT/ET/MET Triggers (~2 kHz)',
     }
 
     ROOT.gStyle.SetPaintTextFormat('1.2g')
