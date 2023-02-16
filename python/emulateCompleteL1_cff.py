@@ -109,9 +109,6 @@ process.schedule.append(process.CaloSummaryPath)
 process.load('L1Trigger.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
 process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
 process.schedule.append(process.uGTEmulationPath)
-#from L1Trigger.L1TGlobal.uGTADEmulator_cfi import uGTADEmulator
-#uGTEmulationPath = cms.Path(uGTADEmulator)
-#process.schedule.append(uGTEmulationPath)
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
