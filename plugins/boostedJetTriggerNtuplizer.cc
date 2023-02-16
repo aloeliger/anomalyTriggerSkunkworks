@@ -54,6 +54,7 @@ private:
 boostedJetTriggerNtuplizer::boostedJetTriggerNtuplizer(const edm::ParameterSet& iConfig):
   boostedJetCollection( consumes< l1extra::L1JetParticleCollection >(iConfig.getParameter<edm::InputTag>("boostedJetCollection")) )
 {
+  usesResource("TFileService");
   verboseDebug  = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
 
   boostedJetTree = theFileService->make< TTree >("boostedJetTrigger", "Output of the L1TCaloSummary boosted jet process");

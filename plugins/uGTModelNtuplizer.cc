@@ -43,6 +43,7 @@ class uGTModelNtuplizer : public edm::one::EDAnalyzer<edm::one::SharedResources>
 uGTModelNtuplizer::uGTModelNtuplizer(const edm::ParameterSet& iConfig):
     anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) )
 {
+    usesResource("TFileService");
     triggerTree = theFileService->make< TTree >("uGTModelOutput","custom uGT AD model emulator information");
     triggerTree -> Branch("run", &run);
     triggerTree -> Branch("lumi", &lumi);

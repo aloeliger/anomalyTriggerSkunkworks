@@ -65,6 +65,7 @@ private:
 L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfig):
   gtAlgBlkToken( consumes< BXVector<GlobalAlgBlk> >(iConfig.getParameter< edm::InputTag >("gtResults")) )
 {
+  usesResource("TFileService");
   L1TUtmTriggerMenuEventToken = consumesCollector().esConsumes<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd>();
   
   verboseDebug = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
