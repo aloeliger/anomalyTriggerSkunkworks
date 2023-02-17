@@ -36,11 +36,11 @@ private:
   void endJob() override {};
   
   //Just some stuff to let us actually ntuplize everything
-  edm::EDGetTokenT< float > anomalyToken;
+  // edm::EDGetTokenT< float > anomalyToken;
   // edm::EDGetTokenT< float > bitAccurateAnomalyToken;
   edm::EDGetTokenT< float > precompiledModelAnomalyToken;
   edm::EDGetTokenT<std::vector<reco::Vertex>> vertexToken;
-  float anomalyScore;
+  // float anomalyScore;
   // float bitAccurateAnomalyScore;
   float precompiledModelAnomalyScore;
 
@@ -70,7 +70,7 @@ private:
 };
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
-  anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
+  // anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
   // bitAccurateAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("bitAccurateScoreSource")) ),
   precompiledModelAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("precompiledModelScoreSource")) ),
   vertexToken( consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
@@ -91,7 +91,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("lumi", &lumi);
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
-  triggerTree -> Branch("anomalyScore", &anomalyScore);
+  // triggerTree -> Branch("anomalyScore", &anomalyScore);
   // triggerTree -> Branch("bitAccurateAnomalyScore", &bitAccurateAnomalyScore);
   triggerTree -> Branch("precompiledModelAnomalyScore", &precompiledModelAnomalyScore);
   triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/s");
@@ -112,11 +112,11 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   using namespace edm;
 
   //little bit wordy, but should function?
-  edm::Handle< float > anomalyHandle;
+  // edm::Handle< float > anomalyHandle;
   // edm::Handle< float > bitAccurateAnomalyHandle;
   edm::Handle< float > precompiledModelAnomalyHandle;
   edm::Handle< std::vector< reco::Vertex > > vertexHandle;
-  iEvent.getByToken(anomalyToken, anomalyHandle);
+  // iEvent.getByToken(anomalyToken, anomalyHandle);
   // iEvent.getByToken(bitAccurateAnomalyToken, bitAccurateAnomalyHandle);
   iEvent.getByToken(precompiledModelAnomalyToken, precompiledModelAnomalyHandle);
 
@@ -124,7 +124,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   lumi = iEvent.id().luminosityBlock();
   evt  = iEvent.id().event();
 
-  anomalyScore = *anomalyHandle;  
+  // anomalyScore = *anomalyHandle;  
   // bitAccurateAnomalyScore = *bitAccurateAnomalyHandle;
   precompiledModelAnomalyScore = *precompiledModelAnomalyHandle;
   
@@ -211,7 +211,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       std::cout<<"Run: "<<run<<std::endl;
       std::cout<<"Lumi: "<<lumi<<std::endl;
       std::cout<<"Event: "<<evt<<std::endl;
-      std::cout<<"Anomaly Score: "<<anomalyScore<<std::endl;
+      // std::cout<<"Anomaly Score: "<<anomalyScore<<std::endl;
       // std::cout<<"Bit accurate anomaly score: "<<bitAccurateAnomalyScore<<std::endl;
       if(includePUInfo) std::cout<<"NPV: "<<npv<<std::endl;
       std::cout<<"ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
