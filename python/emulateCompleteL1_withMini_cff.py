@@ -29,15 +29,22 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring('l1UpgradeTree','l
 
 #Define out input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/497/00000/68E2874E-6495-E811-98C2-FA163EE0D32F.root'),
+                            fileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias1/MINIAOD/PromptReco-v2/000/320/569/00000/020CE671-3C96-E811-B611-FA163EF7B7E3.root'),
                             secondaryFileNames = cms.untracked.vstring(
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/00C024D9-C893-E811-BE8B-FA163E085754.root',
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/2C6E125A-CB93-E811-A6AD-FA163E222D2C.root',
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/4EA623EB-C993-E811-AB4A-FA163E48E52D.root',
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/5AB5C278-C893-E811-B840-FA163E365B83.root',
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/985DCB7A-C893-E811-BFC7-FA163E33D73A.root',
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/C82B8E96-C893-E811-8D87-02163E00CE99.root',
-                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/497/00000/E88C5222-CA93-E811-9F04-FA163ECFF8BE.root'
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/041811F3-6F94-E811-B723-FA163EDA3EDC.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/10B6E814-6D94-E811-9E53-02163E01A16E.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/14B6680E-6D94-E811-9C87-FA163E44D80B.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/20F59A7D-7194-E811-B65A-02163E0164F8.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/48BBDCB6-7194-E811-84CE-FA163EC7FEDF.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/5A76C334-6D94-E811-BE3C-FA163E943C2A.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/5ED16976-7194-E811-9AF5-FA163E8BC3ED.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/68CAC802-7494-E811-B11D-FA163E581BC1.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/86361D76-7294-E811-B762-FA163E337D5D.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/AC24EE4A-6D94-E811-8956-02163E00BCAD.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/B87ECA12-6D94-E811-A3E1-FA163E959DBF.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/C60DDE19-6A94-E811-85D4-FA163E298876.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/DA76F2DC-7494-E811-A646-FA163E3FE3C5.root',
+                                '/store/data/Run2018D/EphemeralZeroBias1/RAW/v1/000/320/569/00000/DC0BF10F-7094-E811-B67A-FA163EF670D6.root',
                             )
 
 )
@@ -61,9 +68,9 @@ process.options = cms.untracked.PSet(
     fileMode = cms.untracked.string('FULLMERGE'),
     forceEventSetupCacheClearOnNewRun = cms.untracked.bool(False),
     makeTriggerResults = cms.obsolete.untracked.bool,
-    numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(0),
+    numberOfConcurrentLuminosityBlocks = cms.untracked.uint32(1),
     numberOfConcurrentRuns = cms.untracked.uint32(1),
-    numberOfStreams = cms.untracked.uint32(0),
+    numberOfStreams = cms.untracked.uint32(1),
     numberOfThreads = cms.untracked.uint32(1),
     printDependencies = cms.untracked.bool(False),
     sizeOfStackForThreadsInKB = cms.optional.untracked.uint32,
@@ -87,10 +94,6 @@ associatePatAlgosToolsTask(process)
 #uGTEmulationPath = cms.Path(uGTADEmulator)
 #process.schedule.append(uGTEmulationPath)
 #Setup FWK for multithreaded
-process.options.numberOfThreads = 1
-process.options.numberOfStreams = 1
-process.options.numberOfConcurrentLuminosityBlocks = 1
-process.options.eventSetup.numberOfConcurrentIOVs = 1
 if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
 
 # customisation of the process.
@@ -115,12 +118,23 @@ process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
 process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
-process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
-process.schedule.append(process.CaloSummaryPath)
+# process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
+# process.schedule.append(process.CaloSummaryPath)
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
-process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
-process.schedule.append(process.uGTEmulationPath)
+# process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
+# process.schedule.append(process.uGTEmulationPath)
+
+process.load('L1Trigger.anomalyTriggerSkunkworks.pileupNetworkProducer_cfi')
+
+process.productionTask = cms.Task(
+    process.uct2016EmulatorDigis,
+    process.uGTADEmulator,
+    process.pileupNetworkProducer,
+)
+process.productionPath = cms.Path(process.productionTask)
+
+process.schedule.append(process.productionPath)
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
