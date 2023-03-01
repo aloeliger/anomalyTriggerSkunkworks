@@ -25,7 +25,7 @@ process.maxEvents = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #attempt to get rid of muon shower warning
-process.MessageLogger.suppressWarning = cms.untracked.vstring('l1UpgradeTree','l1UpgradeEmuTree','l1UpgradeTfMuonShowerTree', 'emtfStage2Digis')
+process.MessageLogger.suppressWarning = cms.untracked.vstring('l1UpgradeTree','l1UpgradeEmuTree','l1UpgradeTfMuonShowerTree', 'emtfStage2Digis', 'l1uGTTestcrateTree')
 
 #Define out input source
 process.source = cms.Source("PoolSource",
@@ -148,6 +148,8 @@ process.load('L1Trigger.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi'
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
 
+process.load('L1Trigger.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
+
 
 process.TFileService = cms.Service(
 	"TFileService",
@@ -158,7 +160,8 @@ process.NtuplePath = cms.Path(
                                 process.L1TCaloSummaryTestNtuplizer +
                                 process.L1TTriggerBitsNtuplizer +
                                 process.boostedJetTriggerNtuplizer +
-                                process.uGTModelNtuplizer
+                                process.uGTModelNtuplizer +
+                                process.pileupNetworkNtuplizer
                               )
 process.schedule.append(process.NtuplePath)
 

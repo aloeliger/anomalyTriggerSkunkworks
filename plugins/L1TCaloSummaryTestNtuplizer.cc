@@ -36,13 +36,10 @@ private:
   void endJob() override {};
   
   //Just some stuff to let us actually ntuplize everything
-  // edm::EDGetTokenT< float > anomalyToken;
-  // edm::EDGetTokenT< float > bitAccurateAnomalyToken;
-  edm::EDGetTokenT< float > precompiledModelAnomalyToken;
+  edm::EDGetTokenT< float > anomalyToken;
+
   edm::EDGetTokenT<std::vector<reco::Vertex>> vertexToken;
-  // float anomalyScore;
-  // float bitAccurateAnomalyScore;
-  float precompiledModelAnomalyScore;
+  float anomalyScore;
 
   edm::EDGetTokenT<EcalTrigPrimDigiCollection> ecalTPSource;
   edm::EDGetTokenT<HcalTrigPrimDigiCollection> hcalTPSource;
@@ -70,9 +67,7 @@ private:
 };
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
-  // anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
-  // bitAccurateAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("bitAccurateScoreSource")) ),
-  precompiledModelAnomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("precompiledModelScoreSource")) ),
+  anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
   vertexToken( consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
   ecalTPSource(consumes<EcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("ecalToken"))),
   hcalTPSource(consumes<HcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("hcalToken"))),
@@ -91,9 +86,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("lumi", &lumi);
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
-  // triggerTree -> Branch("anomalyScore", &anomalyScore);
-  // triggerTree -> Branch("bitAccurateAnomalyScore", &bitAccurateAnomalyScore);
-  triggerTree -> Branch("precompiledModelAnomalyScore", &precompiledModelAnomalyScore);
+  triggerTree -> Branch("anomalyScore", &anomalyScore);
   triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/s");
   triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/s");
   triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
@@ -112,22 +105,16 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   using namespace edm;
 
   //little bit wordy, but should function?
-  // edm::Handle< float > anomalyHandle;
-  // edm::Handle< float > bitAccurateAnomalyHandle;
-  edm::Handle< float > precompiledModelAnomalyHandle;
+  edm::Handle< float > anomalyHandle;
   edm::Handle< std::vector< reco::Vertex > > vertexHandle;
-  // iEvent.getByToken(anomalyToken, anomalyHandle);
-  // iEvent.getByToken(bitAccurateAnomalyToken, bitAccurateAnomalyHandle);
-  iEvent.getByToken(precompiledModelAnomalyToken, precompiledModelAnomalyHandle);
+  iEvent.getByToken(anomalyToken, anomalyHandle);
 
   run  = iEvent.id().run();
   lumi = iEvent.id().luminosityBlock();
   evt  = iEvent.id().event();
 
-  // anomalyScore = *anomalyHandle;  
-  // bitAccurateAnomalyScore = *bitAccurateAnomalyHandle;
-  precompiledModelAnomalyScore = *precompiledModelAnomalyHandle;
-  
+  anomalyScore = *anomalyHandle;  
+
   //figure out primary vertices if that's a thing we want to include
   if(includePUInfo)
     {
@@ -216,72 +203,72 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       if(includePUInfo) std::cout<<"NPV: "<<npv<<std::endl;
       std::cout<<"ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i = 0; i < 72; i++)
-	{
-	  for(int j = 0; j < 56; j++)
-	    {
-	      std::cout<<ecalTPData[i][j]<<" ";
-	    }
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j = 0; j < 56; j++)
+          {
+            std::cout<<ecalTPData[i][j]<<" ";
+          }
+        std::cout<<std::endl;
+      }
       std::cout<<"Regional ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i =0; i < 18; i++)
-	{
-	  for(int j = 0; j<14; j++)
-	    {
-	      std::cout<<regional_ecalTPData[i][j]<<" ";
-	    }
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j = 0; j<14; j++)
+          {
+            std::cout<<regional_ecalTPData[i][j]<<" ";
+          }
+        std::cout<<std::endl;
+      }
       std::cout<<"HCAL TPs at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i = 0; i < 72; i++)
-	{
-	  for(int j = 0; j < 56; j++)
-	    {
-	      std::cout<<hcalTPData[i][j]<<" ";
-	    }
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j = 0; j < 56; j++)
+          {
+            std::cout<<hcalTPData[i][j]<<" ";
+          }
+        std::cout<<std::endl;
+      }
       std::cout<<"Regional HCAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i =0; i < 18; i++)
-	{
-	  for(int j = 0; j<14; j++)
-	    {
-	      std::cout<<regional_hcalTPData[i][j]<<" ";
-	    }
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j = 0; j<14; j++)
+          {
+            std::cout<<regional_hcalTPData[i][j]<<" ";
+          }
+        std::cout<<std::endl;
+      }
       std::cout<<"Naive summed TPs at L1TCaloSummarytestntuplizer"<<std::endl;
       for(int i =0; i < 72; i++)
-	{
-	  for(int j = 0; j < 56; j++)
-	    {
-	      std::cout<<ecalTPData[i][j]+hcalTPData[i][j]<<" ";
-	    }
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j = 0; j < 56; j++)
+          {
+            std::cout<<ecalTPData[i][j]+hcalTPData[i][j]<<" ";
+          }
+        std::cout<<std::endl;
+      }
       std::cout<<"Naive summed regional TPs at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i =0; i < 18; i++)
-	{
-	  for(int j = 0; j<14; j++)
-	    {
-	      std::cout<<regional_ecalTPData[i][j]+regional_hcalTPData[i][j]<<" ";
-	    }
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j = 0; j<14; j++)
+          {
+            std::cout<<regional_ecalTPData[i][j]+regional_hcalTPData[i][j]<<" ";
+          }
+        std::cout<<std::endl;
+      }
       std::cout<<"Tau bit array from the emulator"<<std::endl;
       for(int i=0; i<18; i++)
-	{
-	  for(int j=0;j<14;j++)
-	    std::cout<<tauBits[i][j]<<" ";
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j=0;j<14;j++)
+          std::cout<<tauBits[i][j]<<" ";
+        std::cout<<std::endl;
+      }
       std::cout<<"EG bit array from the emulator"<<std::endl;
       for(int i=0; i<18; i++)
-	{
-	  for(int j=0;j<14;j++)
-	    std::cout<<egBits[i][j]<<" ";
-	  std::cout<<std::endl;
-	}
+      {
+        for(int j=0;j<14;j++)
+          std::cout<<egBits[i][j]<<" ";
+        std::cout<<std::endl;
+      }
     }
 
   triggerTree->Fill();
