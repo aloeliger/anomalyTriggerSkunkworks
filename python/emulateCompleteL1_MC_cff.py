@@ -77,7 +77,7 @@ associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
 process.options.numberOfThreads = 4
-process.options.numberOfStreams = 0
+process.options.numberOfStreams = 4
 process.options.numberOfConcurrentLuminosityBlocks = 1
 process.options.eventSetup.numberOfConcurrentIOVs = 1
 if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
@@ -104,12 +104,23 @@ process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
 process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
-process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
-process.schedule.append(process.CaloSummaryPath)
+# process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
+# process.schedule.append(process.CaloSummaryPath)
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
-process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
-process.schedule.append(process.uGTEmulationPath)
+# process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
+# process.schedule.append(process.uGTEmulationPath)
+
+process.load('L1Trigger.anomalyTriggerSkunkworks.pileupNetworkProducer_cfi')
+
+process.productionTask = cms.Task(
+    process.uct2016EmulatorDigis,
+    process.uGTADEmulator,
+    process.pileupNetworkProducer,
+)
+process.productionPath = cms.Path(process.productionTask)
+
+process.schedule.append(process.productionPath)
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
@@ -122,6 +133,8 @@ process.load('L1Trigger.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi'
 
 process.load('L1Trigger.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
 
+process.load('L1Trigger.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
+
 process.TFileService = cms.Service(
 	"TFileService",
 	#fileName = cms.string("l1TNtuple-test.root")
@@ -131,7 +144,8 @@ process.NtuplePath = cms.Path(
                                 process.L1TCaloSummaryTestNtuplizer +
                                 process.L1TTriggerBitsNtuplizer +
                                 process.boostedJetTriggerNtuplizer +
-                                process.uGTModelNtuplizer
+                                process.uGTModelNtuplizer +
+                                process.pileupNetworkNtuplizer
                               )
 process.schedule.append(process.NtuplePath)
 
