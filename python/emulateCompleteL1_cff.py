@@ -75,8 +75,8 @@ from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 #Setup FWK for multithreaded
-process.options.numberOfThreads = 1
-process.options.numberOfStreams = 1
+process.options.numberOfThreads = 4
+process.options.numberOfStreams = 4
 process.options.numberOfConcurrentLuminosityBlocks = 1
 process.options.eventSetup.numberOfConcurrentIOVs = 1
 if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
@@ -157,9 +157,9 @@ process.NtuplePath = cms.Path(
 process.schedule.append(process.NtuplePath)
 
 
-print(process.schedule)
-print("**************************************************")
-print([x for x in process.schedule])
+# print(process.schedule)
+# print("**************************************************")
+# print([x for x in process.schedule])
 
 #Add early deletion of temporary data products to reduce peak memory need
 from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
