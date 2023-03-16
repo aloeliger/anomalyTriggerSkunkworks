@@ -25,7 +25,14 @@ process.maxEvents = cms.untracked.PSet(
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #attempt to get rid of muon shower warning
-process.MessageLogger.suppressWarning = cms.untracked.vstring('l1UpgradeTree','l1UpgradeEmuTree','l1UpgradeTfMuonShowerTree', 'emtfStage2Digis', 'l1uGTTestcrateTree')
+process.MessageLogger.suppressWarning = cms.untracked.vstring(
+    'l1UpgradeTree',
+    'l1UpgradeEmuTree',
+    'l1UpgradeTfMuonShowerTree', 
+    'emtfStage2Digis', 
+    'l1uGTTestcrateTree', 
+    'simDtTriggerPrimitiveDigis'
+)
 
 #Define out input source
 process.source = cms.Source("PoolSource",

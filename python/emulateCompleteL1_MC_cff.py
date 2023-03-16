@@ -26,6 +26,16 @@ process.maxEvents = cms.untracked.PSet(
 )
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
+#attempt to get rid of muon shower warning
+process.MessageLogger.suppressWarning = cms.untracked.vstring(
+    'l1UpgradeTree',
+    'l1UpgradeEmuTree',
+    'l1UpgradeTfMuonShowerTree', 
+    'emtfStage2Digis', 
+    'l1uGTTestcrateTree', 
+    'simDtTriggerPrimitiveDigis'
+)
+
 #Define out input source
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(options.inputFiles),
@@ -64,7 +74,7 @@ process.options = cms.untracked.PSet(
 from Configuration.AlCa.GlobalTag import GlobalTag
 #process.GlobalTag = GlobalTag(process.GlobalTag, '120X_dataRun2_v2', '')
 #process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
-process.GlobalTag = GlobalTag(process.GlobalTag, '124X_mcRun3_2022_realistic_v8', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '124X_mcRun3_2022_realistic_v12', '')
 
 # Path and EndPath definitions
 process.raw2digi_step = cms.Path(process.RawToDigi)
