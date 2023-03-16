@@ -48,6 +48,8 @@ private:
   unsigned short int regional_ecalTPData[18][14];
   unsigned short int regional_hcalTPData[18][14];
 
+  unsigned short int modelInput[18][14];
+
 
 
   //Stuff pulled from the emulator region collection
@@ -91,6 +93,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/s");
   triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
   triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
+  triggerTree -> Branch("modelInput", &modelInput, "modelInput");
   triggerTree -> Branch("tauBits", &tauBits, "tauBits[18][14]/O");
   triggerTree -> Branch("egBits", &egBits, "tauBits[18][14]/O");
 }
@@ -190,6 +193,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
     {
       tauBits[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.tauVeto();
       egBits[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.overFlow(); //This is the EG bit, as define in the L1 Calo Region return ((m_data >> 10) & 0x1) != 0;, 12th bit in the data, which is where this gets stored in the region summary 0x00000400
+      modelInput[theRegion.gctPhi()][theRegion.gctEta()-4] = theRegion.et();
     }
   
   //Do event reporting if requested
@@ -267,6 +271,13 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       {
         for(int j=0;j<14;j++)
           std::cout<<egBits[i][j]<<" ";
+        std::cout<<std::endl;
+      }
+      std::cout<<"Direct model input"<<std::endl;
+      for(int i =0; i<18; i++)
+      {
+        for(int j=0; j<14; j++)
+          std::cout<<modelInput[i][j]<<" ";
         std::cout<<std::endl;
       }
     }
