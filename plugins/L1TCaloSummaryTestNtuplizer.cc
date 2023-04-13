@@ -43,8 +43,6 @@ private:
 
   edm::EDGetTokenT<EcalTrigPrimDigiCollection> ecalTPSource;
   edm::EDGetTokenT<HcalTrigPrimDigiCollection> hcalTPSource;
-  unsigned short int ecalTPData[72][56];
-  unsigned short int hcalTPData[72][56];
   unsigned short int regional_ecalTPData[18][14];
   unsigned short int regional_hcalTPData[18][14];
 
@@ -83,17 +81,15 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   //Properly spaces out the entries.
 
   //create some ntuplization brickwork
-  triggerTree = theFileService->make< TTree >("L1TCaloSummaryOutput","(emulator) L1CaloSummary informatione");
+  triggerTree = theFileService->make< TTree >("L1TCaloSummaryOutput","(emulator) L1CaloSummary information");
   triggerTree -> Branch("run",  &run);
   triggerTree -> Branch("lumi", &lumi);
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch("anomalyScore", &anomalyScore);
-  triggerTree -> Branch("ecalTPs", &ecalTPData, "ecalTPs[72][56]/s");
-  triggerTree -> Branch("hcalTPs", &hcalTPData, "hcalTPs[72][56]/s");
   triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
   triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
-  triggerTree -> Branch("modelInput", &modelInput, "modelInput");
+  triggerTree -> Branch("modelInput", &modelInput, "modelInput[18][14]/s");
   triggerTree -> Branch("tauBits", &tauBits, "tauBits[18][14]/O");
   triggerTree -> Branch("egBits", &egBits, "tauBits[18][14]/O");
 }
@@ -128,17 +124,13 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   //Sort out TP information and print it
   edm::Handle<EcalTrigPrimDigiCollection> ecalTPs;
   edm::Handle<HcalTrigPrimDigiCollection> hcalTPs;
-  for (int i = 0; i < 72; i++)
-    for (int j = 0; j < 56; j++)
-      {
-	ecalTPData[i][j] = 0;
-	hcalTPData[i][j] = 0;
-      }
+
   for (int i = 0; i < 18; i++)
     for (int j = 0; j < 14; j++)
       {
-	regional_ecalTPData[i][j] = 0;
-	regional_hcalTPData[i][j] = 0;
+	      regional_ecalTPData[i][j] = 0;
+	      regional_hcalTPData[i][j] = 0;
+        modelInput[i][j] = 0;
       }
 
 
@@ -162,7 +154,6 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
 
       ecalTP.compressedEt() > 0xFF? et=0xFF : et = ecalTP.compressedEt();
 
-      ecalTPData[phi][eta] = et;
       regional_ecalTPData[phi/4][eta/4] += et;
     }
   //Do the same for HCAL
@@ -182,7 +173,6 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
 
       hcalTP.SOI_compressedEt() > 0xFF? et=0xFF : et = hcalTP.SOI_compressedEt();
 
-      hcalTPData[phi][eta] = et;
       regional_hcalTPData[phi/4][eta/4] += et;
     }
 
@@ -205,15 +195,6 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       // std::cout<<"Anomaly Score: "<<anomalyScore<<std::endl;
       // std::cout<<"Bit accurate anomaly score: "<<bitAccurateAnomalyScore<<std::endl;
       if(includePUInfo) std::cout<<"NPV: "<<npv<<std::endl;
-      std::cout<<"ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
-      for(int i = 0; i < 72; i++)
-      {
-        for(int j = 0; j < 56; j++)
-          {
-            std::cout<<ecalTPData[i][j]<<" ";
-          }
-        std::cout<<std::endl;
-      }
       std::cout<<"Regional ECAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i =0; i < 18; i++)
       {
@@ -223,30 +204,12 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
           }
         std::cout<<std::endl;
       }
-      std::cout<<"HCAL TPs at L1TCalosummarytestntuplizer"<<std::endl;
-      for(int i = 0; i < 72; i++)
-      {
-        for(int j = 0; j < 56; j++)
-          {
-            std::cout<<hcalTPData[i][j]<<" ";
-          }
-        std::cout<<std::endl;
-      }
       std::cout<<"Regional HCAL TPs (No Processing!) at L1TCalosummarytestntuplizer"<<std::endl;
       for(int i =0; i < 18; i++)
       {
         for(int j = 0; j<14; j++)
           {
             std::cout<<regional_hcalTPData[i][j]<<" ";
-          }
-        std::cout<<std::endl;
-      }
-      std::cout<<"Naive summed TPs at L1TCaloSummarytestntuplizer"<<std::endl;
-      for(int i =0; i < 72; i++)
-      {
-        for(int j = 0; j < 56; j++)
-          {
-            std::cout<<ecalTPData[i][j]+hcalTPData[i][j]<<" ";
           }
         std::cout<<std::endl;
       }
