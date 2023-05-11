@@ -28,7 +28,7 @@ def makeTreeTuples():
         ROOT.kMagenta,
     ]
 
-    location = os.getenv("CMSSW_BASE")+'/src/L1Trigger/anomalyTriggerSkunkworks/data/pileupNtuples/'
+    location = os.getenv("CMSSW_BASE")+'/src/anomalyDetection/anomalyTriggerSkunkworks/data/pileupNtuples/'
 
     files = []
     trees = []
