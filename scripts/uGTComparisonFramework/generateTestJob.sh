@@ -18,4 +18,5 @@ farmoutAnalysisJobs --vsize-limit 8000 --memory-requirements 8000 --infer-cmssw-
     --assume-input-files-exist \
     --opsys="CentOS7" \
     --input-dir=/ \
+    --extra-usercode-files=$CMSSW_BASE/src/L1Trigger/CICADA/ \
     "testRun" "${CONFIG}" 'outputFile=$outputFileName' 'inputFiles=$inputFileNames'

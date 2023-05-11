@@ -26,7 +26,7 @@ def main(args):
 
     print('Determining maximum and minimum score...')
     for run in tqdm(runs):
-        caloMaxes.append(runs[run].chain.GetMaximum('anomalyScore'))
+        caloMaxes.append(min(runs[run].chain.GetMaximum('anomalyScore'),60))
         caloMins.append(runs[run].chain.GetMinimum('anomalyScore'))
         uGTMaxes.append(runs[run].chain.GetMaximum('uGTAnomalyScore'))
         uGTMins.append(runs[run].chain.GetMinimum('uGTAnomalyScore'))
@@ -65,7 +65,7 @@ def main(args):
         #     runSample.GetEntry(i)
         #     caloScorePlots[runName].Fill(runSample.chain.anomalyScore)
         #     uGTScorePlots[runName].Fill(runSample.chain.uGTAnomalyScore)
-        runSample.chain.Draw(f'anomalyScore>>{runName}CaloScores')
+        runSample.chain.Draw(f'anomalyScore>>{runName}CaloScores', 'anomalyScore < 60')
         runSample.chain.Draw(f'uGTAnomalyScore>>{runName}uGTScores')
         caloScorePlots[runName].Scale(1.0/caloScorePlots[runName].Integral())
         uGTScorePlots[runName].Scale(1.0/uGTScorePlots[runName].Integral())

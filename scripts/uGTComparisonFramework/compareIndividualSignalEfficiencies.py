@@ -4,10 +4,10 @@ from samples.SUEPSamples import suepSample
 from samples.VBFHToTauTauSample import vbfHToTauTauSample
 from samples.HTo2LongLivedTo4bSample import HTo2LongLivedTo4bSample
 from samples.TTSample import ttSample
-from samples.GluGluToHHTo4B_node_cHHH1_sample import GluGluHTo4B_cHHH1_sample
-from samples.GluGluToHHTo4B_node_cHHH5_sample import GluGluHTo4B_cHHH5_sample
+from samples.GluGluToHHTo4B_highSamples import GluGluToHHto4B_highSample
+from samples.GluGluToHHTo4B_lowSamples import GluGluToHHto4B_lowSample
 from samples.SUSYSamples import SusyGluGluToBBHToBBSample
-from samples.ZToEESamples import ZToEESample
+from samples.DYLLSamples import DYLLSample
 
 from tqdm import tqdm, trange
 import ROOT
@@ -53,10 +53,10 @@ def main(args):
         'VBFHTT': vbfHToTauTauSample,
         'HLongLived': HTo2LongLivedTo4bSample,
         # #'TT': ttSample, #This is sort of too big to do this kind of analysis on.
-        'GluGluHH4b_cHHH1': GluGluHTo4B_cHHH1_sample,
-        'GluGluHH4B_cHHH5': GluGluHTo4B_cHHH5_sample,
+        'GluGluToHHto4B_highSample': GluGluToHHto4B_highSample,
+        'GluGluToHHto4B_lowSample': GluGluToHHto4B_lowSample,
         'SUSY': SusyGluGluToBBHToBBSample,
-        'ZToEE': ZToEESample,
+        'DYLLSample': DYLLSample,
     }
     triggerGroups = {
         'CICADA3kHz' : ['CICADA3kHz'],

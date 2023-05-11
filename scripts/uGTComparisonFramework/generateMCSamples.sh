@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 
-VERSION=2
-samples=('GluGluToHHTo4B_node_cHHH1' 'GluGluToHHTo4B_node_cHHH5' 'HTo2LongLivedTo4b' 'TT' 'VBFHToTauTau', 'SUSYGluGluToBBHToBB_NarrowWidth_M-350' 'ZToEE')
+VERSION=3
+samples=('GluGlutoHHto4B_kl-0p00_kt-1p00_c2-0p00' 'GluGlutoHHto4B_kl-1p00_kt-1p00_c2-3p00' 'HTo2LongLivedTo4b' 'TT' 'VBFHToTauTau', 'SUSYGluGluToBBHToBB_NarrowWidth_M-120' 'DYTo2L_MLL-4to50' 'GluGluHToTauTau' 'VBFHToTauTau')
 
-#samples=('ZToEE')
+#samples=('VBFHToTauTau')
 
 for sample in "${samples[@]}"; do
 

@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-VERSION=2
+VERSION=3
 runs=('A' 'B' 'C' 'D')
+#runs=('C')
 
 for i in "${runs[@]}"; do
 

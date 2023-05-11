@@ -1,7 +1,7 @@
 from .sample import sample
 import os
 
-hdfsPath = '/hdfs/store/user/aloeliger/uGTComparisons/'
+hdfsPath = '/hdfs/store/user/aloeliger/uGTComparisons/v_2/'
 runAPath = hdfsPath+'RunA/'
 runBPath = hdfsPath+'RunB/'
 runCPath = hdfsPath+'RunC/'

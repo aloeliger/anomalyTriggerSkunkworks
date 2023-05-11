@@ -4,7 +4,9 @@ from samples.dataSamples import runASample,runBSample,runCSample,runDSample
 import json
 from tqdm import tqdm
 import math
+from L1Trigger.anomalyTriggerSkunkworks.utilities.decorators import *
 
+@debug_function
 def getThresholdForRate(ratePlot, rate):
     nBins = ratePlot.GetNbinsX()
     theBin = 0
@@ -55,7 +57,7 @@ def main(args):
 
     print('Determining maximum and minimum score...')
     for run in tqdm(runs):
-        caloMaxes.append(runs[run].chain.GetMaximum('anomalyScore'))
+        caloMaxes.append(min(runs[run].chain.GetMaximum('anomalyScore'), 60))
         caloMins.append(runs[run].chain.GetMinimum('anomalyScore'))
         uGTMaxes.append(runs[run].chain.GetMaximum('uGTAnomalyScore'))
         uGTMins.append(runs[run].chain.GetMinimum('uGTAnomalyScore'))

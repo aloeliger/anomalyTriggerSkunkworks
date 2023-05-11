@@ -17,10 +17,10 @@ def main(args):
         'VBFHTT': 'VBF H#rightarrow#tau#tau',
         'HLongLived': 'H#rightarrow 2 Long Lived #rightarrow 4b',
         'TT': 't#bar{t}',
-        'GluGluHH4b_cHHH1': 'HH#rightarrow 4b (ggH, cHHH1)',
-        'GluGluHH4B_cHHH5': 'HH#rightarrow 4b (ggH, cHHH5)',
+        'GluGluToHHto4B_highSample': 'HH#rightarrow 4b (ggH, kl-1p00_kt-1p00_c2-3p00)',
+        'GluGluToHHTo4B_lowSample': 'HH#rightarrow 4b (kl-0p00_kt-1p00_c2-0p00)',
         'SUSY': 'SUSY gg #rightarrow bbH #rightarrow bb',
-        'ZToEE': 'Z #rightarrow ee'
+        'DYLLSample': 'DY #rightarrow LL (m 4-50)'
     }
 
     zeroBiasAccepts = getattr(theFile, f'{data[0]}Numerator').Clone()
