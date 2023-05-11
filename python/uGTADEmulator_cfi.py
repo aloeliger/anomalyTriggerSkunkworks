@@ -6,5 +6,5 @@ uGTADEmulator = cms.EDProducer(
     jetToken = cms.untracked.InputTag("caloStage2Digis","Jet"),
     muonToken = cms.untracked.InputTag("gmtStage2Digis","Muon"),
     sumToken = cms.untracked.InputTag("caloStage2Digis","EtSum"),
-    anomalyModelLocation = cms.string("/src/L1Trigger/anomalyTriggerSkunkworks/data/uGTADModel/uGTModel/"),
+    anomalyModelLocation = cms.string("/src/anomalyDetection/anomalyTriggerSkunkworks/data/uGTADModel/uGTModel/"),
 )
