@@ -103,15 +103,15 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
 process.schedule.append(process.CaloSummaryPath)
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
 process.L1TCaloSummaryTestNtuplizer.verboseDebug = cms.bool(True)
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
 process.L1TCaloSummaryTestNtuplizer.hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis')
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
 process.L1TTriggerBitsNtuplizer.verboseDebug = cms.bool(True)
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 process.boostedJetTriggerNtuplizer.verboseDebug = cms.bool(True)
 
 process.TFileService = cms.Service(

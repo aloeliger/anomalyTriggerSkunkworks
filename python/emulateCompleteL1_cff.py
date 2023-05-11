@@ -113,12 +113,12 @@ process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 #process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
 #process.schedule.append(process.CaloSummaryPath)
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
 #process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
 #process.schedule.append(process.uGTEmulationPath)
 
 #get the pileup network
-process.load('L1Trigger.anomalyTriggerSkunkworks.pileupNetworkProducer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkProducer_cfi')
 
 process.productionTask = cms.Task(
     process.uct2016EmulatorDigis,
@@ -135,18 +135,18 @@ process.productionPath = cms.Path(process.productionTask)
 
 process.schedule.append(process.productionPath)
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
 process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
 process.L1TCaloSummaryTestNtuplizer.hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis')
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
 process.L1TTriggerBitsNtuplizer.verboseDebug= cms.bool(False)
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
 
-process.load('L1Trigger.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
 
 
 process.TFileService = cms.Service(
