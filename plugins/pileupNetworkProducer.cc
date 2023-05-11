@@ -33,7 +33,8 @@ class pileupNetworkProducer : public edm::stream::EDProducer<>{
         //void beginRun(edm::Run const&, edm::EventSetup const&) override;
 
         edm::EDGetTokenT<L1CaloRegionCollection> regionToken;
-
+  
+        tensorflow::Options options;
         tensorflow::MetaGraphDef* metaGraph;
         tensorflow::Session* session;
 };
@@ -48,8 +49,8 @@ pileupNetworkProducer::pileupNetworkProducer(const edm::ParameterSet& iConfig)
     pathToModel.append(iConfig.getParameter<string>("pileupModelLocation"));
     produces<float>("pileupPrediction");
 
-    metaGraph = tensorflow::loadMetaGraph(pathToModel);
-    session = tensorflow::createSession(metaGraph, pathToModel);
+    metaGraph = tensorflow::loadMetaGraphDef(pathToModel);
+    session = tensorflow::createSession(metaGraph, pathToModel, options);
 }
 
 pileupNetworkProducer::~pileupNetworkProducer()

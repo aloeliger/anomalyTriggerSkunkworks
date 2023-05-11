@@ -46,6 +46,7 @@ class uGTADEmulator : public edm::stream::EDProducer<> {
         const edm::EDGetTokenT<l1t::MuonBxCollection> muonToken_;
 
         //Used for the auto-encoder/anomaly trigger emulation
+        tensorflow::Options options;
         tensorflow::MetaGraphDef* metaGraph;
         tensorflow::Session* session;
 
@@ -182,8 +183,8 @@ uGTADEmulator::uGTADEmulator (const edm::ParameterSet& iConfig):
     std::string fullPathToModel(std::getenv("CMSSW_BASE"));
     fullPathToModel.append(iConfig.getParameter<string>("anomalyModelLocation"));
 
-    metaGraph = tensorflow::loadMetaGraph(fullPathToModel);
-    session = tensorflow::createSession(metaGraph, fullPathToModel);
+    metaGraph = tensorflow::loadMetaGraphDef(fullPathToModel);
+    session = tensorflow::createSession(metaGraph, fullPathToModel, options);
 
     produces<float>("uGTAnomalyScore");
 }
