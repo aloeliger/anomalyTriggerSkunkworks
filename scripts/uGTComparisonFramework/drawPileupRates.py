@@ -2,7 +2,7 @@ import argparse
 import ROOT
 from anomalyTriggerThresholds.thresholdHelper import thresholdHelper
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import convertEffToRate
 
 def convertBinToRates(theHistogram, theBinNumber):
     hist = theHistogram.Clone()

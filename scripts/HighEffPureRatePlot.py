@@ -10,7 +10,7 @@ import ROOT
 import os
 from tqdm import tqdm, trange
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
 
 #This list may not be comprehensive, or right
 #need to research how the l1GtUtils figured out the prescaling

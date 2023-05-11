@@ -8,8 +8,8 @@ NFS_LOCATION="/nfs_scratch/aloeliger/L1TriggerBitTest/allv${VERSION}/EphemeralZe
 DAGS_LOCATION="${NFS_LOCATION}/dags/"
 SUBMIT_LOCATION="${NFS_LOCATION}/submit/"
 OUTPUT_DIR="/hdfs/store/user/aloeliger/L1TriggerBitTest/allv${VERSION}/"
-INPUT_FILES="$CMSSW_BASE/src/L1Trigger/anomalyTriggerSkunkworks/metaData/ephemeralZeroBias${i}_files.txt"
-CONFIG="$CMSSW_BASE/src/L1Trigger/anomalyTriggerSkunkworks/python/emulateCompleteL1_cff.py"
+INPUT_FILES="$CMSSW_BASE/src/anomalyDetection/anomalyTriggerSkunkworks/metaData/ephemeralZeroBias${i}_files.txt"
+CONFIG="$CMSSW_BASE/src/anomalyDetection/anomalyTriggerSkunkworks/python/emulateCompleteL1_cff.py"
 
 mkdir -p ${DAGS_LOCATION}
 

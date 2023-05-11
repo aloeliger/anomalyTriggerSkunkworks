@@ -11,8 +11,8 @@ NFS_LOCATION="/nfs_scratch/aloeliger/uGTComparison/v_${VERSION}/${sample}"
 DAGS_LOCATION="${NFS_LOCATION}/dags/"
 SUBMIT_LOCATION="${NFS_LOCATION}/submit/"
 OUTPUT_DIR="/hdfs/store/user/aloeliger/uGTComparisons/v_${VERSION}/${sample}/"
-INPUT_FILES="${CMSSW_BASE}/src/L1Trigger/anomalyTriggerSkunkworks/metaData/${sample}_files.txt"
-CONFIG="$CMSSW_BASE/src/L1Trigger/anomalyTriggerSkunkworks/python/emulateCompleteL1_MC_cff.py"
+INPUT_FILES="${CMSSW_BASE}/src/anomalyDetection/anomalyTriggerSkunkworks/metaData/${sample}_files.txt"
+CONFIG="$CMSSW_BASE/src/anomalyDetection/anomalyTriggerSkunkworks/python/emulateCompleteL1_MC_cff.py"
 
 mkdir -p ${DAGS_LOCATION}
 

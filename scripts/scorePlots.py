@@ -1,6 +1,6 @@
 #let's recreate the original score and efficiency distribution plots
 #let's attempt to do this vaguely right this time
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.PUScoreSettings import makeTreeTuples
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.PUScoreSettings import makeTreeTuples
 import ROOT
 import os
 import math

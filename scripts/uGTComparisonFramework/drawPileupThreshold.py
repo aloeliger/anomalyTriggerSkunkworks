@@ -2,7 +2,7 @@ import argparse
 import ROOT
 import math
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import convertEffToRate
 from drawFrequencyStability import getThresholdForRate
 
 def createRatePlot(scorePlot):

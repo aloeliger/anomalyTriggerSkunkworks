@@ -1,5 +1,5 @@
 #PU plots
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.PUScoreSettings import makeTreeTuples
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.PUScoreSettings import makeTreeTuples
 import ROOT
 import os
 import math

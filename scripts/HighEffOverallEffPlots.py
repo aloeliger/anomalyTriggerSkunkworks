@@ -2,7 +2,7 @@ import ROOT
 import os
 import argparse
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
 
 unPreScaledBits = [
     'L1_SingleMu22',

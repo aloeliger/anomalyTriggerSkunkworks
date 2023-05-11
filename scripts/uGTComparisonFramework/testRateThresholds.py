@@ -4,7 +4,7 @@ from samples.dataSamples import runASample,runBSample,runCSample,runDSample
 import json
 from tqdm import tqdm
 import math
-from L1Trigger.anomalyTriggerSkunkworks.utilities.decorators import *
+from anomalyDetection.anomalyTriggerSkunkworks.utilities.decorators import *
 
 @debug_function
 def getThresholdForRate(ratePlot, rate):

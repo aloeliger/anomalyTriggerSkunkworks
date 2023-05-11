@@ -29,7 +29,7 @@ PUConfigurations = [
 for maxRateConfig in maxRateConfigurations:
     for PUConfig in PUConfigurations:
         theCall = ["python3",
-                   "$CMSSW_BASE/src/L1Trigger/anomalyTriggerSkunkworks/scripts/efficiencyRatePlots.py",
+                   "$CMSSW_BASE/src/anomalyDetection/anomalyTriggerSkunkworks/scripts/efficiencyRatePlots.py",
                    "--condition",
                    PUConfig[0],
                    "--binLabel",

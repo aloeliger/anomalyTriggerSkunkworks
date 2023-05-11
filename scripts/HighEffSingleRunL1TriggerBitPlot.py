@@ -8,7 +8,7 @@ import argparse
 from tqdm import tqdm
 import time
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
 
 def main(args):
     theFile = ROOT.TFile('/nfs_scratch/aloeliger/MenuComparison_Run%i.root' % args.theRun, 'RECREATE')

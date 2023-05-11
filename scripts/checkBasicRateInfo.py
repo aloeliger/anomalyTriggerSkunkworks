@@ -3,7 +3,7 @@ from prettytable import PrettyTable
 import argparse
 from collections import OrderedDict
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import getListOfUniqueEntries, convertEffToRate
 from tqdm import trange
 
 from HighEffSingleRunPureRatePlot import *

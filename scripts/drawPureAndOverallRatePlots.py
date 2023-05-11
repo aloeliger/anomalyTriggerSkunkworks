@@ -3,7 +3,7 @@ import os
 import argparse
 import re
 
-from L1Trigger.anomalyTriggerSkunkworks.plotSettings.utilities import  convertEffToRate
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import  convertEffToRate
 
 def convertHistFromEffToRate(theHistogram):
     theNewHistogram = theHistogram.Clone()
