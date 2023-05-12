@@ -79,7 +79,7 @@ def main(args):
         patience=10
     )
     bestModel = keras.callbacks.ModelCheckpoint(
-        filepath='./pileupModel.hdf5',
+        filepath='./pileupModel',
         monitor='val_loss',
         save_best_only=True
     )
@@ -87,7 +87,7 @@ def main(args):
     model.fit(
         xTrain,
         yTrain,
-        epochs=500,
+        epochs=30,
         validation_data=(xVal,yVal),
         callbacks=[
             reduceLR, 
