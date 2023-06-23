@@ -2,12 +2,12 @@
 
 import ROOT
 from anomalyDetection.anomalyTriggerSkunkworks.samples.EphemeralZeroBias import EphemeralZeroBiasSample
-import numpy as np
 from tqdm import tqdm
+import argparse
 
 #We need to create histograms for objects
 
-def main():
+def main(args):
     objects = {
         'EGamma':{
             'tree': 'caloStage2EGammaNtuplizer/L1CaloEgammaInformation',
@@ -62,9 +62,9 @@ def main():
         },
     }
 
-    cicadaThresholds = [0.0, 3.0, 5.0, 6.0, 7.0]
+    cicadaThresholds = args.thresholds
 
-    outputFile = ROOT.TFile('/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/triggerObjectPlots.root', 'RECREATE')
+    outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/triggerObjectPlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')
     # theDataframe = EphemeralZeroBiasSample.getNewDataframe(["CICADAv1ntuplizer/L1TCaloSummaryOutput"])
     for object in tqdm(objects, desc="objects"):
         hists = []
@@ -73,7 +73,7 @@ def main():
         #because of re-used filters.
         theDataframe = EphemeralZeroBiasSample.getNewDataframe(
             [
-                'CICADAv1ntuplizer/L1TCaloSummaryOutput',
+                f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 objects[object]['tree']
             ]
         ) 
@@ -100,4 +100,25 @@ def main():
     
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Create plots about trigger objects for certain CICADA thresholds")
+    parser.add_argument(
+        '-v',
+        '--CICADAVersion',
+        default=1,
+        type=int,
+        help='Version to pull the ntuplizer from',
+        choices=[1,2],
+        nargs='?',
+    )
+    parser.add_argument(
+        '-t',
+        '--thresholds',
+        default=[0.0, 3.0, 5.0, 6.0, 7.0],
+        type=float,
+        nargs='*',
+        help='Thresholds of CICADA plot to make',
+    )
+
+    args = parser.parse_args()
+
+    main(args)

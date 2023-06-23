@@ -2,8 +2,9 @@
 
 import ROOT
 import os
+import argparse
 
-def main():
+def main(args):
     ROOT.gStyle.SetOptStat(0)
 
     objects = [
@@ -33,26 +34,48 @@ def main():
         },
     }
     # cicadaThresholds = [0.0, 3.0, 5.0, 6.0, 7.0]
-    cicadaThresholds = {
-        0.0: {
-            'color': 40
-        },
-        3.0: {
-            'color': 41
-        },
-        5.0: {
-            'color': 42
-        },
-        6.0: {
-            'color': 46
-        },
-        7.0: {
-            'color': 30
-        },
-    }
+    if args.CICADAVersion == 1:
+        cicadaThresholds = {
+            0.0: {
+                'color': 40
+            },
+            3.0: {
+                'color': 41
+            },
+            5.0: {
+                'color': 42
+            },
+            6.0: {
+                'color': 46
+            },
+            7.0: {
+                'color': 30
+            },
+        }
+    if args.CICADAVersion == 2:
+        cicadaThresholds = {
+            0.0: {
+                'color': 40
+            },
+            3.0: {
+                'color': 41
+            },
+            5.0: {
+                'color': 42
+            },
+            8.0: {
+                'color': 46
+            },
+            9.0: {
+                'color': 30
+            },
+            10.0: {
+                'color': 12
+            },
+        }
 
-    theFile = ROOT.TFile('/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/triggerObjectPlots.root')
-    destinationPath = '/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/triggerObjectEffects/'
+    theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/triggerObjectPlotsCICADAv{args.CICADAVersion}.root')
+    destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/triggerObjectEffectsCICADAv{args.CICADAVersion}/'
     if not os.path.isdir(destinationPath):
         os.mkdir(destinationPath)
     for object in objects:
@@ -81,7 +104,19 @@ def main():
                     thePlot.Draw('SAME E1')
                 theLegend.AddEntry(thePlot, f'CICADA > {threshold}', 'pl')
             theLegend.Draw()
-            theCanvas.SaveAs(f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/{object}_{histoType}.png')
+            theCanvas.SaveAs(f'{destinationPath}/{object}_{histoType}.png')
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description="Draw the trigger object plots")
+    parser.add_argument(
+        '-v',
+        '--CICADAVersion',
+        default=1,
+        type=int,
+        help='Version to pull the ntuplizer from',
+        choices=[1,2],
+        nargs='?',
+    ) 
+
+    args = parser.parse_args()
+    main(args)
