@@ -98,6 +98,13 @@ process.GlobalTag = GlobalTag(process.GlobalTag, '124X_mcRun3_2022_realistic_v12
 
 process.raw2digi_step = cms.Path(process.RawToDigi)
 process.endjob_step = cms.EndPath(process.endOfProcess)
+# event setup contents
+# process.escontent = cms.EDAnalyzer(
+#     "PrintEventSetupContent",
+#     compact=cms.untracked.bool(True),
+#     printProviders=cms.untracked.bool(True),
+# )
+# process.endjob_step = cms.EndPath(process.escontent+process.endOfProcess)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.raw2digi_step, process.endjob_step)
