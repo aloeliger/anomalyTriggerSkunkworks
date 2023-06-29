@@ -17,4 +17,6 @@
 <use name="ROOT"/>
 <use name="L1Trigger/L1TGlobal"/>
 
+<use name="DataFormats/JetReco"/>
+
 <flags EDM_PLUGIN="1"/>
