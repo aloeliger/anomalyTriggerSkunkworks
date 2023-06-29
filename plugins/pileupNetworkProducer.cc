@@ -32,6 +32,8 @@ class pileupNetworkProducer : public edm::stream::EDProducer<>{
 
         //void beginRun(edm::Run const&, edm::EventSetup const&) override;
 
+        std::string inputLayerName;
+
         edm::EDGetTokenT<L1CaloRegionCollection> regionToken;
   
         tensorflow::Options options;
@@ -39,7 +41,8 @@ class pileupNetworkProducer : public edm::stream::EDProducer<>{
         tensorflow::Session* session;
 };
 
-pileupNetworkProducer::pileupNetworkProducer(const edm::ParameterSet& iConfig)
+pileupNetworkProducer::pileupNetworkProducer(const edm::ParameterSet& iConfig):
+    inputLayerName(iConfig.getParameter<std::string>("inputLayerName"))
 {
     regionToken = consumes<L1CaloRegionCollection>(iConfig.getParameter<edm::InputTag>("regionSource"));
 
@@ -73,7 +76,7 @@ void pileupNetworkProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
         modelInput.tensor<float, 4>()(0, i.gctPhi(), i.gctEta()-4, 0) = i.et();
     }
     std::vector<tensorflow::Tensor> pileupOutput;
-    tensorflow::run(session, {{"serving_default_input_1:0", modelInput}},{"StatefulPartitionedCall:0"}, &pileupOutput);
+    tensorflow::run(session, {{inputLayerName, modelInput}},{"StatefulPartitionedCall:0"}, &pileupOutput);
     *pileupPrediction = pileupOutput[0].matrix<float>()(0,0);
 
     iEvent.put(std::move(pileupPrediction), "pileupPrediction");
@@ -82,7 +85,10 @@ void pileupNetworkProducer::produce(edm::Event& iEvent, const edm::EventSetup& i
 void pileupNetworkProducer::fillDescriptions(edm::ConfigurationDescriptions& descriptions)
 {
     edm::ParameterSetDescription desc;
-    desc.setUnknown();
+    // desc.setUnknown();
+    desc.add<string>("pileupModelLocation");
+    desc.add<edm::InputTag>("regionSource", edm::InputTag("simCaloStage2Layer1Digis", ""));
+    desc.add<string>("inputLayerName", "serving_default_input_1:0");
     descriptions.addDefault(desc);
 }
 
