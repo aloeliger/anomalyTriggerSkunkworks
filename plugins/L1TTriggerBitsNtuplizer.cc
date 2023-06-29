@@ -17,6 +17,9 @@
 #include "CondFormats/DataRecord/interface/L1TUtmTriggerMenuRcd.h"
 #include "CondFormats/L1TObjects/interface/L1TUtmTriggerMenu.h"
 
+#include "CondFormats/L1TObjects/interface/L1TGlobalPrescalesVetos.h"
+#include "CondFormats/DataRecord/interface/L1TGlobalPrescalesVetosRcd.h"
+
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
@@ -41,6 +44,7 @@ private:
   TTree* l1BitsTree;
                   
   edm::ESGetToken<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd> L1TUtmTriggerMenuEventToken;
+  edm::ESGetToken<L1TGlobalPrescalesVetos, L1TGlobalPrescalesVetosRcd> L1TGlobalPrescalesVetoToken;
   const L1TUtmTriggerMenu* l1GtMenu;
   const std::map<std::string, L1TUtmAlgorithm>* algorithmMap;
   //bool L1_SingleMu22;
@@ -54,6 +58,7 @@ private:
   unsigned int nBits = 0;
 
   std::map< string, std::unique_ptr<bool> > triggerResults;
+  std::map< string, std::unique_ptr<int> > prescaleResults;
 
   bool verboseDebug;
 
@@ -67,6 +72,7 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
 {
   usesResource("TFileService");
   L1TUtmTriggerMenuEventToken = consumesCollector().esConsumes<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd>();
+  L1TGlobalPrescalesVetoToken = consumesCollector().esConsumes<L1TGlobalPrescalesVetos, L1TGlobalPrescalesVetosRcd>();
   
   verboseDebug = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
 
@@ -95,6 +101,25 @@ L1TTriggerBitsNtuplizer::~L1TTriggerBitsNtuplizer()
 void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
   using namespace edm;
+
+  auto prescaleRcd = iSetup.get<L1TGlobalPrescalesVetosRcd>();
+  auto prescales = prescaleRcd.get(L1TGlobalPrescalesVetoToken);
+  if (verboseDebug)
+  {
+    int outputPrescaleColumn = 0;
+    std::cout<<"Prescales table size: "<<prescales.prescale_table_.size()<<std::endl;
+    for (auto row: prescales.prescale_table_)
+    {
+      std::cout<<"Prescale column: "<<outputPrescaleColumn<<std::endl;
+      outputPrescaleColumn++;
+      std::cout<<"Row size: "<<row.size()<<std::endl;
+      for (auto tableEntry: row)
+      {
+        std::cout<<tableEntry<<" ";
+      }
+      std::cout<<" "<<std::endl;
+    }
+  }
   
   run  = iEvent.id().run();
   lumi = iEvent.id().luminosityBlock();
@@ -119,51 +144,56 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
       std::vector<GlobalAlgBlk>::const_iterator algBlk = gtAlgBlkHandle->begin(0);
       //
       if(verboseDebug)
-	{
-	  std::cout<<"BxVector First BX: "<<gtAlgBlkHandle->getFirstBX()<<std::endl;
-	  std::cout<<"BxVector Last BX: "<<gtAlgBlkHandle->getLastBX()<<std::endl;
-	}
-      if(algBlk != gtAlgBlkHandle->end(0))
-	{
-	  //Now let's see if we can loop over the bits in the path and see if we can print out
-	  //The names of the L1 seeds
-	  for (std::map<std::string, L1TUtmAlgorithm>::const_iterator itAlgo = algorithmMap->begin();
-	       itAlgo != algorithmMap->end();
-	       itAlgo++) 
 	    {
-	      std::string algName = itAlgo->first;
-	      int algBit = itAlgo->second.getIndex();
-	      int prescaleColumn = algBlk->getPreScColumn();
-	      bool initialDecision = algBlk->getAlgoDecisionInitial(algBit);
-	      bool intermDecision = algBlk->getAlgoDecisionInterm(algBit);
-	      bool decisionFinal = algBlk->getAlgoDecisionFinal(algBit);
-	      //This is unfortunately super specific. This should be rewritten if possible.
-	      //if (algName == "L1_SingleMu22") L1_SingleMu22 = decisionFinal;
-	      //if (algName == "L1_SingleJet180") L1_SingleJet180 = decisionFinal;
-	      //if (algName == "L1_HTTer450") L1_HTTer450 = decisionFinal;
-	      //if (algName == "L1_ZeroBias") L1_ZeroBias = decisionFinal;
-	      if(triggerResults.find(algName) == triggerResults.end())
-		{
-		  //The algorithm name was not in the triger map record.
-		  //Create a new map entry for this bit
-		  triggerResults.insert(std::pair< string, std::unique_ptr<bool> >(algName, std::make_unique<bool>()));
-		  l1BitsTree->Branch(algName.c_str(), triggerResults[algName].get(), (algName+"/O").c_str()); //this feels like it shouldn't work
-		  nBits++;
-		}
-	      *triggerResults[algName] = decisionFinal;
-	      if (verboseDebug)
-		{
-		  std::cout<<"L1 Path: "<<algName<<" Bit: "<<algBit<<" Initial Decision: "<<initialDecision<<" Interm Decision: "<<intermDecision<<" Final Decision: "<<decisionFinal<<std::endl;
-		  std::cout<<"trigger result: "<<triggerResults[algName].get()<<" "<<*triggerResults[algName]<<std::endl; 
-		  std::cout<<"Prescale Column retrieval? "<<prescaleColumn<<std::endl;
-		}
+        std::cout<<"BxVector First BX: "<<gtAlgBlkHandle->getFirstBX()<<std::endl;
+        std::cout<<"BxVector Last BX: "<<gtAlgBlkHandle->getLastBX()<<std::endl;
 	    }
+      if(algBlk != gtAlgBlkHandle->end(0))
+      {
+        //Now let's see if we can loop over the bits in the path and see if we can print out
+        //The names of the L1 seeds
+        for (std::map<std::string, L1TUtmAlgorithm>::const_iterator itAlgo = algorithmMap->begin();
+            itAlgo != algorithmMap->end();
+            itAlgo++) 
+          {
+            std::string algName = itAlgo->first;
+            int algBit = itAlgo->second.getIndex();
+            int prescaleColumn = algBlk->getPreScColumn();
+            bool initialDecision = algBlk->getAlgoDecisionInitial(algBit);
+            bool intermDecision = algBlk->getAlgoDecisionInterm(algBit);
+            bool decisionFinal = algBlk->getAlgoDecisionFinal(algBit);
 
-	}
-      else
-	{
-	  std::cout<<"algBlk was found to be the end of the BX vector (empty)!"<<std::endl;
-	}
+            int prescaleValue = prescales.prescale_table_.at(prescaleColumn).at(algBit);
+
+            if(triggerResults.find(algName) == triggerResults.end())
+            {
+              //The algorithm name was not in the triger map record.
+              //Create a new map entry for this bit
+              triggerResults.insert(std::pair< string, std::unique_ptr<bool> >(algName, std::make_unique<bool>()));
+              l1BitsTree->Branch(algName.c_str(), triggerResults[algName].get(), (algName+"/O").c_str()); //this feels like it shouldn't work
+
+              //let's insert a prescale column as well
+              prescaleResults.insert(std::pair< string, std::unique_ptr<int> >(algName, std::make_unique<int>()));
+              l1BitsTree->Branch((algName+"_prescale").c_str(), prescaleResults[algName].get(), (algName+"_prescale/I").c_str());
+              nBits++;
+            }
+            *triggerResults[algName] = decisionFinal;
+            *prescaleResults[algName] = prescaleValue;
+
+            if (verboseDebug)
+            {
+              std::cout<<"L1 Path: "<<algName<<" Bit: "<<algBit<<" Initial Decision: "<<initialDecision<<" Interm Decision: "<<intermDecision<<" Final Decision: "<<decisionFinal<<std::endl;
+              std::cout<<"trigger result: "<<triggerResults[algName].get()<<" "<<*triggerResults[algName]<<std::endl; 
+              std::cout<<"Prescale Column retrieval: "<<prescaleColumn<<std::endl;
+              std::cout<<"Prescale: "<<prescaleValue<<std::endl;
+            }
+          }
+
+      }
+          else
+      {
+        std::cout<<"algBlk was found to be the end of the BX vector (empty)!"<<std::endl;
+      }
     }
   else
     {
