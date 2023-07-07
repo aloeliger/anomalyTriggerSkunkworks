@@ -134,6 +134,8 @@ process = L1TReEmulMCFromRAW(process)
 
 #call to customisation function L1TSettingsToCaloParams_2018_v1_3 imported from L1Trigger.Configuration.customiseSettings
 # process = L1TSettingsToCaloParams_2018_v1_3(process)
+from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3
+process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
 #process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
@@ -193,15 +195,15 @@ process.CICADAv2ntuplizer = L1TCaloSummaryTestNtuplizer.clone(
     hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis'),
     # includePUInfo = cms.bool(True),
 )
+# Custom boosted jet trigger information
+from anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi import boostedJetTriggerNtuplizer
+process.boostedJetTriggerNtuplizer = boostedJetTriggerNtuplizer.clone(boostedJetCollection = cms.InputTag("L1TCaloSummaryCICADAv1","Boosted"))
 
 process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
-process.L1TTriggerBitsNtuplizer.verboseDebug= cms.bool(False)
-
-process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
-
+# process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
-
 process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.genJetInformationNtuplizer_cfi')
 
 process.load('anomalyDetection.miniCICADA.PFcandSequence_cfi')
 #process.load('anomalyDetection.miniCICADA.electronInformationAnalyzer_cfi')
@@ -215,8 +217,7 @@ process.load('anomalyDetection.miniCICADA.slimmedObjectCounter_cfi')
 process.load('anomalyDetection.miniCICADA.CICADAInputNetworkAnalyzer_cfi')
 process.load('anomalyDetection.miniCICADA.CICADAFromCINAnalyzer_cfi')
 process.load('anomalyDetection.miniCICADA.miniCICADAAnalyzer_cfi')
-process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
-process.load('anomalyDetection.anomalyTriggerSkunkworks.genJetInformationNtuplizer_cfi')
+
 
 process.caloStage2Sequence = cms.Sequence(
                                 process.caloStage2EGammaNtuplizer + 
@@ -246,6 +247,7 @@ process.NtuplePath = cms.Path(
                                 # process.L1TCaloSummaryTestNtuplizer +
                                 process.CICADAv1ntuplizer +
                                 process.CICADAv2ntuplizer +
+                                process.boostedJetTriggerNtuplizer +
                                 process.L1TTriggerBitsNtuplizer +
                                 # process.CICADAInputNetworkAnalyzerv1p0 +
                                 # process.CICADAFromCINSequence +

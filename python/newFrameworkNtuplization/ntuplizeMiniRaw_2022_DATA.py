@@ -1,12 +1,13 @@
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+# from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+from Configuration.Eras.Era_Run3_cff import Run3
 
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('analysis')
 options.parseArguments()
 
-process = cms.Process("NTUPLIZE",Run2_2018)
+process = cms.Process("NTUPLIZE",Run3)
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -34,23 +35,20 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring(
 
 #Define out input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('/store/data/Run2018D/EphemeralZeroBias2/MINIAOD/PromptReco-v2/000/320/570/00000/280370FC-6496-E811-833E-FA163E80C350.root'),
+                            fileNames = cms.untracked.vstring('/store/data/Run2022G/EphemeralZeroBias1/MINIAOD/PromptReco-v1/000/362/437/00000/18960f50-c733-4369-aec0-8a9b3b57bca1.root'),
                             secondaryFileNames = cms.untracked.vstring(
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/16DFBFAF-8094-E811-8E3F-02163E019FF6.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/1827616B-7A94-E811-AF40-FA163E4BCD81.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/2EED80AC-8D94-E811-8BAD-FA163ECCE6F0.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/584A05BA-7994-E811-9DB8-FA163E3FE3C5.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/5E56BDCB-7F94-E811-92D9-FA163E990568.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/80CD42EA-7E94-E811-864C-FA163EBC5A2D.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/8E033345-7C94-E811-B4AF-FA163E3F4095.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/B2792A4F-7C94-E811-B14A-FA163EC1819D.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/D01BB388-8194-E811-910B-02163E017F52.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/E6C30D4D-7C94-E811-AABA-FA163EF21D25.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/E83578F9-8294-E811-B2FA-FA163E376DA0.root',
-                                '/store/data/Run2018D/EphemeralZeroBias2/RAW/v1/000/320/570/00000/FA84DB3F-7D94-E811-B8B7-FA163E793AC1.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/38499c58-9b59-4302-9ba1-f314ddeac12c.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/7b7c7b12-c838-4f1c-91e1-7214ad4ea0a2.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/811c58d6-c794-4aa5-801c-80ddcaa182c1.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/89d256d7-85bd-4563-bb41-e527b0ac9737.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/93382701-4c91-4b41-b844-2288f13a4c1e.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/946291e8-72ab-4c99-a809-6878e6da1cf9.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/9f429629-ca52-470a-842a-604988f60e70.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/9ff46ba6-7b93-4948-bb29-b1acc65e2b8f.root',
+                                '/store/data/Run2022G/EphemeralZeroBias1/RAW/v1/000/362/437/00000/f92864a9-6587-4f7f-bb7b-5fd753e142aa.root',
                             )
                             #ttbar MC inputs
-                            # fileNames = cms.untracked.vstring('/store/mc/Run3Summer22MiniAODv3/TT_TuneCP5_13p6TeV_powheg-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v3/2810000/030d8d9c-7ee7-425e-9686-1cb23020feda.root')
+                            # fileNames = cms.untracked.vstring('/store/mc/Run3Summer22MiniAODv3/TT_TuneCP5_13p6TeV_powheg-pythia8/MINIAODSIM/124X_mcRun3_2022_realistic_v12-v3/2810000/030d8d9c-7ee7-425e-9686-1cb23020feda.root'),
                             # secondaryFileNames = cms.untracked.vstring(
                             #   '/store/mc/Run3Summer22DRPremix/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/124X_mcRun3_2022_realistic_v12-v3/2810001/708c1b63-19b6-468d-808e-2c4bdcd8859f.root',
                             #   '/store/mc/Run3Summer22DRPremix/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/124X_mcRun3_2022_realistic_v12-v3/2810001/e5617bda-2ef0-43e6-bf21-31b70ce34fd1.root',
@@ -60,7 +58,7 @@ process.source = cms.Source("PoolSource",
                             #   '/store/mc/Run3Summer22DRPremix/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/124X_mcRun3_2022_realistic_v12-v3/2810001/ba6e772b-d547-4169-87bb-4eb3ce27a57c.root',
                             #   '/store/mc/Run3Summer22DRPremix/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/124X_mcRun3_2022_realistic_v12-v3/2810001/bc47deee-423e-4ccb-82e1-83373d2d5b99.root',
                             #   '/store/mc/Run3Summer22DRPremix/TT_TuneCP5_13p6TeV_powheg-pythia8/GEN-SIM-RAW/124X_mcRun3_2022_realistic_v12-v3/2810001/e5617bda-2ef0-43e6-bf21-31b70ce34fd1.root',
-                            # )
+                            # ),
 )
 
 process.options = cms.untracked.PSet(
@@ -93,10 +91,17 @@ process.options = cms.untracked.PSet(
 )
 
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run2_data', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 
 process.raw2digi_step = cms.Path(process.RawToDigi)
 process.endjob_step = cms.EndPath(process.endOfProcess)
+# event setup contents
+# process.escontent = cms.EDAnalyzer(
+#     "PrintEventSetupContent",
+#     compact=cms.untracked.bool(True),
+#     printProviders=cms.untracked.bool(True),
+# )
+# process.endjob_step = cms.EndPath(process.escontent+process.endOfProcess)
 
 # Schedule definition
 process.schedule = cms.Schedule(process.raw2digi_step, process.endjob_step)
@@ -110,10 +115,10 @@ process.options.numberOfConcurrentLuminosityBlocks = 1
 process.options.eventSetup.numberOfConcurrentIOVs = 1
 if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
-from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW 
+from L1Trigger.Configuration.customiseReEmul import L1TReEmulMCFromRAW
 
 #call to customisation function L1TReEmulFromRAW imported from L1Trigger.Configuration.customiseReEmul
-process = L1TReEmulFromRAW(process)
+process = L1TReEmulMCFromRAW(process)
 
 # Automatic addition of the customisation function from L1Trigger.L1TNtuples.customiseL1Ntuple
 #from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
@@ -126,8 +131,6 @@ process = L1TReEmulFromRAW(process)
 
 #call to customisation function L1TSettingsToCaloParams_2018_v1_3 imported from L1Trigger.Configuration.customiseSettings
 # process = L1TSettingsToCaloParams_2018_v1_3(process)
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3
-process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
 #process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
@@ -196,6 +199,7 @@ process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_
 # process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
+process.load('anomalyDetection.anomalyTriggerSkunkworks.genJetInformationNtuplizer_cfi')
 
 process.load('anomalyDetection.miniCICADA.PFcandSequence_cfi')
 #process.load('anomalyDetection.miniCICADA.electronInformationAnalyzer_cfi')
@@ -251,6 +255,7 @@ process.NtuplePath = cms.Path(
                                 process.metInformationNtuplizer +
                                 process.caloStage2Sequence +
                                 process.objectCountSequence 
+                                # process.genJetInformationNtuplizer
 )
 process.schedule.append(process.NtuplePath)
 
