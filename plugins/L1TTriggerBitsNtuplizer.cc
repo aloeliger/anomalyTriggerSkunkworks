@@ -20,6 +20,9 @@
 #include "CondFormats/L1TObjects/interface/L1TGlobalPrescalesVetos.h"
 #include "CondFormats/DataRecord/interface/L1TGlobalPrescalesVetosRcd.h"
 
+#include "CondFormats/L1TObjects/interface/L1TGlobalPrescalesVetosFract.h"
+#include "CondFormats/DataRecord/interface/L1TGlobalPrescalesVetosFractRcd.h"
+
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
 #include "DataFormats/L1TGlobal/interface/GlobalAlgBlk.h"
@@ -45,6 +48,7 @@ private:
                   
   edm::ESGetToken<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd> L1TUtmTriggerMenuEventToken;
   edm::ESGetToken<L1TGlobalPrescalesVetos, L1TGlobalPrescalesVetosRcd> L1TGlobalPrescalesVetoToken;
+  edm::ESGetToken<L1TGlobalPrescalesVetosFract, L1TGlobalPrescalesVetosFractRcd> L1TGlobalPrescalesVetoFractToken;
   const L1TUtmTriggerMenu* l1GtMenu;
   const std::map<std::string, L1TUtmAlgorithm>* algorithmMap;
   //bool L1_SingleMu22;
@@ -56,9 +60,10 @@ private:
   unsigned int lumi;
   unsigned int evt;
   unsigned int nBits = 0;
+  std::string menuName;
 
   std::map< string, std::unique_ptr<bool> > triggerResults;
-  std::map< string, std::unique_ptr<int> > prescaleResults;
+  std::map< string, std::unique_ptr<double> > prescaleResults;
 
   bool verboseDebug;
 
@@ -73,6 +78,7 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
   usesResource("TFileService");
   L1TUtmTriggerMenuEventToken = consumesCollector().esConsumes<L1TUtmTriggerMenu, L1TUtmTriggerMenuRcd>();
   L1TGlobalPrescalesVetoToken = consumesCollector().esConsumes<L1TGlobalPrescalesVetos, L1TGlobalPrescalesVetosRcd>();
+  L1TGlobalPrescalesVetoFractToken = consumesCollector().esConsumes<L1TGlobalPrescalesVetosFract, L1TGlobalPrescalesVetosFractRcd>();
   
   verboseDebug = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
 
@@ -87,6 +93,7 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
   l1BitsTree -> Branch("run", &run);
   l1BitsTree -> Branch("lumi", &lumi);
   l1BitsTree -> Branch("evt", &evt);
+  l1BitsTree -> Branch("menuName", &menuName);
   //l1BitsTree->Branch("L1_SingleMu22", &L1_SingleMu22, "L1_SingleMu22/O");
   //l1BitsTree->Branch("L1_SingleJet180", &L1_SingleJet180, "L1_SingleJet180/O");
   //l1BitsTree->Branch("L1_HTTer450", &L1_HTTer450, "L1_HTTer450/O");
@@ -104,6 +111,9 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
 
   auto prescaleRcd = iSetup.get<L1TGlobalPrescalesVetosRcd>();
   auto prescales = prescaleRcd.get(L1TGlobalPrescalesVetoToken);
+
+  auto fractPrescaleRcd = iSetup.get<L1TGlobalPrescalesVetosFractRcd>();
+  auto fractPrescales = fractPrescaleRcd.get(L1TGlobalPrescalesVetoFractToken);
   if (verboseDebug)
   {
     int outputPrescaleColumn = 0;
@@ -119,6 +129,21 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
       }
       std::cout<<" "<<std::endl;
     }
+
+    int outputFractPrescaleColumn = 0;
+    std::cout<<"Fract Prescales table size: "<<fractPrescales.prescale_table_.size()<<std::endl;
+    for (auto row: fractPrescales.prescale_table_)
+    {
+      std::cout<<"Prescale column: "<<outputFractPrescaleColumn<<std::endl;
+      outputFractPrescaleColumn++;
+      std::cout<<"Row size: "<<row.size()<<std::endl;
+      for (double tableEntry: row)
+      {
+        std::cout<<tableEntry<<" ";
+      }
+      std::cout<<" "<<std::endl;
+    }
+
   }
   
   run  = iEvent.id().run();
@@ -128,6 +153,9 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
   //Start the laborious process of accessing the in-event L1 Menu
   auto menuRcd = iSetup.get<L1TUtmTriggerMenuRcd>();
   l1GtMenu = &menuRcd.get(L1TUtmTriggerMenuEventToken);
+  menuName = l1GtMenu->getName();
+  if (verboseDebug)
+    std::cout<<"Menu name: "<<menuName<<std::endl;
   algorithmMap = &(l1GtMenu->getAlgorithmMap());
 
   //Okay. What we would like to do, is on the 
@@ -163,7 +191,7 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
             bool intermDecision = algBlk->getAlgoDecisionInterm(algBit);
             bool decisionFinal = algBlk->getAlgoDecisionFinal(algBit);
 
-            int prescaleValue = prescales.prescale_table_.at(prescaleColumn).at(algBit);
+            int prescaleValue = fractPrescales.prescale_table_.at(prescaleColumn).at(algBit);
 
             if(triggerResults.find(algName) == triggerResults.end())
             {
@@ -173,8 +201,8 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
               l1BitsTree->Branch(algName.c_str(), triggerResults[algName].get(), (algName+"/O").c_str()); //this feels like it shouldn't work
 
               //let's insert a prescale column as well
-              prescaleResults.insert(std::pair< string, std::unique_ptr<int> >(algName, std::make_unique<int>()));
-              l1BitsTree->Branch((algName+"_prescale").c_str(), prescaleResults[algName].get(), (algName+"_prescale/I").c_str());
+              prescaleResults.insert(std::pair< string, std::unique_ptr<double> >(algName, std::make_unique<double>()));
+              l1BitsTree->Branch((algName+"_prescale").c_str(), prescaleResults[algName].get(), (algName+"_prescale/D").c_str());
               nBits++;
             }
             *triggerResults[algName] = decisionFinal;
