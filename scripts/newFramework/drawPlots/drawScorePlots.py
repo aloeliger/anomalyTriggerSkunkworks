@@ -96,7 +96,7 @@ def rateEffPlot(runs, scorePlots, destinationPath, args):
             ratePlot.SetTitle('')
         else:
             ratePlot.Draw('SAME E1 X0')
-        theLegend.AddEntry(ratePlot, f'Run {run [3]}', 'pl')
+        theLegend.AddEntry(ratePlot, f'{run}', 'pl')
     theLegend.Draw()
     theCanvas.SaveAs(f'{destinationPath}/ratePlotCICADAv{args.CICADAVersion}.png')
 
@@ -121,36 +121,97 @@ def basicScorePlot(runs, scorePlots, destinationPath, args):
             thePlot.SetTitle('')
         else:
             thePlot.Draw('SAME E1 X0')
-        theLegend.AddEntry(thePlot, f'Run {run[3]}', 'pl')
+        theLegend.AddEntry(thePlot, f'{run}', 'pl')
     theLegend.Draw()
     theCanvas.SaveAs(f'{destinationPath}/scorePlotCICADAv{args.CICADAVersion}.png')
 
 def main(args):
     ROOT.gStyle.SetOptStat(0)
-    runs = {
-        'RunA': 41,
-        'RunB': 42,
-        'RunC': 46,
-        'RunD': 30,
-    }
-
-    theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scorePlotsCICADAv{args.CICADAVersion}.root')
-    destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scorePlotsCICADAv{args.CICADAVersion}/'
+    if args.mc:
+        theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scoreMCPlots{args.year}CICADAv{args.CICADAVersion}.root')
+        destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scoreMCPlots{args.year}CICADAv{args.CICADAVersion}/'
+    else:
+        theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scorePlots{args.year}CICADAv{args.CICADAVersion}.root')
+        destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scorePlots{args.year}CICADAv{args.CICADAVersion}/'
     if not os.path.isdir(destinationPath):
         os.mkdir(destinationPath)
 
-    scorePlots = {
-        'RunA': theFile.RunA_score,
-        'RunB': theFile.RunB_score,
-        'RunC': theFile.RunC_score,
-        'RunD': theFile.RunD_score,
-    }
-    hgScorePlots = {
-        'RunA': theFile.RunA_score_highGranularity,
-        'RunB': theFile.RunB_score_highGranularity,
-        'RunC': theFile.RunC_score_highGranularity,
-        'RunD': theFile.RunD_score_highGranularity,
-    }
+    if args.year == '2018':
+        runs = {
+            'RunA': 41,
+            'RunB': 42,
+            'RunC': 46,
+            'RunD': 30,
+        }
+        scorePlots = {
+            'RunA': theFile.RunA_score,
+            'RunB': theFile.RunB_score,
+            'RunC': theFile.RunC_score,
+            'RunD': theFile.RunD_score,
+        }
+        hgScorePlots = {
+            'RunA': theFile.RunA_score_highGranularity,
+            'RunB': theFile.RunB_score_highGranularity,
+            'RunC': theFile.RunC_score_highGranularity,
+            'RunD': theFile.RunD_score_highGranularity,
+        }
+    if args.year == '2022':
+        if args.mc:
+            runs = {
+                'DYTo2L':40,
+                'GGHTT':42,
+                'HTo2LongLived4b':46,
+                'SUSYGGBBHtoBB':30,
+                'TT':33,
+                'VBFHToInvisible':28,
+                'VBFHTT':6,
+                'ZPrimeTT':2,
+            }
+            scorePlots = {
+                'DYTo2L':theFile.DYTo2L_score,
+                'GGHTT':theFile.DYTo2L_score,
+                'HTo2LongLived4b':theFile.HTo2LongLived4b_score,
+                'SUSYGGBBHtoBB':theFile.SUSYGGBBHtoBB_score,
+                'TT':theFile.TT_score,
+                'VBFHToInvisible':theFile.VBFHToInvisible_score,
+                'VBFHTT':theFile.VBFHTT_score,
+                'ZPrimeTT':theFile.ZPrimeTT_score,
+            }
+            hgScorePlots = {
+                'DYTo2L':theFile.DYTo2L_score_highGranularity,
+                'GGHTT':theFile.DYTo2L_score_highGranularity,
+                'HTo2LongLived4b':theFile.HTo2LongLived4b_score_highGranularity,
+                'SUSYGGBBHtoBB':theFile.SUSYGGBBHtoBB_score_highGranularity,
+                'TT':theFile.TT_score_highGranularity,
+                'VBFHToInvisible':theFile.VBFHToInvisible_score_highGranularity,
+                'VBFHTT':theFile.VBFHTT_score_highGranularity,
+                'ZPrimeTT':theFile.ZPrimeTT_score_highGranularity,
+            }
+        else:
+            runs = {
+                'RunB': 40,
+                'RunC': 42,
+                'RunD': 46,
+                'RunE': 30,
+                'RunF': 33,
+                'RunG': 28,
+            }
+            scorePlots = {
+                'RunB': theFile.RunB_score,
+                'RunC': theFile.RunC_score,
+                'RunD': theFile.RunD_score,
+                'RunE': theFile.RunE_score,
+                'RunF': theFile.RunF_score,
+                'RunG': theFile.RunG_score,
+            }
+            hgScorePlots = {
+                'RunB': theFile.RunB_score_highGranularity,
+                'RunC': theFile.RunC_score_highGranularity,
+                'RunD': theFile.RunD_score_highGranularity,
+                'RunE': theFile.RunE_score_highGranularity,
+                'RunF': theFile.RunF_score_highGranularity,
+                'RunG': theFile.RunG_score_highGranularity,
+            }
     
     basicScorePlot(
         runs=runs,
@@ -176,6 +237,19 @@ if __name__ == '__main__':
         help = 'CICADA version',
         choices = [1,2],
         nargs='?'
+    )
+    parser.add_argument(
+        '-y',
+        '--year',
+        default='2018',
+        help='Year of samples to use',
+        choices=['2018','2022'],
+        nargs='?'
+    )
+    parser.add_argument(
+        '--mc',
+        action='store_true',
+        help='Trigger the MC samples'
     )
 
     args = parser.parse_args()
