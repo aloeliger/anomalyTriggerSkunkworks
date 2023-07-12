@@ -5,7 +5,7 @@ import os
 basePath = '/hdfs/store/user/aloelige'
 
 filePaths = [
-    f'{basePath}/ZeroBias/CICADA_2018RunA_ZB_30Jun2023/'
+    f'{basePath}/ZeroBias/CICADA_2018RunA_ZB_07Jul2023/'
 ]
 
 theFiles = []
@@ -13,8 +13,6 @@ for filePath in filePaths:
     for root, dirs, files in os.walk(filePath, topdown = True):
         for name in files:
             theFiles.append(os.path.join(root, name))
-
-theFiles = theFiles[:10]
 
 treeNames = [
     'CICADAv1ntuplizer/L1TCaloSummaryOutput',

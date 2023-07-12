@@ -5,7 +5,7 @@ import os
 basePath = '/hdfs/store/user/aloelige'
 
 filePaths = [
-    f'{basePath}/ZeroBias/CICADA_2018RunC_ZB_30Jun2023'
+    f'{basePath}/ZeroBias/CICADA_2018RunC_ZB_07Jul2023'
 ]
 
 theFiles = []

@@ -1,11 +1,12 @@
-# !/usr/bin/env python3
 from ..sample import sample
 import os
 
 basePath = '/hdfs/store/user/aloelige'
 
 filePaths = [
-    f'{basePath}/ZeroBias/CICADA_2018RunD_ZB_07Jul2023'
+    f'{basePath}/EphemeralZeroBias2/CICADA_2018EphemeralZeroBias2_07Jul2023',
+    f'{basePath}/EphemeralZeroBias3/CICADA_2018EphemeralZeroBias3_07Jul2023',
+    f'{basePath}/EphemeralZeroBias7/CICADA_2018EphemeralZeroBias7_07Jul2023',
 ]
 
 theFiles = []
@@ -37,7 +38,7 @@ treeNames = [
     'boostedTauCounter/objectInfo',
 ]
 
-RunDSample = sample(
+EphemeralZeroBiasSample = sample(
     listOfFiles = theFiles,
     treeNames = treeNames
 )
