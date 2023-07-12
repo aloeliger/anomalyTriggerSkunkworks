@@ -126,8 +126,8 @@ process = L1TReEmulFromRAW(process)
 
 #call to customisation function L1TSettingsToCaloParams_2018_v1_3 imported from L1Trigger.Configuration.customiseSettings
 # process = L1TSettingsToCaloParams_2018_v1_3(process)
-from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3
-process = L1TSettingsToCaloParams_2018_v1_3(process)
+# from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3
+# process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
 #process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
