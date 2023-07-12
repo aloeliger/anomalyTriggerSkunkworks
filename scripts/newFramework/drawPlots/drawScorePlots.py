@@ -61,6 +61,7 @@ def printRateThresholds(ratePlot, run):
     theTable.field_names = ["nominal rate", "bin no", "rate (plot content)", "low threshold", "high threshold"]
     theTable.add_rows(
         [
+            [10.0, *findBinForRate(ratePlot, 10.0)],
             [5.0, *findBinForRate(ratePlot, 5.0)],
             [3.0, *findBinForRate(ratePlot, 3.0)],
             [2.0, *findBinForRate(ratePlot, 2.0)],
