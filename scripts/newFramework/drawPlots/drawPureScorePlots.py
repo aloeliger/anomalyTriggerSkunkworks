@@ -187,7 +187,7 @@ def main(args):
             menuRates = array('d', getListOfAllRates(menuRatePlot))
             pureRates = array('d', getListOfAllRates(pureRatePlot))
             pureVsOverallCurve = ROOT.TGraph(len(menuRates), menuRates, pureRates)
-            pureVsOverallCurve.SetTitle(f";Overall Rate;Pure Rate")
+            pureVsOverallCurve.SetTitle(f";CICADA Overall Rate; CICADA Pure Rate")
             pureVsOverallCurve.SetMarkerStyle(7)
             pureVsOverallCurve.SetMarkerColor(ROOT.kRed)
             pureVsOverallCurve.SetLineColor(ROOT.kRed)

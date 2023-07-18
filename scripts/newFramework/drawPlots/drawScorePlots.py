@@ -74,7 +74,7 @@ def printRateThresholds(ratePlot, run):
 def rateEffPlot(runs, scorePlots, destinationPath, args):
     theCanvas = ROOT.TCanvas('highGranularityCanvas')
     theCanvas.SetLogy()
-    theLegend = ROOT.TLegend(0.7, 0.7, 0.9, 0.9)
+    theLegend = ROOT.TLegend(0.5, 0.7, 0.9, 0.9)
 
     ratePlots = []
 
@@ -97,14 +97,24 @@ def rateEffPlot(runs, scorePlots, destinationPath, args):
             ratePlot.SetTitle('')
         else:
             ratePlot.Draw('SAME E1 X0')
-        theLegend.AddEntry(ratePlot, f'{run}', 'pl')
+        
+        _, _, five_kHz_threshold, _ = findBinForRate(ratePlot, 5.0)
+
+        theLegend.AddEntry(ratePlot, f'{run}, 5 kHz Threshold: {five_kHz_threshold:1.2f}', 'pl')
     theLegend.Draw()
+    
+    cmsLatex = ROOT.TLatex()
+    cmsLatex.SetTextSize(0.04)
+    cmsLatex.SetNDC(True)
+    cmsLatex.SetTextAlign(11)
+    cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
+
     theCanvas.SaveAs(f'{destinationPath}/ratePlotCICADAv{args.CICADAVersion}.png')
 
 def basicScorePlot(runs, scorePlots, destinationPath, args):
     theCanvas = ROOT.TCanvas('theCanvas')
     theCanvas.SetLogy()
-    theLegend = ROOT.TLegend(0.7, 0.7, 0.9, 0.9)
+    theLegend = ROOT.TLegend(0.5, 0.7, 0.9, 0.9)
 
     for index, run in enumerate(runs):
         thePlot = scorePlots[run]
@@ -122,8 +132,19 @@ def basicScorePlot(runs, scorePlots, destinationPath, args):
             thePlot.SetTitle('')
         else:
             thePlot.Draw('SAME E1 X0')
-        theLegend.AddEntry(thePlot, f'{run}', 'pl')
+
+        theMean = thePlot.GetMean()
+        stdDev = thePlot.GetStdDev()
+
+        theLegend.AddEntry(thePlot, f'{run}, Mean: {theMean:1.2f}, StdDev: {stdDev:1.2f}', 'pl')
     theLegend.Draw()
+
+    cmsLatex = ROOT.TLatex()
+    cmsLatex.SetTextSize(0.04)
+    cmsLatex.SetNDC(True)
+    cmsLatex.SetTextAlign(11)
+    cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
+
     theCanvas.SaveAs(f'{destinationPath}/scorePlotCICADAv{args.CICADAVersion}.png')
 
 def main(args):

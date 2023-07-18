@@ -79,12 +79,15 @@ def main(args):
     if not os.path.isdir(destinationPath):
         os.mkdir(destinationPath)
     for object in objects:
+        # print(f'Object: {object}')
         for histoType in histograms:
+            # print(f'histoType: {histoType}')
             theCanvas = ROOT.TCanvas(f'{object}_{histoType}')
             theCanvas.SetLogy()
 
             theLegend = ROOT.TLegend(0.7,0.7,0.9,0.9)
             for index, threshold in enumerate(cicadaThresholds):
+                # print(f'threshold: {threshold}')
                 thresholdString = str(threshold).replace('.', 'p')
                 thePlot = getattr(theFile, f'{object}_{histoType}_CICADA{thresholdString}')
                 
@@ -103,7 +106,20 @@ def main(args):
                 else:
                     thePlot.Draw('SAME E1')
                 theLegend.AddEntry(thePlot, f'CICADA > {threshold}', 'pl')
+                # print(thePlot.Integral())
+                # cumsum = 0.0
+                # for binNum in range(1,thePlot.GetNbinsX()+1):
+                #     content = thePlot.GetBinContent(binNum)
+                #     cumsum += content
+                #     print(f'binNum: {binNum}, content: {content}, cumulative: {cumsum}')
             theLegend.Draw()
+
+            cmsLatex = ROOT.TLatex()
+            cmsLatex.SetTextSize(0.05)
+            cmsLatex.SetNDC(True)
+            cmsLatex.SetTextAlign(11)
+            cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
+
             theCanvas.SaveAs(f'{destinationPath}/{object}_{histoType}.png')
 
 if __name__ == '__main__':

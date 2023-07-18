@@ -100,6 +100,13 @@ def main(args):
                     thePlot.Draw('SAME E1')
                 theLegend.AddEntry(thePlot, f'CICADA > {threshold}', 'pl')
             theLegend.Draw()
+
+            cmsLatex = ROOT.TLatex()
+            cmsLatex.SetTextSize(0.05)
+            cmsLatex.SetNDC(True)
+            cmsLatex.SetTextAlign(11)
+            cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
+
             theCanvas.SaveAs(f'{destinationPath}/{object}_{histoType}.png')       
 
 if __name__ == '__main__':
