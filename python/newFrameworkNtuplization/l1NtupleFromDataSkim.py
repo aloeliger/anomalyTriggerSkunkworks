@@ -1,13 +1,12 @@
 import FWCore.ParameterSet.Config as cms
 
-# from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 from Configuration.Eras.Era_Run3_2023_cff import Run3_2023
 
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('analysis')
 options.parseArguments()
 
-process = cms.Process("NTUPLIZE",Run3_2023)
+process = cms.Process("L1NTUPLES",Run3_2023)
 process.load('Configuration.StandardSequences.Services_cff')
 process.load('SimGeneral.HepPDTESSource.pythiapdt_cfi')
 process.load('FWCore.MessageService.MessageLogger_cfi')
@@ -21,22 +20,12 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(options.maxEvents)
 )
-process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
-process.MessageLogger.suppressWarning = cms.untracked.vstring(
-    'emtfStage2Digis', 
-    'l1uGTTestcrateTree', 
-    'simDtTriggerPrimitiveDigis',
-    'simCscTriggerPrimitiveDigisRun3'
-)
+process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #Define out input source
 process.source = cms.Source("PoolSource",
-                            fileNames = cms.untracked.vstring('/store/data/Run2023C/ZeroBias/MINIAOD/PromptReco-v1/000/367/094/00000/cd8692ec-e37f-456b-8d3a-c6f854a2b83a.root'),
-                            secondaryFileNames = cms.untracked.vstring(
-                                "/store/data/Run2023C/ZeroBias/RAW/v1/000/367/094/00000/60dd6298-7ebf-4219-8da6-816915e8a1f8.root",
-                                "/store/data/Run2023C/ZeroBias/RAW/v1/000/367/094/00000/ddf586ed-b482-400e-94f9-dc8cd3547122.root",
-                             )
+                            fileNames = cms.untracked.vstring(options.inputFiles),
 )
 
 process.options = cms.untracked.PSet(
@@ -70,34 +59,32 @@ process.options = cms.untracked.PSet(
 
 from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
+if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
 
 process.raw2digi_step = cms.Path(process.RawToDigi)
-process.schedule = cmanomalyDetection/anomalyTriggerSkunkworks/python/newFrameworkNtuplization/crabConfigs/skim2023Configs/skimZB2023AConfig.pys.tools.helpers import associatePatAlgosToolsTask
+process.endjob_step = cms.EndPath(process.endOfProcess)
+
+process.schedule = cms.Schedule(process.raw2digi_step, process.endjob_step)
+
+from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
+# L1 emulation
 from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW
-
-#call to customisation function L1TReEmulFromRAW imported from L1Trigger.Configuration.customiseReEmul
 process = L1TReEmulFromRAW(process)
 
+# L1 Ntuples
+from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
+process = L1NtupleRAWEMU(process)
 
-process.skimOutput = cms.OutputModule(
-    'PoolOutputModule',
-    fileName = cms.untracked.string(options.outputFile),
-    outputCommands = cms.untracked.vstring(
-        'keep *',
-        'drop *_*_*_NTUPLIZE',
-        'keep *_simCaloStage2Layer1Digis_*_*',
-        'drop *_*_*_LHC',
-        'drop *_*_*_HLT',
-    ),
+process.TFileService = cms.Service(
+	"TFileService",
+    fileName = cms.string(options.outputFile)
 )
-
-process.skimStep = cms.EndPath(
-    process.skimOutput
-)
-
-process.schedule.append(process.skimStep)
 
 print(process.schedule)
+print("**************************************************")
+print([x for x in process.schedule])
 
+from Configuration.StandardSequences.earlyDeleteSettings_cff import customiseEarlyDelete
+process = customiseEarlyDelete(process)

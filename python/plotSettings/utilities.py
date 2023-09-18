@@ -17,3 +17,6 @@ def getListOfUniqueEntries(theChain, branchName):
 
 def convertEffToRate(eff):
     return eff * (2544.0 * 11425e-3)
+
+def convertRateToEff(rate):
+    return rate / (2544.0 * 11425e-3)

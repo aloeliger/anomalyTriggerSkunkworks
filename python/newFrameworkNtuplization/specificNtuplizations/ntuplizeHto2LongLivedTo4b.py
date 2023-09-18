@@ -1,0 +1,33 @@
+import FWCore.ParameterSet.Config as cms
+from anomalyDetection.anomalyTriggerSkunkworks.newFrameworkNtuplization.ntuplizeSkim_2023_MC import process
+
+process.source.fileNames = cms.untracked.vstring(
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_1.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_12.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_15.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_18.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_20.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_23.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_26.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_3.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_6.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_9.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_10.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_13.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_16.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_19.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_21.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_24.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_27.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_4.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_7.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_11.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_14.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_17.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_2.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_22.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_25.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_28.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_5.root",
+    "/store/user/aloelige/Hto2LongLivedto4b_MH-125_MFF-25_CTau-1500mm_TuneCP5_13p6TeV_pythia8/CICADASkim_2023_HToLongLivedTo4b_21Jul2023/230721_143557/0000/output_8.root",
+)

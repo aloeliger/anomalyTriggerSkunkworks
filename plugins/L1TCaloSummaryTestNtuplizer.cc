@@ -87,11 +87,11 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch("anomalyScore", &anomalyScore);
-  triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
-  triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
+  // triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
+  // triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
   triggerTree -> Branch("modelInput", &modelInput, "modelInput[18][14]/s");
-  triggerTree -> Branch("tauBits", &tauBits, "tauBits[18][14]/O");
-  triggerTree -> Branch("egBits", &egBits, "tauBits[18][14]/O");
+  // triggerTree -> Branch("tauBits", &tauBits, "tauBits[18][14]/O");
+  // triggerTree -> Branch("egBits", &egBits, "tauBits[18][14]/O");
 }
 
 L1TCaloSummaryTestNtuplizer::~L1TCaloSummaryTestNtuplizer()
