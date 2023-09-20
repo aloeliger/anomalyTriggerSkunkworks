@@ -82,22 +82,12 @@ L1TTriggerBitsNtuplizer::L1TTriggerBitsNtuplizer(const edm::ParameterSet& iConfi
   
   verboseDebug = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
 
-  //REALLY need a better way of doing this
-  //L1_SingleMu22 = false;
-  //L1_SingleJet180 = false;
-  //L1_HTTer450 = false;
-  //L1_ZeroBias = false;
-
   //setup the bits tree
   l1BitsTree = theFileService->make<TTree>("L1TTriggerBits","Emulator L1 Trigger Bits");
   l1BitsTree -> Branch("run", &run);
   l1BitsTree -> Branch("lumi", &lumi);
   l1BitsTree -> Branch("evt", &evt);
   l1BitsTree -> Branch("menuName", &menuName);
-  //l1BitsTree->Branch("L1_SingleMu22", &L1_SingleMu22, "L1_SingleMu22/O");
-  //l1BitsTree->Branch("L1_SingleJet180", &L1_SingleJet180, "L1_SingleJet180/O");
-  //l1BitsTree->Branch("L1_HTTer450", &L1_HTTer450, "L1_HTTer450/O");
-  //l1BitsTree->Branch("L1_ZeroBias", &L1_ZeroBias, "L1_ZeroBias/O");
 }
 
 L1TTriggerBitsNtuplizer::~L1TTriggerBitsNtuplizer()
@@ -180,6 +170,10 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
       {
         //Now let's see if we can loop over the bits in the path and see if we can print out
         //The names of the L1 seeds
+        if(verboseDebug)
+        {
+          std::cout<<"Ntuplizing specific algorithms"<<std::endl;
+        }
         for (std::map<std::string, L1TUtmAlgorithm>::const_iterator itAlgo = algorithmMap->begin();
             itAlgo != algorithmMap->end();
             itAlgo++) 
@@ -191,7 +185,15 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
             bool intermDecision = algBlk->getAlgoDecisionInterm(algBit);
             bool decisionFinal = algBlk->getAlgoDecisionFinal(algBit);
 
+            if (verboseDebug)
+            {
+              std::cout<<"L1 Path: "<<algName<<" Bit: "<<algBit<<" Initial Decision: "<<initialDecision<<" Interm Decision: "<<intermDecision<<" Final Decision: "<<decisionFinal<<std::endl;
+              std::cout<<"Prescale Column retrieval: "<<prescaleColumn<<std::endl;
+            }
+
             int prescaleValue = fractPrescales.prescale_table_.at(prescaleColumn).at(algBit);
+
+            if (verboseDebug) std::cout<<"Prescale: "<<prescaleValue<<std::endl;
 
             if(triggerResults.find(algName) == triggerResults.end())
             {
@@ -208,13 +210,8 @@ void L1TTriggerBitsNtuplizer::analyze(const edm::Event& iEvent, const edm::Event
             *triggerResults[algName] = decisionFinal;
             *prescaleResults[algName] = prescaleValue;
 
-            if (verboseDebug)
-            {
-              std::cout<<"L1 Path: "<<algName<<" Bit: "<<algBit<<" Initial Decision: "<<initialDecision<<" Interm Decision: "<<intermDecision<<" Final Decision: "<<decisionFinal<<std::endl;
-              std::cout<<"trigger result: "<<triggerResults[algName].get()<<" "<<*triggerResults[algName]<<std::endl; 
-              std::cout<<"Prescale Column retrieval: "<<prescaleColumn<<std::endl;
-              std::cout<<"Prescale: "<<prescaleValue<<std::endl;
-            }
+            if (verboseDebug) std::cout<<"trigger result: "<<triggerResults[algName].get()<<" "<<*triggerResults[algName]<<std::endl; 
+
           }
 
       }

@@ -5,6 +5,12 @@ from Configuration.Eras.Era_Run3_2023_cff import Run3_2023
 
 import FWCore.ParameterSet.VarParsing as VarParsing
 options = VarParsing.VarParsing ('analysis')
+options.register('secondaryFiles',
+                 [],
+                 VarParsing.VarParsing.multiplicity.list,
+                VarParsing.VarParsing.varType.string,
+                "Secondary files to use in SUEP skimming"
+)
 options.parseArguments()
 
 process = cms.Process("NTUPLIZE",Run3_2023)
@@ -76,7 +82,7 @@ process.options = cms.untracked.PSet(
 )
 
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '130X_dataRun3_Prompt_v4', '')
 
 process.raw2digi_step = cms.Path(process.RawToDigi)
 process.endjob_step = cms.EndPath(process.endOfProcess)
@@ -179,6 +185,7 @@ from anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi im
 process.boostedJetTriggerNtuplizer = boostedJetTriggerNtuplizer.clone(boostedJetCollection = cms.InputTag("L1TCaloSummaryCICADAv1","Boosted"))
 
 process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
+# process.L1TTriggerBitsNtuplizer.verboseDebug = cms.bool(True)
 # process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
@@ -227,7 +234,7 @@ process.NtuplePath = cms.Path(
                                 process.CICADAv1ntuplizer +
                                 process.CICADAv2ntuplizer +
                                 process.boostedJetTriggerNtuplizer +
-                                # process.L1TTriggerBitsNtuplizer +
+                                process.L1TTriggerBitsNtuplizer +
                                 # process.CICADAInputNetworkAnalyzerv1p0 +
                                 # process.CICADAFromCINSequence +
                                 # process.miniCICADAAnalyzerSequence +
