@@ -1,11 +1,12 @@
 from anomalyDetection.anomalyTriggerSkunkworks.samples.sample import sample
 
-theFile = ['/hdfs/store/user/aloeliger/ntuplizedSkims_7_Sep_2023/RunCEphemeralZeroBias0.root']
+theFile = ['/hdfs/store/user/aloeliger/ntuplizedSkims_19_Sep_2023/RunCEZB0.root']
 
 treeNames = [
     'CICADAv1ntuplizer/L1TCaloSummaryOutput',
     'CICADAv2ntuplizer/L1TCaloSummaryOutput',
     'boostedJetTriggerNtuplizer/boostedJetTrigger',
+    'L1TTriggerBitsNtuplizer/L1TTriggerBits',
     'uGTModelNtuplizer/uGTModelOutput',
     'caloStage2EGammaNtuplizer/L1CaloEgammaInformation',
     'caloStage2JetNtuplizer/L1CaloJetInformation',

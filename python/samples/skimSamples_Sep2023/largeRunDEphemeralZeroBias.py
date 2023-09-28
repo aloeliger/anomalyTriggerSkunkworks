@@ -1,6 +1,18 @@
 from anomalyDetection.anomalyTriggerSkunkworks.samples.sample import sample
+import os
 
-theFile = ['/hdfs/store/user/aloeliger/ntuplizedSkims_19_Sep_2023/Hto2LongLivedTo4b.root']
+basePath = '/hdfs/store/user/aloelige'
+
+filePaths = [
+    f'{basePath}/EphemeralZeroBias0/CICADASkimNtuplization_2023RunD_EZB0_21Sep2023/',
+    f'{basePath}/EphemeralZeroBias1/CICADASkimNtuplization_2023RunD_EZB1_22Sep2023/',
+]
+
+theFiles = []
+for filePath in filePaths:
+    for root, dirs, files in os.walk(filePath, topdown=True):
+        for name in files:
+            theFiles.append(os.path.join(root, name))
 
 treeNames = [
     'CICADAv1ntuplizer/L1TCaloSummaryOutput',
@@ -21,7 +33,7 @@ treeNames = [
     'boostedTauCounter/objectInfo',
 ]
 
-Hto2LongLivedTo4bSample = sample(
-    listOfFiles= theFile,
-    treeNames=treeNames
+largeRunDEphemeralZeroBiasSample = sample(
+    listOfFiles = theFiles,
+    treeNames = treeNames,
 )
