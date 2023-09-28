@@ -171,14 +171,14 @@ process.CICADAv1ntuplizer = L1TCaloSummaryTestNtuplizer.clone(
     scoreSource = cms.InputTag("L1TCaloSummaryCICADAv1","anomalyScore"),
     ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis'),
     hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis'),
-    # includePUInfo = cms.bool(True),
+    includePUInfo = cms.bool(True),
 )
 
 process.CICADAv2ntuplizer = L1TCaloSummaryTestNtuplizer.clone(
     scoreSource = cms.InputTag("L1TCaloSummaryCICADAv2","anomalyScore"),
     ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis'),
     hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis'),
-    # includePUInfo = cms.bool(True),
+    includePUInfo = cms.bool(True),
 )
 # Custom boosted jet trigger information
 from anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi import boostedJetTriggerNtuplizer
