@@ -57,20 +57,17 @@ def main(args):
             0.0: {
                 'color': 40
             },
-            3.0: {
+            8.0: {
                 'color': 41
             },
-            5.0: {
+            11.0: {
                 'color': 42
             },
-            8.0: {
+            13.0: {
                 'color': 46
             },
-            9.0: {
+            15.0: {
                 'color': 30
-            },
-            10.0: {
-                'color': 12
             },
         }
 
@@ -95,7 +92,10 @@ def main(args):
                 thePlot.SetMarkerColor(cicadaThresholds[threshold]['color'])
                 thePlot.SetLineColor(cicadaThresholds[threshold]['color'])
 
-                thePlot.Scale(1.0/thePlot.Integral())
+                try:
+                    thePlot.Scale(1.0/thePlot.Integral())
+                except ZeroDivisionError:
+                    pass
 
                 if index == 0:
                     thePlot.Draw('E1')

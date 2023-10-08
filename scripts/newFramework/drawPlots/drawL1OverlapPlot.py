@@ -14,7 +14,7 @@ def main(args):
     if not os.path.isdir(destinationPath):
         os.mkdir(destinationPath)
 
-    menus = ['L1Menu_Collisions2018_v2_0_0','L1Menu_Collisions2018_v2_1_0']
+    menus = ['L1Menu_Collisions2023_v1_2_0']
     
     ROOT.gStyle.SetPaintTextFormat('1.2g')
 

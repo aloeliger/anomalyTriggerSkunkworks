@@ -1,136 +1,58 @@
 #!/usr/bin/env python3
 
 import ROOT
-from tqdm import tqdm
+# from tqdm import tqdm
 import argparse
+from rich.progress import track
+from rich.console import Console
+from rich.traceback import install
+
+console = Console()
+install()
 
 def main(args):
-    if args.mc == True:
-        outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scoreMCPlots{args.year}CICADAv{args.CICADAVersion}.root', 'RECREATE')
-    else:
-        outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scorePlots{args.year}CICADAv{args.CICADAVersion}.root', 'RECREATE')
-    if args.year == '2018':
-        from anomalyDetection.anomalyTriggerSkunkworks.samples.RunA import RunASample
-        from anomalyDetection.anomalyTriggerSkunkworks.samples.RunB import RunBSample
-        from anomalyDetection.anomalyTriggerSkunkworks.samples.RunC import RunCSample
-        from anomalyDetection.anomalyTriggerSkunkworks.samples.RunD import RunDSample
-        dataframes = {
-            'RunA': RunASample.getNewDataframe(
-                [
-                    f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                ]
-            ),
-            'RunB': RunBSample.getNewDataframe(
-                [
-                    f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                ]
-            ),
-            'RunC': RunCSample.getNewDataframe(
-                [
-                    f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                ]
-            ),
-            'RunD': RunDSample.getNewDataframe(
-                [
-                    f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                ]
-            ),
-        }
-    elif args.year == '2022':
-        if args.mc:
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.DYto2L import DYTo2LSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.GGHTT import GGHTTSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.HTo2LongLived4b import HTo2LongLived4bSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.SUSYGGBBHtoBB import SUSYGGBBHtoBBSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.TT import TTSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.VBFHToInvisible import VBFHToInvisibleSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.VBFHTT import VBFHTTSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.mcSamples2022.ZPrimeTT import ZPrimeTTSample
-            dataframes = {
-                'DYTo2L': DYTo2LSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'GGHTT': GGHTTSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'HTo2LongLived4b': HTo2LongLived4bSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'SUSYGGBBHtoBB': SUSYGGBBHtoBBSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'TT': TTSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'VBFHToInvisible': VBFHToInvisibleSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'VBFHTT': VBFHTTSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-                'ZPrimeTT': ZPrimeTTSample.getNewDataframe(
-                    [
-                      f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',  
-                    ]
-                ),
-            }
-        else:
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2022.RunB import RunBSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2022.RunC import RunCSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2022.RunD import RunDSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2022.RunE import RunESample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2022.RunF import RunFSample
-            from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2022.RunG import RunGSample
-            dataframes = {
-                'RunB': RunBSample.getNewDataframe(
-                    [
-                        f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                    ]
-                ),
-                'RunC': RunCSample.getNewDataframe(
-                    [
-                        f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                    ]
-                ),
-                'RunD': RunDSample.getNewDataframe(
-                    [
-                        f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                    ]
-                ),
-                'RunE': RunESample.getNewDataframe(
-                    [
-                        f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                    ]
-                ),
-                'RunF': RunFSample.getNewDataframe(
-                    [
-                        f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                    ]
-                ),
-                'RunG': RunGSample.getNewDataframe(
-                    [
-                        f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-                    ]
-                ),
-            }
+    
+    outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scorePlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')
+    # 2018 setup
+    """ from anomalyDetection.anomalyTriggerSkunkworks.samples.RunA import RunASample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.RunB import RunBSample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.RunC import RunCSample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.RunD import RunDSample """
+    # 2023 setup
+    # Run A seems... incorrect
+    # from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.RunA import RunASample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.RunBComplete import RunBSample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.RunCComplete import RunCSample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.RunDComplete import RunDSample
+
+    dataframes = {
+        # 'RunA': RunASample.getNewDataframe(
+        #     [
+        #         f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+        #     ]
+        # ),
+        'RunB': RunBSample.getNewDataframe(
+            [
+                f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+            ]
+        ),
+        'RunC': RunCSample.getNewDataframe(
+            [
+                f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+            ]
+        ),
+        'RunD': RunDSample.getNewDataframe(
+            [
+                f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+            ]
+        ),
+    }
+
+    # console.log('Removing training from samples...')
 
     maxes = []
     mins = []
-    for run in tqdm(dataframes, desc="extremum"):
+    for run in track(dataframes, description="Finding Extrememum..."):
         maxes.append(
             dataframes[run].Max('anomalyScore').GetValue()
         )
@@ -142,7 +64,14 @@ def main(args):
     scoreMax = max(maxes)
     scoreMin = min(mins)
     hists = []
-    for run in tqdm(dataframes, desc="histogram booking"):
+
+    # Pull any training data out before histograms are made
+    from anomalyDetection.anomalyTriggerSkunkworks.utilities.removeTraining import removeTrainingTool
+    theTrainingRemovalTool = removeTrainingTool()
+    for run in track(dataframes, description='Removing traning from samples...'):
+        dataframes[run] = theTrainingRemovalTool.removeTrainingDataFromDataframe(dataframes[run])
+
+    for run in track(dataframes, description="Histogram booking.."):
         histoName = f'{run}_score'
         histoModel = ROOT.RDF.TH1DModel(
             histoName,
@@ -170,7 +99,7 @@ def main(args):
                 'anomalyScore'
             )
         )
-    for hist in tqdm(hists, desc='histogram writing'):
+    for hist in track(hists, description='Histogram writing...'):
         hist.Write()
     
     outputFile.Write()
@@ -188,19 +117,6 @@ if __name__ == '__main__':
         help='Version to pull the ntuplizer from',
         choices=[1,2],
         nargs='?',
-    )
-    parser.add_argument(
-        '-y',
-        '--year',
-        default='2018',
-        help='Year of samples to use',
-        choices=['2018','2022'],
-        nargs='?'
-    )
-    parser.add_argument(
-        '--mc',
-        action='store_true',
-        help='Trigger the MC samples'
     )
 
     args = parser.parse_args()

@@ -40,7 +40,7 @@ def anUnprescaledBitPassesCondition(unprescaledBits):
     return passCondition
 
 def main(args):
-    destinationPath='/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/additionsPlots/'
+    destinationPath='/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/'
     if not os.path.isdir(destinationPath):
         os.makedirs(destinationPath, exist_ok=True)
     outputFile = ROOT.TFile(f'{destinationPath}/additionPlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')

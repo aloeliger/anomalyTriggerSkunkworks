@@ -5,6 +5,8 @@ import argparse
 import itertools
 from rich.console import Console
 from rich.table import Table
+import os
+from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import convertRateToEff
 
 console = Console()
 
@@ -13,7 +15,7 @@ def main(args):
 
     ROOT.gStyle.SetOptStat(0)
 
-    fileName = f'/nfs_scratch/aloeliger/anomalyPlotFiles/rocCurves/rocCurveFileCICADAv{args.CICADAVersion}.root'
+    fileName = f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/rocCurveFileCICADAv{args.CICADAVersion}.root'
     theFile = ROOT.TFile(fileName, 'READ')
     if theFile.IsZombie():
         console.log(f'Failed to load file (found zombie)...', style='bold red')
@@ -48,12 +50,23 @@ def main(args):
     ]
 
     rateEffs = {
-        '10 kHz': 0.00034405405,
-        '5 kHz': 0.00017202702,
-        '3 kHZ': 0.00010321621,
-        '2 kHz': 0.00006881081,
-        '1 kHz': 0.0000344054,
+        '10 kHz Overall': convertRateToEff(10.0),
+        '5 kHz Overall': convertRateToEff(5.0),
+        '3 kHZ Overall': convertRateToEff(3.0),
+        '2 kHz Overall': convertRateToEff(2.0),
+        '1 kHz Overall': convertRateToEff(1.0),
     }
+
+    lineColors = {
+        '10 kHz Overall': 40,
+        '5 kHz Overall': 30,
+        '3 kHZ Overall': 42,
+        '2 kHz Overall': 46,
+        '1 kHz Overall': 28,   
+    }
+
+    destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/rocCurvesCICADAv{args.CICADAVersion}/'
+    os.makedirs(destinationPath, exist_ok=True)
 
     for spreadType in spreadTypes:
         for combination in backgroundSignalCombinations:
@@ -85,8 +98,9 @@ def main(args):
                 theHist.GetYaxis().SetTitle('Signal Acceptance')
 
                 if spreadType == 'FreqSpread':
-                    lines = []
-                    texts = []
+                    # lines = []
+                    # texts = []
+                    lines = {}
                     for index, rate in enumerate(rateEffs):
                         rateLine = ROOT.TLine(
                             rateEffs[rate],
@@ -94,18 +108,39 @@ def main(args):
                             rateEffs[rate],
                             1.0
                         )
-                        rateLine.SetLineColor(ROOT.kBlue)
+                        rateLine.SetLineColor(lineColors[rate])
                         rateLine.SetLineWidth(2)
+                        rateLine.SetLineStyle(9)
                         rateLine.Draw()
 
-                        rateText = ROOT.TLatex(rateEffs[rate], 0.9-index*0.1, f'{rate}')
-                        rateText.Draw()
+                        # rateText = ROOT.TLatex(rateEffs[rate], 0.9-index*0.1, f'{rate}')
+                        # rateText.Draw()
 
-                        lines.append(rateLine)
-                        texts.append(rateText)
+                        # lines.append(rateLine)
+                        # texts.append(rateText)
+                        lines[rate] = rateLine
+                    
+                    theLegend = ROOT.TLegend(0.4,0.75,0.9,0.9)
+                    theLegend.SetNColumns(2)
+                    for rate in lines:
+                        theLegend.AddEntry(lines[rate], rate, 'l')
+                    theLegend.Draw()
 
                 theGraph.SetTitle('')
-                theCanvas.SaveAs(histoName+f'_CICADAv{args.CICADAVersion}.png')
+
+                cmsLatex = ROOT.TLatex()
+                cmsLatex.SetTextSize(0.04)
+                cmsLatex.SetNDC(True)
+                cmsLatex.SetTextAlign(11)
+                cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
+
+                signalLatex = ROOT.TLatex()
+                signalLatex.SetTextSize(0.04)
+                signalLatex.SetNDC(True)
+                signalLatex.SetTextAlign(31)
+                signalLatex.DrawLatex(0.9,0.92, "#font[61]{"+combination[1]+"}")
+
+                theCanvas.SaveAs(destinationPath+'/'+histoName+f'_CICADAv{args.CICADAVersion}.png')
 
     console.rule('AUCs')
 

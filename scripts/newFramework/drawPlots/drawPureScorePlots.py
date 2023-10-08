@@ -26,19 +26,14 @@ def main(args):
     
     runs = ['EphemeralZeroBias']
     menus = {
-        'EphemeralZeroBias': ['L1Menu_Collisions2018_v2_0_0', 'L1Menu_Collisions2018_v2_1_0']
+        'EphemeralZeroBias': ['L1Menu_Collisions2023_v1_2_0']
     }
     menuColors = {
-        'L1Menu_Collisions2018_v2_0_0': {
+        'L1Menu_Collisions2023_v1_2_0': {
             'overall': ROOT.kBlue,
             'pure': 30,
             'pureMinusMuon': 40
         },
-        'L1Menu_Collisions2018_v2_1_0':{
-            'overall': ROOT.kGreen,
-            'pure': 42,
-            'pureMinusMuon': 9
-        }
     }
 
     plots = []
@@ -49,12 +44,12 @@ def main(args):
         #one for rates
         scoreCanvas = ROOT.TCanvas(f'{run}_score_canvas')
         scoreCanvas.SetLogy()
-        scoreLegend = ROOT.TLegend(0.4,0.7,1.0,1.0)
+        scoreLegend = ROOT.TLegend(0.35,0.7,0.9,0.9)
         scoreLegend.SetTextSize(0.0225)
 
         rateCanvas = ROOT.TCanvas(f'{run}_rate_canvas')
         rateCanvas.SetLogy()
-        rateLegend = ROOT.TLegend(0.4,0.7,1.0,1.0)
+        rateLegend = ROOT.TLegend(0.35,0.7,0.9,0.9)
         rateLegend.SetTextSize(0.0225)
 
         #First thing's first, let's grab the overall score plots

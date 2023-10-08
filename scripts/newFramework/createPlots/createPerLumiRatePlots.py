@@ -1,11 +1,15 @@
 # !/usr/bin/env python3
 import ROOT
-from anomalyDetection.anomalyTriggerSkunkworks.samples.EphemeralZeroBias import EphemeralZeroBiasSample
 import argparse
 import numpy as np
 import time
 import math
 from tqdm import tqdm, trange
+
+# 2018 setup 
+# from anomalyDetection.anomalyTriggerSkunkworks.samples.EphemeralZeroBias import EphemeralZeroBiasSample
+# 2023 setup
+from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.largeRunDEphemeralZeroBias import largeRunDEphemeralZeroBiasSample as EphemeralZeroBiasSample
 
 def createPlotForThreshold(theDataframe, run, rate, threshold, lumis):
     thresholdDF = theDataframe.Filter(f'anomalyScore >= {threshold}')
@@ -69,20 +73,22 @@ def main(args):
     if args.CICADAVersion == 1:
         rateThresholds = {
             'ZeroBias': 0.0,
-            '5kHz': 5.783,
-            '3kHz': 5.895,
-            '2kHz': 5.988,
-            '1kHz': 6.221,
-            '0p5kHz': 6.520,
+            '10kHz': 5.781,
+            '5kHz': 5.859,
+            '3kHz': 5.922,
+            '2kHz': 5.983,
+            '1kHz': 6.016,
+            '0p5kHz': 6.109,
         }
     elif args.CICADAVersion == 2:
         rateThresholds = {
             'ZeroBias': 0.0,
-            '5kHz': 10.630,
-            '3kHz': 11.336,
-            '2kHz': 11.953,
-            '1kHz': 13.365,
-            '0p5kHz': 15.570,
+            '10kHz': 11.555,
+            '5kHz': 11.947,
+            '3kHz': 12.252,
+            '2kHz': 12.528,
+            '1kHz': 13.277,
+            '0p5kHz': 14.012,
         }
 
     # print(theDataframe.GetColumnNames())

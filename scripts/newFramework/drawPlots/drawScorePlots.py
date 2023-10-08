@@ -3,8 +3,15 @@
 import ROOT
 import argparse
 import os
-import prettytable
+# import prettytable
 import math
+
+from rich.console import Console
+from rich.table import Table
+from rich.traceback import install
+
+console = Console()
+install()
 
 def createEffPlot(scorePlot):
     theEffPlot = ROOT.TH1D(
@@ -56,20 +63,23 @@ def findBinForRate(ratePlot, rate):
     return currentBin, binContent, binLeftEdge, binRightEdge
 
 def printRateThresholds(ratePlot, run):
-    print(f'Info for run: {run}')
-    theTable = prettytable.PrettyTable()
-    theTable.field_names = ["nominal rate", "bin no", "rate (plot content)", "low threshold", "high threshold"]
-    theTable.add_rows(
-        [
-            [10.0, *findBinForRate(ratePlot, 10.0)],
-            [5.0, *findBinForRate(ratePlot, 5.0)],
-            [3.0, *findBinForRate(ratePlot, 3.0)],
-            [2.0, *findBinForRate(ratePlot, 2.0)],
-            [1.0, *findBinForRate(ratePlot, 1.0)],
-            [0.5, *findBinForRate(ratePlot, 0.5)],
-        ]
-    )
-    print(theTable)
+    console.log(f'Info for run: {run}')
+
+    theTable = Table(title=run)
+    theTable.add_column("Nominal rate", style='cyan', justify='center')
+    theTable.add_column("Bin No.", style='cyan', justify='center')
+    theTable.add_column("Rate (plot content)", style='underline white', justify='right')
+    theTable.add_column('Low threshold', style='green', justify='right')
+    theTable.add_column('High threshold', style='green', justify='right')
+    
+    theTable.add_row('10.0', *[str(x) for x in findBinForRate(ratePlot, 10.0)])
+    theTable.add_row('5.0', *[str(x) for x in findBinForRate(ratePlot, 5.0)])
+    theTable.add_row('3.0', *[str(x) for x in findBinForRate(ratePlot, 3.0)])
+    theTable.add_row('2.0', *[str(x) for x in findBinForRate(ratePlot, 2.0)])
+    theTable.add_row('1.0', *[str(x) for x in findBinForRate(ratePlot, 1.0)])
+    theTable.add_row('0.5', *[str(x) for x in findBinForRate(ratePlot, 0.5)])
+
+    console.print(theTable)
 
 def rateEffPlot(runs, scorePlots, destinationPath, args):
     theCanvas = ROOT.TCanvas('highGranularityCanvas')
@@ -149,12 +159,14 @@ def basicScorePlot(runs, scorePlots, destinationPath, args):
 
 def main(args):
     ROOT.gStyle.SetOptStat(0)
-    if args.mc:
+    """ if args.mc:
         theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scoreMCPlots{args.year}CICADAv{args.CICADAVersion}.root')
         destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scoreMCPlots{args.year}CICADAv{args.CICADAVersion}/'
     else:
         theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scorePlots{args.year}CICADAv{args.CICADAVersion}.root')
-        destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scorePlots{args.year}CICADAv{args.CICADAVersion}/'
+        destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scorePlots{args.year}CICADAv{args.CICADAVersion}/' """
+    theFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/scorePlotsCICADAv{args.CICADAVersion}.root')
+    destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/scorePlotsCICADAv{args.CICADAVersion}/'
     if not os.path.isdir(destinationPath):
         os.mkdir(destinationPath)
 
@@ -209,31 +221,25 @@ def main(args):
                 'VBFHTT':theFile.VBFHTT_score_highGranularity,
                 'ZPrimeTT':theFile.ZPrimeTT_score_highGranularity,
             }
-        else:
-            runs = {
-                'RunB': 40,
-                'RunC': 42,
-                'RunD': 46,
-                'RunE': 30,
-                'RunF': 33,
-                'RunG': 28,
-            }
-            scorePlots = {
-                'RunB': theFile.RunB_score,
-                'RunC': theFile.RunC_score,
-                'RunD': theFile.RunD_score,
-                'RunE': theFile.RunE_score,
-                'RunF': theFile.RunF_score,
-                'RunG': theFile.RunG_score,
-            }
-            hgScorePlots = {
-                'RunB': theFile.RunB_score_highGranularity,
-                'RunC': theFile.RunC_score_highGranularity,
-                'RunD': theFile.RunD_score_highGranularity,
-                'RunE': theFile.RunE_score_highGranularity,
-                'RunF': theFile.RunF_score_highGranularity,
-                'RunG': theFile.RunG_score_highGranularity,
-            }
+    if args.year == '2023':
+        runs = {
+            # 'RunA': 41,
+            'RunB': 42,
+            'RunC': 46,
+            'RunD': 30,
+        }
+        scorePlots = {
+            # 'RunA': theFile.RunA_score,
+            'RunB': theFile.RunB_score,
+            'RunC': theFile.RunC_score,
+            'RunD': theFile.RunD_score,
+        }
+        hgScorePlots = {
+            # 'RunA': theFile.RunA_score_highGranularity,
+            'RunB': theFile.RunB_score_highGranularity,
+            'RunC': theFile.RunC_score_highGranularity,
+            'RunD': theFile.RunD_score_highGranularity,
+        }
     
     basicScorePlot(
         runs=runs,
@@ -263,9 +269,9 @@ if __name__ == '__main__':
     parser.add_argument(
         '-y',
         '--year',
-        default='2018',
+        default='2023',
         help='Year of samples to use',
-        choices=['2018','2022'],
+        choices=['2018','2022','2023'],
         nargs='?'
     )
     parser.add_argument(

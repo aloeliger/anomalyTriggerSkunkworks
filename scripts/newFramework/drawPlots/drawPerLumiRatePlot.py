@@ -6,6 +6,7 @@ import statistics
 import math
 from drawScorePlots import convertEffToRate
 from tqdm import tqdm
+import re
 
 def addInQuadrature(iterable):
     sum = 0.0
@@ -108,46 +109,25 @@ def main(args):
     if not os.path.isdir(destinationPath):
         os.mkdir(destinationPath)
 
-    runs = [
-        320673, 
-        321755, 
-        323725, 
-        323727, 
-        323755, 
-        323775, 
-        323790, 
-        323841, 
-        323940, 
-        323976,
-        323978, 
-        323980, 
-        324021, 
-        324077, 
-        324201, 
-        324202, 
-        324237, 
-        324245, 
-        324293, 
-        324315,
-        324420, 
-        324747, 
-        324785, 
-        324835, 
-        324878, 
-        324897, 
-        324970, 
-        324980, 
-        324997, 
-        325022,
-        325057, 
-        325097, 
-        325098, 
-        325099, 
-        325110, 
-        325159,
-    ]
+    listOfKeys = list(theFile.GetListOfKeys())
+    listOfNames = [x.GetName() for x in listOfKeys]
+    # print(listOfNames)
+    listOfRuns = []
+    for name in listOfNames:
+        match = re.search('^[0-9]+(?=_)', name)
+        if match:
+            runNum = match.group(0)
+        else:
+            print('failed to generate a run number. Continuing')
+            continue
+        listOfRuns.append(runNum)
 
-    for run in runs:
+    listOfUniqueRuns = []
+    for runNum in listOfRuns:
+        if runNum not in listOfUniqueRuns:
+            listOfUniqueRuns.append(runNum)
+
+    for run in listOfUniqueRuns:
         makeRunPlot(
             run,
             theFile,

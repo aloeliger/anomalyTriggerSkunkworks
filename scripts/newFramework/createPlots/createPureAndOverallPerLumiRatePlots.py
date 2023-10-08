@@ -74,8 +74,12 @@ def createBitPlotForRun(dataframe, name, run):
 def main(args):
     outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/perLumiPureAndOverallRatePlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')
     
-    from anomalyDetection.anomalyTriggerSkunkworks.samples.ephemeralZeroBiasSamples2018.ephemeralZeroBiasAll2018 import EphemeralZeroBiasSample
-    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2018
+    # 2018 setup
+    """ from anomalyDetection.anomalyTriggerSkunkworks.samples.ephemeralZeroBiasSamples2018.ephemeralZeroBiasAll2018 import EphemeralZeroBiasSample
+    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2018 """
+    
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.largeRunDEphemeralZeroBias import largeRunDEphemeralZeroBiasSample as EphemeralZeroBiasSample
+    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2023
 
     theDataframe = EphemeralZeroBiasSample.getNewDataframe(
         [
@@ -84,7 +88,8 @@ def main(args):
         ]
     )
 
-    if args.CICADAVersion == 1:
+    # 2018 setup
+    """ if args.CICADAVersion == 1:
         rateThresholds = {
             'L1Menu_Collisions2018_v2_0_0':{
                 'overall':{
@@ -169,6 +174,52 @@ def main(args):
                     '0p5kHz': 14.336,
                 },
             }
+        } """
+    if args.CICADAVersion == 1:
+        rateThresholds = {
+            'L1Menu_Collisions2023_v1_2_0':{
+                'overall':{
+                    'ZeroBias': 0.0,
+                    "10kHz": 5.734,
+                    "5kHz": 5.884,
+                    "3kHz": 5.953,
+                    "2kHz": 6.047,
+                    "1kHz": 6.406,
+                    "0p5kHz": 6.922,
+                },
+                'pure':{
+                    'ZeroBias': 0.0,
+                    "10kHz": 5.781,
+                    "5kHz": 5.859,
+                    "3kHz": 5.922,
+                    "2kHz": 5.983,
+                    "1kHz": 6.016,
+                    "0p5kHz": 6.109,
+                },
+            },
+        }
+    if args.CICADAVersion == 2:
+        rateThresholds = {
+            'L1Menu_Collisions2023_v1_2_0':{
+                'overall':{
+                    'ZeroBias':0.0,
+                    "10kHz": 11.356,
+                    "5kHz": 11.983,
+                    "3kHz": 12.477,
+                    "2kHz": 13.371,
+                    "1kHz": 15.707,
+                    "0p5kHz": 18.934,
+                },
+                'pure':{
+                    'ZeroBias':0.0,
+                    '10kHz': 11.555,
+                    '5kHz': 11.947,
+                    '3kHz': 12.252,
+                    '2kHz': 13.528,
+                    '1kHz': 13.277,
+                    '0p5kHz': 14.012,
+                },
+            },
         }
     usefulUnprescaledBits = [
         'L1_SingleMu22',
@@ -176,7 +227,9 @@ def main(args):
         'L1_SingleJet180',
     ]
     #Let's just abuse the fact that we know what the menus are
-    menus = ['L1Menu_Collisions2018_v2_0_0','L1Menu_Collisions2018_v2_1_0']
+    # 2018 setup
+    # menus = ['L1Menu_Collisions2018_v2_0_0','L1Menu_Collisions2018_v2_1_0']
+    menus = ['L1Menu_Collisions2023_v1_2_0']
     # storage so we don't lose any pieces
     dataframes = []
     hists = []
@@ -193,7 +246,7 @@ def main(args):
         uniqueRuns = list(uniqueRuns)
         # print(uniqueRuns)
 
-        noUnprescaledBitCondition = getStringForNoBitPass(unprescaledBits2018[menu])
+        noUnprescaledBitCondition = getStringForNoBitPass(unprescaledBits2023[menu])
         pureMenuDF = menuDF.Filter(noUnprescaledBitCondition)
         dataframes.append(pureMenuDF)
 
@@ -228,7 +281,7 @@ def main(args):
                 # for our l1 bits
                 for bit in tqdm(usefulUnprescaledBits, ascii=True, dynamic_ncols=True, leave=False, desc='L1 Bits'):
                     if pureOrOverall == 'pure':
-                        condition = getStringForNoBitPass(unprescaledBits2018[menu])
+                        condition = getStringForNoBitPass(unprescaledBits2023[menu])
                         condition.replace(f'{bit} == 0', f'{bit} == 1')
                     elif pureOrOverall == 'overall':
                         condition = f'{bit}==1'

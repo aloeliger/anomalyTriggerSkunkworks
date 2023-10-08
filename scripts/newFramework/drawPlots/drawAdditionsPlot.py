@@ -12,7 +12,7 @@ def main(args):
 
     console.rule('Loading file')
 
-    theFilename = f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/additionsPlots/additionPlotsCICADAv{args.CICADAVersion}.root'
+    theFilename = f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/additionPlotsCICADAv{args.CICADAVersion}.root'
     theFile = ROOT.TFile(theFilename, 'READ')
     if theFile.IsZombie():
         console.log('Failed to load file (found zombie)...', style='bold red')
@@ -102,7 +102,7 @@ def main(args):
     else:
         cmsLatex.DrawLatex(0.2, 0.92, '10 kHz Overall Rate AD')
 
-    theLegend = ROOT.TLegend(0.4, 0.73, 0.9, 0.9)
+    theLegend = ROOT.TLegend(0.5, 0.73, 0.9, 0.9)
     theLegend.SetBorderSize(0)
     theLegend.SetFillStyle(0)
     theLegend.SetNColumns(2)
@@ -114,7 +114,7 @@ def main(args):
     theLegend.Draw()
 
 
-    destinationPath = '/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/additionsPlots/'
+    destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/additionsPlotsCICADAv{args.CICADAVersion}/'
     if args.includeAXOL1TL:
         plotName = f'additionsPlotCICADAv{args.CICADAVersion}AndAXOL1TL.png'
     else:

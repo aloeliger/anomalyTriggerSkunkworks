@@ -6,6 +6,8 @@ from tqdm import tqdm,trange
 
 from collections import OrderedDict
 
+from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.thresholds import CICADAThresholds
+
 def createStringConditionForTriggerGroup(triggerGroup):
     theStr = ''
     for trigger in triggerGroup:
@@ -16,8 +18,9 @@ def createStringConditionForTriggerGroup(triggerGroup):
 def main(args):
     outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/L1OverlapCICADAv{args.CICADAVersion}.root', 'RECREATE')
     
-    from anomalyDetection.anomalyTriggerSkunkworks.samples.ephemeralZeroBiasSamples2018.ephemeralZeroBiasAll2018 import EphemeralZeroBiasSample
-    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2018
+    # 2018
+    """     from anomalyDetection.anomalyTriggerSkunkworks.samples.ephemeralZeroBiasSamples2018.ephemeralZeroBiasAll2018 import EphemeralZeroBiasSample
+    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2023
 
     theDataframe = EphemeralZeroBiasSample.getNewDataframe(
         [
@@ -26,8 +29,21 @@ def main(args):
         ]
     )
     menus = ['L1Menu_Collisions2018_v2_0_0','L1Menu_Collisions2018_v2_1_0']
+     """
+    # 2023
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.largeRunDEphemeralZeroBias import largeRunDEphemeralZeroBiasSample
+    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2023
 
-    if args.CICADAVersion == 1:
+    theDataframe = largeRunDEphemeralZeroBiasSample.getNewDataframe(
+        [
+            f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+            'L1TTriggerBitsNtuplizer/L1TTriggerBits',
+        ]
+    )
+
+    menus = ['L1Menu_Collisions2023_v1_2_0']
+
+    """     if args.CICADAVersion == 1:
         rateThresholds = {
             'L1Menu_Collisions2018_v2_0_0': OrderedDict({
                 '10kHz (overall)': 5.364,
@@ -64,6 +80,28 @@ def main(args):
                 '1kHz (overall)': 15.747,
                 '0p5kHz (overall)': 17.820,
             }),
+        } """
+    if args.CICADAVersion == 1:
+        rateThresholds = {
+            'L1Menu_Collisions2023_v1_2_0': OrderedDict({
+                '10kHz (overall)': 5.734,
+                '5kHz (overall)': 5.884,
+                '3kHz (overall)': 5.953,
+                '2kHz (overall)': 6.047,
+                '1kHz (overall)': 6.406,
+                '0p5kHz (overall)': 6.922,
+            })
+        }
+    if args.CICADAVersion == 2:
+        rateThresholds = {
+            'L1Menu_Collisions2023_v1_2_0': OrderedDict({
+                '10kHz (overall)': 11.356,
+                '5kHz (overall)': 11.983,
+                '3kHz (overall)': 12.477,
+                '2kHz (overall)': 13.371,
+                '1kHz (overall)': 15.707,
+                '0p5kHz (overall)': 18.934,
+            })
         }
 
     overlapEvents = OrderedDict()
@@ -74,12 +112,12 @@ def main(args):
 
         #first, we get a list of all the trigger conditions we want
 
-        triggerGroupNames = [group for group in unprescaledBits2018[menu]]
+        triggerGroupNames = [group for group in unprescaledBits2023[menu]]
         triggerConditions = OrderedDict()
         for cicadaRate in rateThresholds[menu]:
             triggerConditions[cicadaRate] = f'anomalyScore > {rateThresholds[menu][cicadaRate]}'
         for name in triggerGroupNames:
-            triggerConditions[name] = createStringConditionForTriggerGroup(unprescaledBits2018[menu][name])
+            triggerConditions[name] = createStringConditionForTriggerGroup(unprescaledBits2023[menu][name])
         # print(triggerConditions)
         # Let's create the histogram that we are going to fill with stuff
         overlapHisto = ROOT.TH2F(
@@ -108,21 +146,7 @@ def main(args):
             allEvents[primaryTrigger] = allEvents[primaryTrigger].GetValue()
             for secondaryTrigger in tqdm(triggerConditions, ascii=True, dynamic_ncols=True, leave=False, desc="Write out secondary"):
                 overlapEvents[primaryTrigger][secondaryTrigger] = overlapEvents[primaryTrigger][secondaryTrigger].GetValue()
-                overlapif __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Create stability rate plots for CICADA versions")
-    parser.add_argument(
-        '-v',
-        '--CICADAVersion',
-        default=1,
-        type=int,
-        help='Version to pull the ntuplizer from',
-        choices=[1,2],
-        nargs='?',
-    )
-
-    args = parser.parse_args()
-
-    main(args)  Histo.Fill(primaryTrigger, secondaryTrigger, overlapEvents[primaryTrigger][secondaryTrigger]/allEvents[primaryTrigger])
+                overlapHisto.Fill(primaryTrigger, secondaryTrigger, overlapEvents[primaryTrigger][secondaryTrigger]/allEvents[primaryTrigger])
         overlapHisto.Write()
     outputFile.Write()
     outputFile.Close()

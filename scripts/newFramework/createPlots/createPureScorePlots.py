@@ -35,38 +35,39 @@ def main(args):
     outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/pureScorePlots{args.year}CICADAv{args.CICADAVersion}.root', 'RECREATE')
     #Get the sample
     #for right now this is just going to be EphemeralZeroBias
-    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2018
 
-    from anomalyDetection.anomalyTriggerSkunkworks.samples.ephemeralZeroBiasSamples2018.ephemeralZeroBiasAll2018 import EphemeralZeroBiasSample
+    # 2018 setup
+    # from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2018
+
+    # 2023 setup
+    from anomalyDetection.anomalyTriggerSkunkworks.triggerInfo.unprescaledTriggerBits import unprescaledBits2023
+
+    # 2018 setup
+    """ from anomalyDetection.anomalyTriggerSkunkworks.samples.ephemeralZeroBiasSamples2018.ephemeralZeroBiasAll2018 import EphemeralZeroBiasSample
     from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2018.RunA import RunASample
     from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2018.RunC import RunCSample
-    from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2018.RunD import RunDSample
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.dataSamples2018.RunD import RunDSample """
+    
+    # 2023 setup
+    from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.largeRunDEphemeralZeroBias import largeRunDEphemeralZeroBiasSample
 
-    dataframes = {
+    # 2018 setup
+    """ dataframes = {
         'EphemeralZeroBias': EphemeralZeroBiasSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 'L1TTriggerBitsNtuplizer/L1TTriggerBits',
             ]
         ),
-        # 'RunA': RunASample.getNewDataframe(
-        #     [
-        #         f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-        #         'L1TTriggerBitsNtuplizer/L1TTriggerBits',
-        #     ]
-        # ),
-        # 'RunC': RunCSample.getNewDataframe(
-        #     [
-        #         f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-        #         'L1TTriggerBitsNtuplizer/L1TTriggerBits',
-        #     ]
-        # ),
-        # 'RunD': RunDSample.getNewDataframe(
-        #     [
-        #         f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
-        #         'L1TTriggerBitsNtuplizer/L1TTriggerBits',
-        #     ]
-        # )
+    } """
+    # 2023 
+    dataframes = {
+        'EphemeralZeroBias': largeRunDEphemeralZeroBiasSample.getNewDataframe(
+            [
+                f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+                'L1TTriggerBitsNtuplizer/L1TTriggerBits',
+            ]
+        )
     }
 
     maxes = []
@@ -110,7 +111,7 @@ def main(args):
         # print('unmatched menus')
         unmatchedMenus = []
         for menuName in uniqueMenuNames:
-            if not menuName in unprescaledBits2018:
+            if not menuName in unprescaledBits2023:
                 print(f"Failed to find prescales for {menuName} in unprescaled bits file. Please add it")
                 unmatchedMenus.append(menuName)
                 uniqueMenuNames.remove(menuName)
@@ -204,9 +205,9 @@ def main(args):
                 scoreMax,
             )
 
-            noUnprescaledBitPasses = getStringForNoBitPass(unprescaledBits2018[menu])
+            noUnprescaledBitPasses = getStringForNoBitPass(unprescaledBits2023[menu])
             noUnprescaledBitPassesMinusMuons = getStringForNoBitPass(
-                unprescaledBits2018[menu],
+                unprescaledBits2023[menu],
                 excludedCats=[
                     'Muon',
                     'MuonEG',

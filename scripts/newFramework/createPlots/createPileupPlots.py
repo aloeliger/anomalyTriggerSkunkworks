@@ -3,6 +3,7 @@
 import ROOT
 import argparse
 import os
+import time
 
 import numpy as np
 import math
@@ -12,6 +13,9 @@ from rich.console import Console
 from anomalyDetection.anomalyTriggerSkunkworks.plotSettings.utilities import convertEffToRate
 from anomalyDetection.anomalyTriggerSkunkworks.utilities.decorators import cache
 from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.largeRunDEphemeralZeroBias import largeRunDEphemeralZeroBiasSample
+from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.RunDEphemeralZeroBias0 import RunDEphemeralZeroBias0Sample
+
+from multiprocessing import Queue, Pool
 
 console = Console()
 
@@ -101,9 +105,41 @@ def getCICADAMuRate(theFrame, run, lumi, threshold):
 
     return cicadaRate, singleMuRate
 
+# Okay, the single mu versus CICADA rate for a large dataset is taking forever,
+# so the idea is going to be to farm out the run lumi pairs to a function
+# and each one will put 
+resultsPackage = Queue()
+def multiprocessingCICADAMuRateHandle(run, lumi, threshold):
+    # make a process based copy of the dataframe for thread safety
+    start_time = time.perf_counter()
+    processSample = largeRunDEphemeralZeroBiasSample.getNewDataframe(
+        [
+            f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+            'L1TTriggerBitsNtuplizer/L1TTriggerBits',
+        ]        
+    )
+    # Filter it down,
+    runLumiFrame = processSample.Filter(f'run == {run} && lumi == {lumi}')
+    thresholdFrame = runLumiFrame.Filter(f'anomalyScore >= {threshold}')
+    singleMuFrame = runLumiFrame.Filter(f'L1_SingleMu22 == 1.0')
+
+    cicadaEff = thresholdFrame.Count().GetValue() / runLumiFrame.Count().GetValue()
+    cicadaRate = convertEffToRate(cicadaEff)
+
+    singleMuEff = singleMuFrame.Count().GetValue() / runLumiFrame.Count().GetValue()
+    singleMuRate = convertEffToRate(singleMuEff)
+
+    end_time = time.perf_counter()
+
+    # console.print(cicadaRate, singleMuRate, f'In {end_time-start_time:.3f} seconds')
+
+    resultsPackage.put(
+        (cicadaRate, singleMuRate)
+    )
+
 def main(args):
     
-    destinationPath = '/nfs_scratch/aloeliger/anomalyPlotFiles/pileupPlots/'
+    destinationPath = '/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/'
     if not os.path.isdir(destinationPath):
         os.makedirs(destinationPath, exist_ok=True)
     outputFile = ROOT.TFile(f'{destinationPath}/pileupPlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')
@@ -114,6 +150,12 @@ def main(args):
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
         ]
     )
+    # theSample = RunDEphemeralZeroBias0Sample.getNewDataframe(
+    #         [
+    #             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+    #             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
+    #         ]
+    # )
 
     # rates in kHz we want thresholds for
     desiredRates = [
@@ -183,31 +225,61 @@ def main(args):
     # Then for each, calculate a rate for a series of thresholds
     # And look at the single mu eff/rate for that
     # DONE
+
     CICADAvsSingleMuGraphs = {}
     with console.status('Making CICADA rate versus single mu rate...'):
         # Get a list of run lumi pairs
         runLumiPairs = getListOfRunLumiPairs(theSample)
         for rate in rateThresholds:
 
+            workPackage = [
+                [run, lumi, rateThresholds[rate]] for run, lumi in runLumiPairs
+            ]
+            console.log(f'There are {len(workPackage)} items in the work package')
+
+            # console.print('Work package:')
+            # console.print(workPackage)
+
             theCICADAvsSingleMuGraph = ROOT.TGraph(len(runLumiPairs))
             nameTitle = f'CICADAvsSingleMu_{rate}'
             theCICADAvsSingleMuGraph.SetNameTitle(nameTitle, nameTitle)
-            theThreshold = rateThresholds[rate]
 
-            for index, runLumi in enumerate(runLumiPairs):
-                run, lumi = runLumi[0], runLumi[1]
-                cicadaRate, singleMuRate = getCICADAMuRate(
-                    theSample,
-                    run,
-                    lumi,
-                    theThreshold,
-                )
+            console.log(f'Starting multiprocessing pool for rate: {rate} ...', style='bold green')
+            try:
+                thePool = Pool(10)
+                thePool.starmap(multiprocessingCICADAMuRateHandle, workPackage)
+                thePool.close()
+            except:
+                thePool.terminate()
+            finally:
+                thePool.join()
+                console.log(f'Finalized multiprocessing pool for rate: {rate} ...', style='bold green')
 
+            index = 0
+            while not resultsPackage.empty():
+                cicadaRate, singleMuRate = resultsPackage.get()
                 theCICADAvsSingleMuGraph.SetPoint(
                     index,
                     singleMuRate,
-                    cicadaRate,
+                    cicadaRate
                 )
+                index+=1
+            # theThreshold = rateThresholds[rate]
+
+            # for index, runLumi in enumerate(runLumiPairs):
+            #     run, lumi = runLumi[0], runLumi[1]
+            #     cicadaRate, singleMuRate = getCICADAMuRate(
+            #         theSample,
+            #         run,
+            #         lumi,
+            #         theThreshold,
+            #     )
+
+            #     theCICADAvsSingleMuGraph.SetPoint(
+            #         index,
+            #         singleMuRate,
+            #         cicadaRate,
+            #     )
             CICADAvsSingleMuGraphs[rate] = theCICADAvsSingleMuGraph
 
     console.log('CICADA rate versus single mu rate: Done', style='bold green')

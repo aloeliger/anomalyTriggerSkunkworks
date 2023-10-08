@@ -123,7 +123,7 @@ def createROCDataFromFrame(backgroundFrame, signalFrame, desiredEffs):
     return effPoints
 
 def main(args):
-    destinationPath = '/nfs_scratch/aloeliger/anomalyPlotFiles/rocCurves/'
+    destinationPath = '/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/'
     if not os.path.isdir(destinationPath):
         os.makedirs(destinationPath, exist_ok=True)
     outputFile = ROOT.TFile(f'{destinationPath}/rocCurveFileCICADAv{args.CICADAVersion}.root','RECREATE')
