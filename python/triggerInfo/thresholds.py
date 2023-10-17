@@ -52,7 +52,7 @@ CICADAThresholds = {
             1: 15.747,
             0.5: 17.820,
         },
-    }
+    },
     'v_1.1.0':{ #trained for 2023
         'general':{ # default treated as L1Menu_Collisions2023_v1_2_0 for this arch
             10: 5.734,
@@ -78,7 +78,7 @@ CICADAThresholds = {
             1: 6.406,
             0.5: 6.922,
         }, 
-        'L1Menu_Collisions2022_v1_4_0':{
+        'L1Menu_Collisions2022_v1_4_0':{ #likely bugged by bad stats or overtraining
             10: 0.312,
             5: 0.328,
             3: 0.328,
