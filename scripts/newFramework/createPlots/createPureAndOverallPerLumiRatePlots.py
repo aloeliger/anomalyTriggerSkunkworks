@@ -3,7 +3,8 @@
 import ROOT
 import argparse
 import numpy as np
-from tqdm import tqdm,trange
+# from tqdm import tqdm,trange
+from rich.progress import Progress, track
 import math
 import time
 
@@ -85,6 +86,7 @@ def main(args):
         [
             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
+            'boostedJetTriggerNtuplizer/boostedJetTrigger',
         ]
     )
 
@@ -233,69 +235,116 @@ def main(args):
     # storage so we don't lose any pieces
     dataframes = []
     hists = []
-    for menu in tqdm(menus, ascii=True, dynamic_ncols=True, leave=False, desc='Menus'):
-        # print(f'processing menu: {menu}')
-        menuDF = theDataframe.Filter(f'menuName == \"{menu}\"')
-        dataframes.append(menuDF)
-        # print('Getting unique runs...')
-        # startTime = time.perf_counter()
-        runCol = menuDF.AsNumpy(['run'])['run']
-        # endTime = time.perf_counter()
-        # print(f'Runs gotten in {endTime-startTime:.2f} seconds')
-        uniqueRuns = np.unique(runCol)
-        uniqueRuns = list(uniqueRuns)
-        # print(uniqueRuns)
 
-        noUnprescaledBitCondition = getStringForNoBitPass(unprescaledBits2023[menu])
-        pureMenuDF = menuDF.Filter(noUnprescaledBitCondition)
-        dataframes.append(pureMenuDF)
+    with Progress(transient=True) as progress:
+        task1 = progress.add_task("[red]Menus...",total=len(menus))
+        for menu in menus:
+            menuDF = theDataframe.Filter(f'menuName == \"{menu}\"')
+            dataframes.append(menuDF)
 
-        #first, let's handle
-        for run in tqdm(uniqueRuns, ascii=True, dynamic_ncols=True, leave=False, desc="Booking Anomaly Hists"):
-            for pureOrOverall in tqdm(['pure','overall'], ascii=True, dynamic_ncols=True, leave=False, desc='Pure or Overall?'):
-                # make the CICADA plots
-                for rate in tqdm(rateThresholds[menu][pureOrOverall], ascii=True, dynamic_ncols=True, leave=False, desc="rates"):
-                    threshold = rateThresholds[menu][pureOrOverall][rate]
-                    histoRunName = f'CICADA_{run}_{menu}_{pureOrOverall}'
-                    if pureOrOverall == 'pure':
+            runCol = menuDF.AsNumpy(['run'])['run']
+            uniqueRuns = np.unique(runCol)
+            uniqueRuns = list(uniqueRuns)
+ 
+            # we now need to make a DF that has the boosted jet information we want available
+            boostedJetTriggerDerivationFunction = """
+                for(int i = 0; i < numberOfJets; ++i){
+                    if(jetPts.at(i) > 120.0){
+                        return 1.0;
+                    }
+                }
+                return 0.0;
+            """
+            menuDF = menuDF.Define(
+                "boostedJetTriggerFires",
+                boostedJetTriggerDerivationFunction,
+            )
+
+            noUnprescaledBitCondition = getStringForNoBitPass(unprescaledBits2023[menu])
+            pureMenuDF = menuDF.Filter(noUnprescaledBitCondition)
+            dataframes.append(pureMenuDF)
+
+            #first, let's handle
+            task2 = progress.add_task("[green]Runs...",total=len(uniqueRuns))
+            # for run in tqdm(uniqueRuns, ascii=True, dynamic_ncols=True, leave=False, desc="Booking Anomaly Hists"):
+            for run in uniqueRuns:
+                task3 = progress.add_task("[cyan]Pure Vs Overall...", total=2)
+                # for pureOrOverall in tqdm(['pure','overall'], ascii=True, dynamic_ncols=True, leave=False, desc='Pure or Overall?'):
+                for pureOrOverall in ['pure','overall']:
+                    # make the CICADA plots
+                    task4 = progress.add_task("[magenta]Rate...", total=len(rateThresholds[menu][pureOrOverall].keys()))
+                    # for rate in tqdm(rateThresholds[menu][pureOrOverall], ascii=True, dynamic_ncols=True, leave=False, desc="rates"):
+                    for rate in rateThresholds[menu][pureOrOverall]:
+                        threshold = rateThresholds[menu][pureOrOverall][rate]
+                        histoRunName = f'CICADA_{run}_{menu}_{pureOrOverall}'
+                        if pureOrOverall == 'pure':
+                            hists.append(
+                                createRateThresholdPlotForRun(
+                                    dataframe = pureMenuDF,
+                                    name = histoRunName,
+                                    run = run,
+                                    rate = rate,
+                                    rateThreshold = threshold
+                                )
+                            )
+                        elif pureOrOverall == 'overall':
+                            hists.append(
+                                createRateThresholdPlotForRun(
+                                    dataframe = menuDF,
+                                    name = histoRunName,
+                                    run = run,
+                                    rate = rate,
+                                    rateThreshold = threshold
+                                )
+                            )
+                        progress.update(task4, advance=1)
+                    # While we're here, let's try to make pure or overall plots 
+                    # for our l1 bits
+                    task4 = progress.add_task("[magenta]Unprescaled Bits...",total=len(usefulUnprescaledBits))
+                    # for bit in tqdm(usefulUnprescaledBits, ascii=True, dynamic_ncols=True, leave=False, desc='L1 Bits'):
+                    for bit in usefulUnprescaledBits:
+                        if pureOrOverall == 'pure':
+                            condition = getStringForNoBitPass(unprescaledBits2023[menu])
+                            condition.replace(f'{bit} == 0', f'{bit} == 1')
+                        elif pureOrOverall == 'overall':
+                            condition = f'{bit}==1'
+                        bitDF = menuDF.Filter(condition)
+                        dataframes.append(bitDF)
+                        histoRunName = f'{bit}_{run}_{menu}_{pureOrOverall}'
                         hists.append(
-                            createRateThresholdPlotForRun(
-                                dataframe = pureMenuDF,
-                                name = histoRunName,
+                            createBitPlotForRun(
+                                dataframe=bitDF,
+                                name=histoRunName,
+                                run=run,
+                            )
+                        )
+                        progress.update(task4, advance=1)
+                    #now, the other thing we need to do is make a boosted jet algorithm dataframe
+                    if pureOrOverall == 'pure':
+                        pureBoostedDF = pureMenuDF.Filter('boostedJetTriggerFires == 1.0')
+                        histoName = f'boostedJetTrigger_{run}_{menu}_{pureOrOverall}'
+                        hists.append(
+                            createBitPlotForRun(
+                                dataframe=pureBoostedDF,
+                                name=histoName,
                                 run = run,
-                                rate = rate,
-                                rateThreshold = threshold
                             )
                         )
                     elif pureOrOverall == 'overall':
+                        boostedDF = menuDF.Filter('boostedJetTriggerFires == 1.0')
+                        histoName = f'boostedJetTrigger_{run}_{menu}_{pureOrOverall}'
                         hists.append(
-                            createRateThresholdPlotForRun(
-                                dataframe = menuDF,
-                                name = histoRunName,
+                            createBitPlotForRun(
+                                dataframe=boostedDF,
+                                name=histoName,
                                 run = run,
-                                rate = rate,
-                                rateThreshold = threshold
                             )
                         )
-                # While we're here, let's try to make pure or overall plots 
-                # for our l1 bits
-                for bit in tqdm(usefulUnprescaledBits, ascii=True, dynamic_ncols=True, leave=False, desc='L1 Bits'):
-                    if pureOrOverall == 'pure':
-                        condition = getStringForNoBitPass(unprescaledBits2023[menu])
-                        condition.replace(f'{bit} == 0', f'{bit} == 1')
-                    elif pureOrOverall == 'overall':
-                        condition = f'{bit}==1'
-                    bitDF = menuDF.Filter(condition)
-                    dataframes.append(bitDF)
-                    histoRunName = f'{bit}_{run}_{menu}_{pureOrOverall}'
-                    hists.append(
-                        createBitPlotForRun(
-                            dataframe=bitDF,
-                            name=histoRunName,
-                            run=run,
-                        )
-                    )
-    for hist in tqdm(hists, desc='Writing hists', ascii=True, dynamic_ncols=True, leave=False):
+                    progress.update(task3, advance=1)
+                progress.update(task2, advance=1)
+            progress.update(task1, advance=1)
+
+    for hist in track(hists, description='Writing hists...', transient=True):
         hist.Write()
     outputFile.Write()
 
