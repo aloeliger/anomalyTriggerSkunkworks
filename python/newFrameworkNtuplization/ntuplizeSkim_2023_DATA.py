@@ -36,17 +36,10 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring(
     'l1UpgradeTfMuonShowerTree', 
     'emtfStage2Digis', 
     'l1uGTTestcrateTree', 
-    'simDtTriggerPrimitiveDigis'
+    'simDtTriggerPrimitiveDigis',
+    'simEmtfDigis'
 )
 
-#Define out input source
-# process.source = cms.Source("PoolSource",
-#                             fileNames = cms.untracked.vstring('/store/user/aloelige/ZeroBias/CICADASkim_2023RunA_ZB_21Jul2023/230721_143242/0000/output_1-1.root'),
-#                             # secondaryFileNames = cms.untracked.vstring(
-#                             #     "/store/data/Run2023C/ZeroBias/RAW/v1/000/367/094/00000/60dd6298-7ebf-4219-8da6-816915e8a1f8.root",
-#                             #     "/store/data/Run2023C/ZeroBias/RAW/v1/000/367/094/00000/ddf586ed-b482-400e-94f9-dc8cd3547122.root",
-#                             #  )
-# )
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(options.inputFiles),
 
@@ -112,10 +105,10 @@ from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW
 process = L1TReEmulFromRAW(process)
 
 # Automatic addition of the customisation function from L1Trigger.L1TNtuples.customiseL1Ntuple
-#from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
+from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
 
 #call to customisation function L1NtupleRAWEMU imported from L1Trigger.L1TNtuples.customiseL1Ntuple
-#process = L1NtupleRAWEMU(process)
+process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
 # from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3 
