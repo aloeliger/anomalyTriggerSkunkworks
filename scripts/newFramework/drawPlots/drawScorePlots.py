@@ -82,9 +82,11 @@ def printRateThresholds(ratePlot, run):
     console.print(theTable)
 
 def rateEffPlot(runs, scorePlots, destinationPath, args):
-    theCanvas = ROOT.TCanvas('highGranularityCanvas')
+    theCanvas = ROOT.TCanvas('highGranularityCanvas','highGranularityCanvas',1400,1000)
     theCanvas.SetLogy()
-    theLegend = ROOT.TLegend(0.5, 0.7, 0.9, 0.9)
+    theLegend = ROOT.TLegend(0.5, 0.69, 0.9, 0.89)
+    theLegend.SetBorderSize(0)
+    theLegend.SetLineWidth(2)
 
     ratePlots = []
 
@@ -96,13 +98,16 @@ def rateEffPlot(runs, scorePlots, destinationPath, args):
         ratePlots.append(ratePlot)
         printRateThresholds(ratePlot, run)
 
-        ratePlot.SetMarkerStyle(6)
+        ratePlot.SetMarkerStyle(7)
+        ratePlot.SetMarkerSize(2)
         ratePlot.SetMarkerColor(runs[run])
         ratePlot.SetLineColor(runs[run])
+        ratePlot.SetLineWidth(2)
 
         if index == 0:
             ratePlot.Draw('E1 X0')
-            ratePlot.GetXaxis().SetTitle(f'CICADA v{args.CICADAVersion} score')
+            # ratePlot.GetXaxis().SetTitle(f'CICADA v{args.CICADAVersion} score')
+            ratePlot.GetXaxis().SetTitle('CICADA score')
             ratePlot.GetYaxis().SetTitle('Rate (kHZ)')
             ratePlot.SetTitle('')
         else:
@@ -119,25 +124,36 @@ def rateEffPlot(runs, scorePlots, destinationPath, args):
     cmsLatex.SetTextAlign(11)
     cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
 
+    yearEnergyLabel = ROOT.TLatex()
+    yearEnergyLabel.SetTextSize(0.04)
+    yearEnergyLabel.SetNDC(True)
+    yearEnergyLabel.SetTextAlign(31)
+    yearEnergyLabel.DrawLatex(0.9, 0.92, "#font[42]{2023 (13.6 TeV)}")
+
     theCanvas.SaveAs(f'{destinationPath}/ratePlotCICADAv{args.CICADAVersion}.png')
 
 def basicScorePlot(runs, scorePlots, destinationPath, args):
-    theCanvas = ROOT.TCanvas('theCanvas')
+    theCanvas = ROOT.TCanvas('theCanvas','theCanvas',1400,1000)
     theCanvas.SetLogy()
-    theLegend = ROOT.TLegend(0.5, 0.7, 0.9, 0.9)
+    theLegend = ROOT.TLegend(0.5, 0.69, 0.9, 0.89)
+    theLegend.SetBorderSize(0)
+    theLegend.SetLineWidth(2)
 
     for index, run in enumerate(runs):
         thePlot = scorePlots[run]
 
         thePlot.SetMarkerStyle(20)
+        thePlot.SetMarkerSize(2)
         thePlot.SetMarkerColor(runs[run])
         thePlot.SetLineColor(runs[run])
+        thePlot.SetLineWidth(2)
 
         thePlot.Scale(1.0/thePlot.Integral())
 
         if index == 0:
             thePlot.Draw('E1 X0')
-            thePlot.GetXaxis().SetTitle(f'CICADA v{args.CICADAVersion} score')
+            # thePlot.GetXaxis().SetTitle(f'CICADA v{args.CICADAVersion} score')
+            thePlot.GetXaxis().SetTitle('CICADA score')
             thePlot.GetYaxis().SetTitle('Fraction (normalized to 1)')
             thePlot.SetTitle('')
         else:
@@ -154,6 +170,12 @@ def basicScorePlot(runs, scorePlots, destinationPath, args):
     cmsLatex.SetNDC(True)
     cmsLatex.SetTextAlign(11)
     cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
+
+    yearEnergyLabel = ROOT.TLatex()
+    yearEnergyLabel.SetTextSize(0.04)
+    yearEnergyLabel.SetNDC(True)
+    yearEnergyLabel.SetTextAlign(31)
+    yearEnergyLabel.DrawLatex(0.9, 0.92, "#font[42]{2023 (13.6 TeV)}")
 
     theCanvas.SaveAs(f'{destinationPath}/scorePlotCICADAv{args.CICADAVersion}.png')
 

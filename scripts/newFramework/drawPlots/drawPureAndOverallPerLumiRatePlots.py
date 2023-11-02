@@ -54,7 +54,7 @@ def makeRunPlot(run, theFile, destinationPath, CICADAVersion, drawBoostedJets = 
     smooth_singleTauPlot = convertEffToRate(smooth_singleTauPlot)
     smooth_boostedJetPlot = convertEffToRate(smooth_boostedJetPlot)
 
-    theCanvas = ROOT.TCanvas("theCanvas")
+    theCanvas = ROOT.TCanvas("theCanvas","theCanvas",1400,1000)
     theCanvas.SetLogy()
 
     smooth_overall5kHZPlot.SetLineColor(ROOT.kRed)
@@ -64,15 +64,15 @@ def makeRunPlot(run, theFile, destinationPath, CICADAVersion, drawBoostedJets = 
     smooth_singleTauPlot.SetLineColor(ROOT.kGreen)
     smooth_boostedJetPlot.SetLineColor(ROOT.kBlack)
 
-    smooth_overall5kHZPlot.SetLineWidth(2)
-    smooth_pure3kHZPlot.SetLineWidth(2)
-    smooth_singleMuPlot.SetLineWidth(2)
-    smooth_singleJetPlot.SetLineWidth(2)
-    smooth_singleTauPlot.SetLineWidth(2)
-    smooth_boostedJetPlot.SetLineWidth(2)
+    smooth_overall5kHZPlot.SetLineWidth(4)
+    smooth_pure3kHZPlot.SetLineWidth(4)
+    smooth_singleMuPlot.SetLineWidth(4)
+    smooth_singleJetPlot.SetLineWidth(4)
+    smooth_singleTauPlot.SetLineWidth(4)
+    smooth_boostedJetPlot.SetLineWidth(4)
 
     smooth_overall5kHZPlot.Draw("HIST")
-    smooth_overall5kHZPlot.GetXaxis().SetTitle("Lumi")
+    smooth_overall5kHZPlot.GetXaxis().SetTitle("Lumisections")
     smooth_overall5kHZPlot.GetYaxis().SetTitle("Rate (kHz)")
     smooth_overall5kHZPlot.GetYaxis().SetRangeUser(0.1, 100)
     smooth_overall5kHZPlot.SetTitle('')
@@ -85,8 +85,10 @@ def makeRunPlot(run, theFile, destinationPath, CICADAVersion, drawBoostedJets = 
         smooth_boostedJetPlot.Draw("HIST SAME")
 
     theLegend = ROOT.TLegend(0.1, 0.75, 0.9, 0.9)
-    theLegend.AddEntry(smooth_overall5kHZPlot, f'CICADA v{CICADAVersion} 5 kHz (overall, nominal)', 'l')
-    theLegend.AddEntry(smooth_pure3kHZPlot, f'CICADA v{CICADAVersion} 3 kHz (pure, nominal)', 'l')
+    # theLegend.AddEntry(smooth_overall5kHZPlot, f'CICADA v{CICADAVersion} 5 kHz (overall, nominal)', 'l')
+    # theLegend.AddEntry(smooth_pure3kHZPlot, f'CICADA v{CICADAVersion} 3 kHz (pure, nominal)', 'l')
+    theLegend.AddEntry(smooth_overall5kHZPlot, f'CICADA 5 kHz (overall, nominal)', 'l')
+    theLegend.AddEntry(smooth_pure3kHZPlot, f'CICADA 3 kHz (pure, nominal)', 'l')
     if drawBoostedJets:
         theLegend.AddEntry(smooth_boostedJetPlot, f'Boosted Jet Trigger', 'l')
     theLegend.AddEntry(smooth_singleMuPlot, f'L1 Single Mu 22', 'l')
@@ -104,11 +106,12 @@ def makeRunPlot(run, theFile, destinationPath, CICADAVersion, drawBoostedJets = 
     cmsLatex.SetTextAlign(11)
     cmsLatex.DrawLatex(0.1,0.92, "#font[61]{CMS} #font[52]{Preliminary}")
 
-    runLatex = ROOT.TLatex()
-    runLatex.SetTextSize(0.05)
-    runLatex.SetNDC(True)
-    runLatex.SetTextAlign(31)
-    runLatex.DrawLatex(0.9, 0.92, '#font[62]{Run: ' + str(run)+'}')
+    rightLatex = ROOT.TLatex()
+    rightLatex.SetTextSize(0.05)
+    rightLatex.SetNDC(True)
+    rightLatex.SetTextAlign(31)
+    # rightLatex.DrawLatex(0.9, 0.92, '#font[62]{Run: ' + str(run)+'}')
+    rightLatex.DrawLatex(0.9, 0.92, "#font[41]{2023 (13.6 TeV)}")
 
     if drawBoostedJets:
         histoName = f'{destinationPath}/{run}_wBoostedJets_ratePlot.png'

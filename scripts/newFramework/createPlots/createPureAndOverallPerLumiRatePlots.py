@@ -247,9 +247,12 @@ def main(args):
             uniqueRuns = list(uniqueRuns)
  
             # we now need to make a DF that has the boosted jet information we want available
+            # normal trigger would be pt 120.0
+            # but we suspect there is a factor of 3/2 in the pt for some reason
+            # so the trigger here is defined as 180.0
             boostedJetTriggerDerivationFunction = """
                 for(int i = 0; i < numberOfJets; ++i){
-                    if(jetPts.at(i) > 120.0){
+                    if(jetPts.at(i) > 180.0){
                         return 1.0;
                     }
                 }
