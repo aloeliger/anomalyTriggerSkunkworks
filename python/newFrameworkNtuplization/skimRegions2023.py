@@ -72,7 +72,8 @@ from Configuration.AlCa.GlobalTag import GlobalTag
 process.GlobalTag = GlobalTag(process.GlobalTag, 'auto:run3_data', '')
 
 process.raw2digi_step = cms.Path(process.RawToDigi)
-process.schedule = cmanomalyDetection/anomalyTriggerSkunkworks/python/newFrameworkNtuplization/crabConfigs/skim2023Configs/skimZB2023AConfig.pys.tools.helpers import associatePatAlgosToolsTask
+process.schedule = cms.Schedule(process.raw2digi_step)
+from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
 
 from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW
