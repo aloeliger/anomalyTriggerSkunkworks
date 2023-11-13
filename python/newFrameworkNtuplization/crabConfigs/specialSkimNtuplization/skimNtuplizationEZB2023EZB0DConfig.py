@@ -9,7 +9,7 @@ config.General.requestName = f'CICADASkimNtuplization_2023RunD_EZB0_{todaysDate}
 config.General.workArea = 'crabWorkArea'
 config.General.transferOutputs = True
 
-config.JobType.pluginname = 'Analysis'
+config.JobType.pluginName = 'Analysis'
 config.JobType.psetName = f'{os.environ["CMSSW_BASE"]}/src/anomalyDetection/anomalyTriggerSkunkworks/python/newFrameworkNtuplization/ntuplizeSkim_2023_DATA.py'
 config.JobType.maxMemoryMB = 4000
 cicadaPath = f'{os.environ["CMSSW_BASE"]}/src/anomalyDetection/CICADA'
