@@ -112,10 +112,10 @@ from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW
 process = L1TReEmulFromRAW(process)
 
 # Automatic addition of the customisation function from L1Trigger.L1TNtuples.customiseL1Ntuple
-#from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
+from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU 
 
 #call to customisation function L1NtupleRAWEMU imported from L1Trigger.L1TNtuples.customiseL1Ntuple
-#process = L1NtupleRAWEMU(process)
+process = L1NtupleRAWEMU(process)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
 # from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3 

@@ -109,6 +109,7 @@ from L1Trigger.L1TNtuples.customiseL1Ntuple import L1NtupleRAWEMU
 
 #call to customisation function L1NtupleRAWEMU imported from L1Trigger.L1TNtuples.customiseL1Ntuple
 process = L1NtupleRAWEMU(process)
+process.l1ntupleraw.remove(process.l1uGTTestcrateTree)
 
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseSettings
 # from L1Trigger.Configuration.customiseSettings import L1TSettingsToCaloParams_2018_v1_3 
