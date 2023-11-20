@@ -76,20 +76,60 @@ def createHTo2LongLivedTo4bPlots(hDataframe, cicadaThresholds):
         thresholdFrame = hDataframe.Filter(f'anomalyScore > {threshold}')
         hists.append(
             thresholdFrame.Histo1D(
-                (f'invariantMass_CICADA{int(threshold)}', f'invariantMass_CICADA{int(threshold)}', 50, 0.0, 1000.0),
+                (f'Hto2LongLivedTo4b_invariantMass_CICADA{int(threshold)}', f'Hto2LongLivedTo4b_invariantMass_CICADA{int(threshold)}', 50, 0.0, 1000.0),
                 'invariantMass'
             )
         )
         hists.append(
             thresholdFrame.Histo1D(
-                (f'leadingJetPt_CICADA{int(threshold)}',f'leadingJetPt_CICADA{int(threshold)}', 50, 0.0, 200.0),
+                (f'Hto2LongLivedTo4b_leadingJetPt_CICADA{int(threshold)}',f'Hto2LongLivedTo4b_leadingJetPt_CICADA{int(threshold)}', 50, 0.0, 300.0),
                 'leadingJetPt'
             )
         )
     return hists
 
 def createSUSYPlots(sDataframe, cicadaThresholds):
-    pass
+    hists = []
+    sDataframe = sDataframe.Define('leadingJetPt', getVectorPropertyFunction("ptVector", 0))
+    sDataframe = sDataframe.Define('leadingJetEta', getVectorPropertyFunction("etaVector", 0))
+    sDataframe = sDataframe.Define('leadingJetPhi', getVectorPropertyFunction("phiVector", 0))
+    sDataframe = sDataframe.Define('leadingJetMass', getVectorPropertyFunction("massVector", 0))
+
+    sDataframe = sDataframe.Define('subleadingJetPt', getVectorPropertyFunction("ptVector", 1))
+    sDataframe = sDataframe.Define('subleadingJetEta', getVectorPropertyFunction("etaVector", 1))
+    sDataframe = sDataframe.Define('subleadingJetPhi', getVectorPropertyFunction("phiVector", 1))
+    sDataframe = sDataframe.Define('subleadingJetMass', getVectorPropertyFunction("massVector", 1))
+
+    invariantMassFunction = """
+    if (nObjects >= 2) {
+        TLorentzVector firstVector;
+        firstVector.SetPtEtaPhiM(leadingJetPt, leadingJetEta, leadingJetPhi, leadingJetMass);
+
+        TLorentzVector secondVector;
+        secondVector.SetPtEtaPhiM(subleadingJetPt, subleadingJetEta, subleadingJetPhi, subleadingJetMass);
+
+        return (firstVector + secondVector).M();
+    }
+    else
+        return -1.0;
+    """
+    sDataframe = sDataframe.Define('invariantMass', invariantMassFunction)
+
+    for threshold in cicadaThresholds:
+        thresholdFrame = sDataframe.Filter(f'anomalyScore > {threshold}')
+        hists.append(
+            thresholdFrame.Histo1D(
+                (f'SUSYGluGlutoBBHtoBB_invariantMass_CICADA{int(threshold)}', f'SUSYGluGlutoBBHtoBB_invariantMass_CICADA{int(threshold)}', 50, 0.0, 1000.0),
+                'invariantMass'
+            )
+        )
+        hists.append(
+            thresholdFrame.Histo1D(
+                (f'SUSYGluGlutoBBHtoBB_leadingJetPt_CICADA{int(threshold)}', f'SUSYGluGlutoBBHtoBB_leadingJetPt_CICADA{int(threshold)}', 50, 0.0, 300.0),
+                'leadingJetPt'
+            )
+        )
+    return hists
 
 def main(args):
     console.log('Forming relevant dataframes/histograms...')
