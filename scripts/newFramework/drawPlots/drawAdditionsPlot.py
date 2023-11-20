@@ -37,7 +37,7 @@ def main(args):
     triggerCICADAGraph.SetMarkerStyle(22)
 
     triggerGraph.SetMarkerColor(2)
-    triggerCICADAGraph.SetMarkerColor(3)
+    triggerCICADAGraph.SetMarkerColor(ROOT.kGreen+3)
 
     if args.includeAXOL1TL:
         triggerAXOGraph.SetMarkerStyle(21)
