@@ -47,7 +47,8 @@ def getEffsForPoint(signalSample, backgroundSample, variable, threshold):
     sfFrame = signalSample.Filter(f'{variable} >= {threshold}')
 
     bfCount = bfFrame.Count()
-    sfCount = sfFrame.Count()
+    # sfCount = sfFrame.Count()
+    sfCount = sfFrame.Sum('pileupWeight')
 
     backgroundEff = bfCount.GetValue() / totalBackgroundCount.GetValue()
     signalEff = sfCount.GetValue() / totalSignalCount.GetValue()
@@ -128,30 +129,35 @@ def main(args):
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 'caloStage2EtSumNtuplizer/L1CaloEtSumInformation', #the sum will be the sum with type == 1
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'SUSYGluGlutoBBHtoBB': SUSYGluGlutoBBHtoBBSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 'caloStage2EtSumNtuplizer/L1CaloEtSumInformation', #the sum will be the sum with type == 1
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'TT': TTSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 'caloStage2EtSumNtuplizer/L1CaloEtSumInformation', #the sum will be the sum with type == 1
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'VBFHto2C': VBFHto2CSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 'caloStage2EtSumNtuplizer/L1CaloEtSumInformation', #the sum will be the sum with type == 1
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'SUEP': SUEPSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
                 'caloStage2EtSumNtuplizer/L1CaloEtSumInformation', #the sum will be the sum with type == 1
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
     }

@@ -16,7 +16,7 @@ def drawShapingPlots(theFile, theThresholds, destinationPath, theSample):
     plotTypes = ['invariantMass', 'leadingJetPt']
     plotTypes = {
         'invariantMass': {
-            'x-axis': 'Invariant Mass (leading 4 jets, GeV)'
+            'x-axis': 'Invariant Mass (leading jets, GeV)'
         },
         'leadingJetPt': {
             'x-axis': 'Leading jet p_{T} (GeV)'
@@ -67,16 +67,16 @@ def main(args):
             0.0: {
                 'color': 40
             },
-            3.0: {
+            7.0: {
                 'color': 41
             },
-            5.0: {
+            10.0: {
                 'color': 42
             },
-            6.0: {
+            11.0: {
                 'color': 46
             },
-            7.0: {
+            13: {
                 'color': 30
             },
         }
@@ -85,16 +85,16 @@ def main(args):
             0.0: {
                 'color': 40
             },
-            8.0: {
+            7.0: {
                 'color': 41
             },
-            11.0: {
+            8.5: {
                 'color': 42
             },
-            13.0: {
+            10.5: {
                 'color': 46
             },
-            15.0: {
+            14.0: {
                 'color': 30
             },
         }
@@ -106,7 +106,8 @@ def main(args):
     # Start by drawing the Hto2LongLived
     samples = [
         'Hto2LongLivedTo4b',
-        'SUSYGluGlutoBBHtoBB'
+        'SUSYGluGlutoBBHtoBB',
+        'ZeroBias'
     ]
     for sample in samples:
         drawShapingPlots(

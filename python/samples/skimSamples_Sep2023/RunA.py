@@ -1,6 +1,6 @@
 from anomalyDetection.anomalyTriggerSkunkworks.samples.sample import sample
 
-theFile = ['/hdfs/store/user/aloeliger/ntuplizedSkims_19_Sep_2023/RunA.root']
+theFile = ['/hdfs/store/user/aloeliger/ntuplizedSkims_17_Nov_2023/RunAZB.root']
 
 treeNames = [
     'CICADAv1ntuplizer/L1TCaloSummaryOutput',
@@ -8,6 +8,7 @@ treeNames = [
     'boostedJetTriggerNtuplizer/boostedJetTrigger',
     'L1TTriggerBitsNtuplizer/L1TTriggerBits',
     'uGTModelNtuplizer/uGTModelOutput',
+    'pileupInformationNtuplizer/pileupInformation',
     'caloStage2EGammaNtuplizer/L1CaloEgammaInformation',
     'caloStage2JetNtuplizer/L1CaloJetInformation',
     'caloStage2TauNtuplizer/L1CaloTauInformation',

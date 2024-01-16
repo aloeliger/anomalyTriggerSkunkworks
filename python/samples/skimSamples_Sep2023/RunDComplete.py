@@ -4,7 +4,7 @@ import os
 basePath = '/hdfs/store/user/aloelige/ZeroBias'
 
 filePaths = [
-    f'{basePath}/CICADASkimNtuplization_2023RunD_ZB_29Sep2023/',
+    f'{basePath}/CICADASkimNtuplization_2023RunD_ZB_17Nov2023/',
 ]
 
 theFiles = []
@@ -19,6 +19,7 @@ treeNames = [
     'boostedJetTriggerNtuplizer/boostedJetTrigger',
     'L1TTriggerBitsNtuplizer/L1TTriggerBits',
     'uGTModelNtuplizer/uGTModelOutput',
+    'pileupInformationNtuplizer/pileupInformation',
     'caloStage2EGammaNtuplizer/L1CaloEgammaInformation',
     'caloStage2JetNtuplizer/L1CaloJetInformation',
     'caloStage2TauNtuplizer/L1CaloTauInformation',

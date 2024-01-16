@@ -130,7 +130,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
       {
 	      regional_ecalTPData[i][j] = 0;
 	      regional_hcalTPData[i][j] = 0;
-        modelInput[i][j] = 0;
+	      modelInput[i][j] = 0;
       }
 
 

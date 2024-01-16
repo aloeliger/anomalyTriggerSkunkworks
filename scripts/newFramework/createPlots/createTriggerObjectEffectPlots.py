@@ -71,9 +71,9 @@ def main(args):
     # TODO: invent a way to make these thresholds generically
     # They should demonstrate zero, low (25% exclusion), floor triggering (10 kHz), av triggering (2 kHz), exclusive triggering (< 0.5 kHz)
     if args.CICADAVersion == 1:
-        cicadaThresholds = [0.0, 3.0, 5.0, 6.0, 7.0]
+        cicadaThresholds = [0.0, 7.0, 10.0, 11.0, 13.0]
     elif args.CICADAVersion == 2:
-        cicadaThresholds = [0.0, 8.0, 11.0, 13.0, 15.0]
+        cicadaThresholds = [0.0, 7.0, 8.5, 10.5, 14.0]
 
     outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/triggerObjectPlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')
     # theDataframe = EphemeralZeroBiasSample.getNewDataframe(["CICADAv1ntuplizer/L1TCaloSummaryOutput"])

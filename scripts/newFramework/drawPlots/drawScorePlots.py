@@ -237,7 +237,7 @@ def main(args):
                 'DYTo2L':theFile.DYTo2L_score_highGranularity,
                 'GGHTT':theFile.DYTo2L_score_highGranularity,
                 'HTo2LongLived4b':theFile.HTo2LongLived4b_score_highGranularity,
-                'SUSYGGBBHtoBB':theFile.SUSYGGBBHtoBB_score_highGranularity,
+                'SUSYGGBBHtoBB':theFile.SUSYGGBBHtoBB_score_highGranuscorelarity,
                 'TT':theFile.TT_score_highGranularity,
                 'VBFHToInvisible':theFile.VBFHToInvisible_score_highGranularity,
                 'VBFHTT':theFile.VBFHTT_score_highGranularity,

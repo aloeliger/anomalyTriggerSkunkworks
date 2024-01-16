@@ -1,6 +1,9 @@
 from anomalyDetection.anomalyTriggerSkunkworks.samples.sample import sample
 import os
 
+import warnings
+warnings.warn("Run A Complete has been deprecated due to strange conditions and not having files available. Please change whatever script uses this.")
+
 basePath = '/hdfs/store/user/aloelige/ZeroBias'
 
 filePaths = [
@@ -19,6 +22,7 @@ treeNames = [
     'boostedJetTriggerNtuplizer/boostedJetTrigger',
     'L1TTriggerBitsNtuplizer/L1TTriggerBits',
     'uGTModelNtuplizer/uGTModelOutput',
+    'pileupInformationNtuplizer/pileupInformation',
     'caloStage2EGammaNtuplizer/L1CaloEgammaInformation',
     'caloStage2JetNtuplizer/L1CaloJetInformation',
     'caloStage2TauNtuplizer/L1CaloTauInformation',

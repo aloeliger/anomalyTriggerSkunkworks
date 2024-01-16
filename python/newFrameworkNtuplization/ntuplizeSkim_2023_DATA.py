@@ -1,6 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 
-# from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 from Configuration.Eras.Era_Run3_2023_cff import Run3_2023
 
 import FWCore.ParameterSet.VarParsing as VarParsing
@@ -28,6 +27,18 @@ process.maxEvents = cms.untracked.PSet(
     input = cms.untracked.int32(options.maxEvents)
 )
 process.MessageLogger.cerr.FwkReport.reportEvery = 10000
+
+# process.MessageLogger = cms.Service(
+#     "MessageLogger",
+#     destinations = cms.untracked.vstring("cerr", "cout"),
+#     cerr = cms.untracked.PSet(
+#         threshold = cms.untracked.string('DEBUG')
+#     ),
+#     cout = cms.untracked.PSet(
+#         threshold = cms.untracked.string('DEBUG')
+#     )
+# )
+# process.MessageLogger.cerr.FwkReport.reportEvery = 10000
 
 #attempt to get rid of muon shower warning
 process.MessageLogger.suppressWarning = cms.untracked.vstring(
@@ -118,47 +129,20 @@ process.l1ntupleraw.remove(process.l1uGTTestcrateTree)
 # process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
-#process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.load('L1Trigger.L1TCaloLayer1.L1TCaloSummaryCICADAv1p1')
 process.load('L1Trigger.L1TCaloLayer1.L1TCaloSummaryCICADAv2p1')
-#process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
-#process.schedule.append(process.CaloSummaryPath)
-
-process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
-#process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
-#process.schedule.append(process.uGTEmulationPath)
 
 #get the pileup network
-process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkProducer_cfi')
-# get the CICADAInputNetworkProducer 
-# process.load('anomalyDetection.miniCICADA.CICADAInputNetworkProducer_cfi')
-#get the CICADAInputNetwork Producer
-# process.load('anomalyDetection.miniCICADA.CICADAFromCINProducer_cfi')
-# process.load('anomalyDetection.miniCICADA.miniCICADAProducer_cfi')
-
 
 process.productionTask = cms.Task(
-#    process.uct2016EmulatorDigis,
     process.L1TCaloSummaryCICADAv1,
     process.L1TCaloSummaryCICADAv2,
-    process.uGTADEmulator,
-    process.pileupNetworkProducer,
-    # process.inciSNAILv0p1Producer,
-    # process.CICADAInputNetworkProducerv1p0,
-    # process.CICADAv1FromCINv1Producer,
-    # process.CICADAv2FromCINv1Producer,
-    # process.miniCICADAProducer,
-    # process.miniCICADAProducerCICADAv1,
-    # process.miniCICADAv1p1CICADAv1,
-    # process.miniCICADAv1p1CICADAv2,
 )
 process.productionPath = cms.Path(process.productionTask)
 
 process.schedule.append(process.productionPath)
 
 # process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
-# process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
-# process.L1TCaloSummaryTestNtuplizer.hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis')
 from anomalyDetection.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi import L1TCaloSummaryTestNtuplizer
 
 process.CICADAv1ntuplizer = L1TCaloSummaryTestNtuplizer.clone(
@@ -182,11 +166,10 @@ process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_
 # process.L1TTriggerBitsNtuplizer.verboseDebug = cms.bool(True)
 # process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
-process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
+# process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.genJetInformationNtuplizer_cfi')
 
 process.load('anomalyDetection.miniCICADA.PFcandSequence_cfi')
-#process.load('anomalyDetection.miniCICADA.electronInformationAnalyzer_cfi')
 process.load('anomalyDetection.miniCICADA.pileupInformationNtuplizer_cfi')
 process.load('anomalyDetection.miniCICADA.metInformationNtuplizer_cfi')
 process.load('anomalyDetection.miniCICADA.caloStage2EGammaNtuplizer_cfi')
@@ -206,16 +189,7 @@ process.caloStage2Sequence = cms.Sequence(
                                 process.caloStage2EtSumNtuplizer
 )
 
-# process.CICADAFromCINSequence = cms.Sequence(
-#     process.CICADAv1FromCINv1Analyzer +
-#     process.CICADAv2FromCINv1Analyzer
-# )
-# process.miniCICADAAnalyzerSequence = cms.Sequence(
-#     process.miniCICADAAnalyzer +
-#     process.miniCICADAAnalyzerCICADAv1 +
-#     process.miniCICADAv1p1AnalyzerCICADAv1 +
-#     process.miniCICADAv1p1AnalyzerCICADAv2
-# )
+
 
 
 process.TFileService = cms.Service(
@@ -224,23 +198,15 @@ process.TFileService = cms.Service(
         fileName = cms.string(options.outputFile)
 )
 process.NtuplePath = cms.Path(
-                                # process.L1TCaloSummaryTestNtuplizer +
                                 process.CICADAv1ntuplizer +
                                 process.CICADAv2ntuplizer +
                                 process.boostedJetTriggerNtuplizer +
                                 process.L1TTriggerBitsNtuplizer +
-                                # process.CICADAInputNetworkAnalyzerv1p0 +
-                                # process.CICADAFromCINSequence +
-                                # process.miniCICADAAnalyzerSequence +
-                                process.uGTModelNtuplizer +
-                                # process.PFcandSequence +
-                                process.pileupNetworkNtuplizer +
-                                # process.inciSNAILv0p1Ntuplizer +
+                                # process.pileupNetworkNtuplizer +
                                 process.pileupInformationNtuplizer +
                                 process.metInformationNtuplizer +
                                 process.caloStage2Sequence +
                                 process.objectCountSequence 
-                                # process.genJetInformationNtuplizer
 )
 process.schedule.append(process.NtuplePath)
 

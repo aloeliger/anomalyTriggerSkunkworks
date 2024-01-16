@@ -39,14 +39,6 @@ process.MessageLogger.suppressWarning = cms.untracked.vstring(
     'simDtTriggerPrimitiveDigis'
 )
 
-#Define out input source
-# process.source = cms.Source("PoolSource",
-#                             fileNames = cms.untracked.vstring('/store/user/aloelige/ZeroBias/CICADASkim_2023RunA_ZB_21Jul2023/230721_143242/0000/output_1-1.root'),
-#                             # secondaryFileNames = cms.untracked.vstring(
-#                             #     "/store/data/Run2023C/ZeroBias/RAW/v1/000/367/094/00000/60dd6298-7ebf-4219-8da6-816915e8a1f8.root",
-#                             #     "/store/data/Run2023C/ZeroBias/RAW/v1/000/367/094/00000/ddf586ed-b482-400e-94f9-dc8cd3547122.root",
-#                             #  )
-# )
 process.source = cms.Source("PoolSource",
                             fileNames = cms.untracked.vstring(options.inputFiles),
 
@@ -105,6 +97,7 @@ process.options.numberOfStreams = 1
 process.options.numberOfConcurrentLuminosityBlocks = 1
 process.options.eventSetup.numberOfConcurrentIOVs = 1
 if hasattr(process, 'DQMStore'): process.DQMStore.assertLegacySafe=cms.untracked.bool(False)
+
 # Automatic addition of the customisation function from L1Trigger.Configuration.customiseReEmul
 from L1Trigger.Configuration.customiseReEmul import L1TReEmulFromRAW
 
@@ -124,47 +117,17 @@ process = L1NtupleRAWEMU(process)
 # process = L1TSettingsToCaloParams_2018_v1_3(process)
 
 #load up our ntuplization stuff and append it on to the end of the schedule
-#process.load('L1Trigger.L1TCaloLayer1.uct2016EmulatorDigis_cfi')
 process.load('L1Trigger.L1TCaloLayer1.L1TCaloSummaryCICADAv1p1')
 process.load('L1Trigger.L1TCaloLayer1.L1TCaloSummaryCICADAv2p1')
-#process.CaloSummaryPath = cms.Path(process.uct2016EmulatorDigis)
-#process.schedule.append(process.CaloSummaryPath)
-
-process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTADEmulator_cfi')
-#process.uGTEmulationPath = cms.Path(process.uGTADEmulator)
-#process.schedule.append(process.uGTEmulationPath)
-
-#get the pileup network
-process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkProducer_cfi')
-# get the CICADAInputNetworkProducer 
-# process.load('anomalyDetection.miniCICADA.CICADAInputNetworkProducer_cfi')
-#get the CICADAInputNetwork Producer
-# process.load('anomalyDetection.miniCICADA.CICADAFromCINProducer_cfi')
-# process.load('anomalyDetection.miniCICADA.miniCICADAProducer_cfi')
-
 
 process.productionTask = cms.Task(
-#    process.uct2016EmulatorDigis,
     process.L1TCaloSummaryCICADAv1,
     process.L1TCaloSummaryCICADAv2,
-    process.uGTADEmulator,
-    process.pileupNetworkProducer,
-    # process.inciSNAILv0p1Producer,
-    # process.CICADAInputNetworkProducerv1p0,
-    # process.CICADAv1FromCINv1Producer,
-    # process.CICADAv2FromCINv1Producer,
-    # process.miniCICADAProducer,
-    # process.miniCICADAProducerCICADAv1,
-    # process.miniCICADAv1p1CICADAv1,
-    # process.miniCICADAv1p1CICADAv2,
 )
 process.productionPath = cms.Path(process.productionTask)
 
 process.schedule.append(process.productionPath)
 
-# process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi')
-# process.L1TCaloSummaryTestNtuplizer.ecalToken = cms.InputTag('simEcalTriggerPrimitiveDigis')
-# process.L1TCaloSummaryTestNtuplizer.hcalToken = cms.InputTag('simHcalTriggerPrimitiveDigis')
 from anomalyDetection.anomalyTriggerSkunkworks.L1TCaloSummaryTestNtuplizer_cfi import L1TCaloSummaryTestNtuplizer
 
 process.CICADAv1ntuplizer = L1TCaloSummaryTestNtuplizer.clone(
@@ -185,13 +148,9 @@ from anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi im
 process.boostedJetTriggerNtuplizer = boostedJetTriggerNtuplizer.clone(boostedJetCollection = cms.InputTag("L1TCaloSummaryCICADAv1","Boosted"))
 
 process.load('anomalyDetection.anomalyTriggerSkunkworks.L1TTriggerBitsNtuplizer_cfi')
-# process.load('anomalyDetection.anomalyTriggerSkunkworks.boostedJetTriggerNtuplizer_cfi')
-process.load('anomalyDetection.anomalyTriggerSkunkworks.uGTModelNtuplizer_cfi')
-process.load('anomalyDetection.anomalyTriggerSkunkworks.pileupNetworkNtuplizer_cfi')
 process.load('anomalyDetection.anomalyTriggerSkunkworks.genJetInformationNtuplizer_cfi')
 
 process.load('anomalyDetection.miniCICADA.PFcandSequence_cfi')
-#process.load('anomalyDetection.miniCICADA.electronInformationAnalyzer_cfi')
 process.load('anomalyDetection.miniCICADA.pileupInformationNtuplizer_cfi')
 process.load('anomalyDetection.miniCICADA.metInformationNtuplizer_cfi')
 process.load('anomalyDetection.miniCICADA.caloStage2EGammaNtuplizer_cfi')
@@ -211,37 +170,17 @@ process.caloStage2Sequence = cms.Sequence(
                                 process.caloStage2EtSumNtuplizer
 )
 
-# process.CICADAFromCINSequence = cms.Sequence(
-#     process.CICADAv1FromCINv1Analyzer +
-#     process.CICADAv2FromCINv1Analyzer
-# )
-# process.miniCICADAAnalyzerSequence = cms.Sequence(
-#     process.miniCICADAAnalyzer +
-#     process.miniCICADAAnalyzerCICADAv1 +
-#     process.miniCICADAv1p1AnalyzerCICADAv1 +
-#     process.miniCICADAv1p1AnalyzerCICADAv2
-# )
-
 
 process.TFileService = cms.Service(
 	"TFileService",
-	#fileName = cms.string("l1TNtuple-test.root")
-        fileName = cms.string(options.outputFile)
+    fileName = cms.string(options.outputFile)
 )
 process.NtuplePath = cms.Path(
-                                # process.L1TCaloSummaryTestNtuplizer +
                                 process.CICADAv1ntuplizer +
                                 process.CICADAv2ntuplizer +
                                 process.boostedJetTriggerNtuplizer +
                                 process.L1TTriggerBitsNtuplizer +
-                                # process.CICADAInputNetworkAnalyzerv1p0 +
-                                # process.CICADAFromCINSequence +
-                                # process.miniCICADAAnalyzerSequence +
-                                process.uGTModelNtuplizer +
-                                # process.PFcandSequence +
-                                process.pileupNetworkNtuplizer +
-                                # process.inciSNAILv0p1Ntuplizer +
-                                process.pileupInformationNtuplizer +
+                                # process.pileupInformationNtuplizer +
                                 process.metInformationNtuplizer +
                                 process.caloStage2Sequence +
                                 process.objectCountSequence 

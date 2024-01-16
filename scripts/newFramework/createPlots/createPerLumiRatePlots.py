@@ -73,22 +73,22 @@ def main(args):
     if args.CICADAVersion == 1:
         rateThresholds = {
             'ZeroBias': 0.0,
-            '10kHz': 5.781,
-            '5kHz': 5.859,
-            '3kHz': 5.922,
-            '2kHz': 5.983,
-            '1kHz': 6.016,
-            '0p5kHz': 6.109,
+            '10kHz': 10.910,
+            '5kHz': 12.082,
+            '3kHz': 13.170,
+            '2kHz': 14.231,
+            '1kHz': 16.575,
+            '0p5kHz': 18.975,
         }
     elif args.CICADAVersion == 2:
         rateThresholds = {
             'ZeroBias': 0.0,
-            '10kHz': 11.555,
-            '5kHz': 11.947,
-            '3kHz': 12.252,
-            '2kHz': 12.528,
-            '1kHz': 13.277,
-            '0p5kHz': 14.012,
+            '10kHz': 8.549,
+            '5kHz': 9.296,
+            '3kHz': 10.023,
+            '2kHz': 10.691,
+            '1kHz': 11.871,
+            '0p5kHz': 13.856,
         }
 
     # print(theDataframe.GetColumnNames())

@@ -13,6 +13,9 @@ from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.TT im
 from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.VBFHto2C import VBFHto2CSample
 from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.SUEP import SUEPSample
 
+from anomalyDetection.anomalyTriggerSkunkworks.samples.skimSamples_Sep2023.largeRunDEphemeralZeroBias import largeRunDEphemeralZeroBiasSample
+
+
 install()
 console = Console()
 
@@ -88,7 +91,7 @@ def createHTo2LongLivedTo4bPlots(hDataframe, cicadaThresholds):
         )
     return hists
 
-def createSUSYPlots(sDataframe, cicadaThresholds):
+def createTwoJetPlots(sDataframe, cicadaThresholds, label):
     hists = []
     sDataframe = sDataframe.Define('leadingJetPt', getVectorPropertyFunction("ptVector", 0))
     sDataframe = sDataframe.Define('leadingJetEta', getVectorPropertyFunction("etaVector", 0))
@@ -119,13 +122,13 @@ def createSUSYPlots(sDataframe, cicadaThresholds):
         thresholdFrame = sDataframe.Filter(f'anomalyScore > {threshold}')
         hists.append(
             thresholdFrame.Histo1D(
-                (f'SUSYGluGlutoBBHtoBB_invariantMass_CICADA{int(threshold)}', f'SUSYGluGlutoBBHtoBB_invariantMass_CICADA{int(threshold)}', 50, 0.0, 1000.0),
+                (f'{label}_invariantMass_CICADA{int(threshold)}', f'{label}_invariantMass_CICADA{int(threshold)}', 50, 0.0, 1000.0),
                 'invariantMass'
             )
         )
         hists.append(
             thresholdFrame.Histo1D(
-                (f'SUSYGluGlutoBBHtoBB_leadingJetPt_CICADA{int(threshold)}', f'SUSYGluGlutoBBHtoBB_leadingJetPt_CICADA{int(threshold)}', 50, 0.0, 300.0),
+                (f'{label}_leadingJetPt_CICADA{int(threshold)}', f'{label}_leadingJetPt_CICADA{int(threshold)}', 50, 0.0, 300.0),
                 'leadingJetPt'
             )
         )
@@ -135,9 +138,9 @@ def main(args):
     console.log('Forming relevant dataframes/histograms...')
     hists = []
     if args.CICADAVersion == 1:
-        cicadaThresholds = [0.0, 3.0, 5.0, 6.0, 7.0]
+        cicadaThresholds = [0.0, 7.0, 10.0, 11.0, 13.0]
     elif args.CICADAVersion == 2:
-        cicadaThresholds = [0.0, 8.0, 11.0, 13.0, 15.0]
+        cicadaThresholds = [0.0, 7.0, 8.5, 10.5, 14.0]
     outputFile = ROOT.TFile(f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/CICADASignalShapingCICADAv{args.CICADAVersion}.root', 'RECREATE')    
     # Let's start with H to 2 long lived to 4 b.
     # We want to demonstrate we can get something resembling a higgs peak from it,
@@ -158,7 +161,15 @@ def main(args):
         ]
     )
 
-    hists += createSUSYPlots(sDataframe, cicadaThresholds)
+    hists += createTwoJetPlots(sDataframe, cicadaThresholds, label="SUSYGluGlutoBBHtoBB")
+
+    zeroBiasDataframe = largeRunDEphemeralZeroBiasSample.getNewDataframe(
+         [
+            f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+            'jetCounter/objectInfo',
+        ]       
+    )
+    hists += createTwoJetPlots(zeroBiasDataframe, cicadaThresholds, label="ZeroBias")
 
     console.log("Finalized histograms")
     with console.status("Writing stuff..."):

@@ -43,7 +43,8 @@ def main(args):
     destinationPath='/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/'
     if not os.path.isdir(destinationPath):
         os.makedirs(destinationPath, exist_ok=True)
-    outputFile = ROOT.TFile(f'{destinationPath}/additionPlotsCICADAv{args.CICADAVersion}.root', 'RECREATE')
+    rateString = str(args.rate).replace('.','p')
+    outputFile = ROOT.TFile(f'{destinationPath}/additionPlots_{rateString}kHz_CICADAv{args.CICADAVersion}.root', 'RECREATE')
 
     theSamples = OrderedDict()
     theSamples['Hto2LongLivedTo4b'] =  Hto2LongLivedTo4bSample.getNewDataframe(
@@ -51,6 +52,7 @@ def main(args):
             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
             'uGTModelNtuplizer/uGTModelOutput',
+            'pileupWeightDirectory/pileupWeightTree',
         ]
     )
     theSamples['SUSYGluGlutoBBHtoBB'] = SUSYGluGlutoBBHtoBBSample.getNewDataframe(
@@ -58,6 +60,7 @@ def main(args):
             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
             'uGTModelNtuplizer/uGTModelOutput',
+            'pileupWeightDirectory/pileupWeightTree',
         ]
     )
     theSamples['TT'] =  TTSample.getNewDataframe(
@@ -65,6 +68,7 @@ def main(args):
             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
             'uGTModelNtuplizer/uGTModelOutput',
+            'pileupWeightDirectory/pileupWeightTree',
         ]
     )
     theSamples['VBFHto2C'] = VBFHto2CSample.getNewDataframe(
@@ -72,6 +76,7 @@ def main(args):
             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
             'uGTModelNtuplizer/uGTModelOutput',
+            'pileupWeightDirectory/pileupWeightTree',
         ]
     )
     theSamples['SUEP'] = SUEPSample.getNewDataframe(
@@ -79,6 +84,7 @@ def main(args):
             f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
             'L1TTriggerBitsNtuplizer/L1TTriggerBits',
             'uGTModelNtuplizer/uGTModelOutput',
+            'pileupWeightDirectory/pileupWeightTree',
         ]
     )
     
@@ -98,23 +104,23 @@ def main(args):
 
     with console.status('Figuring out CICADA thresholds...'):
         cicada_maxScore, cicada_minScore = getMaxAndMinScore(dataSample, ADScoreName='anomalyScore')
-        cicada_tenkHzThreshold = getThresholdForRate(
+        cicada_rateThreshold = getThresholdForRate(
             dataSample,
-            10.0,
+            args.rate,
             cicada_minScore,
             cicada_maxScore,
             anomalyScoreName = 'anomalyScore'
         )
     with console.status('Figuring out AXOL1TL thresholds...'):
         axo_maxScore, axo_minScore = getMaxAndMinScore(dataSample, ADScoreName='uGTAnomalyScore')
-        axo_tenkHzThreshold = getThresholdForRate(
+        axo_rateThreshold = getThresholdForRate(
             dataSample,
-            10.0,
+            args.rate,
             axo_minScore,
             axo_maxScore,
             anomalyScoreName = 'uGTAnomalyScore'
         )
-    console.print(f'10 kHz: CICADA Threshold: {cicada_tenkHzThreshold:.3f}, AX0L1TL: {axo_tenkHzThreshold:.2f}')
+    console.print(f'{args.rate} kHz: CICADA Threshold: {cicada_rateThreshold:.3f}, AX0L1TL: {axo_rateThreshold:.2f}')
     
     nSamples = len(theSamples.keys())
 
@@ -128,23 +134,28 @@ def main(args):
 
         # total info
 
-        totalEvents = sample.Count().GetValue()
+        # totalEvents = sample.Count().GetValue()
+        totalEvents = sample.Sum('pileupWeight').GetValue()
 
         # un-caught events
 
         noTriggerSample = sample.Filter(noUnprescaledBitPassesCondition(mcBits))
-        unTriggeredEvents = noTriggerSample.Count().GetValue()
+        # unTriggeredEvents = noTriggerSample.Count().GetValue()
+        unTriggeredEvents = noTriggerSample.Sum('pileupWeight').GetValue()
         unCaughtFraction = unTriggeredEvents / totalEvents
 
         #  reclaimed information
 
-        cicadaReclaimedSample = noTriggerSample.Filter(f'anomalyScore >= {cicada_tenkHzThreshold}')
-        axoReclaimedSample = noTriggerSample.Filter(f'uGTAnomalyScore >= {axo_tenkHzThreshold}')
-        bothReclaimedSample = noTriggerSample.Filter(f'anomalyScore >= {cicada_tenkHzThreshold} || uGTAnomalyScore >= {axo_tenkHzThreshold}')
+        cicadaReclaimedSample = noTriggerSample.Filter(f'anomalyScore >= {cicada_rateThreshold}')
+        axoReclaimedSample = noTriggerSample.Filter(f'uGTAnomalyScore >= {axo_rateThreshold}')
+        bothReclaimedSample = noTriggerSample.Filter(f'anomalyScore >= {cicada_rateThreshold} || uGTAnomalyScore >= {axo_rateThreshold}')
 
-        cicadaReclaimedEvents = cicadaReclaimedSample.Count().GetValue()
-        axoReclaimedEvents = axoReclaimedSample.Count().GetValue()
-        bothReclaimedEvents = bothReclaimedSample.Count().GetValue()
+        # cicadaReclaimedEvents = cicadaReclaimedSample.Count().GetValue()
+        # axoReclaimedEvents = axoReclaimedSample.Count().GetValue()
+        # bothReclaimedEvents = bothReclaimedSample.Count().GetValue()
+        cicadaReclaimedEvents = cicadaReclaimedSample.Sum("pileupWeight").GetValue()
+        axoReclaimedEvents = axoReclaimedSample.Sum("pileupWeight").GetValue()
+        bothReclaimedEvents = bothReclaimedSample.Sum("pileupWeight").GetValue()
 
         cicadaFracReclaimed = cicadaReclaimedEvents / unTriggeredEvents
         axoFracReclaimed = axoReclaimedEvents / unTriggeredEvents
@@ -153,14 +164,18 @@ def main(args):
         # Total Catch information
 
         triggerCaughtSample = sample.Filter(anUnprescaledBitPassesCondition(mcBits))
-        triggerCICADACaughtSample = sample.Filter(f'{anUnprescaledBitPassesCondition(mcBits)} || anomalyScore >= {cicada_tenkHzThreshold}')
-        triggerAXOCaughtSample = sample.Filter(f'{anUnprescaledBitPassesCondition(mcBits)} || uGTAnomalyScore >= {axo_tenkHzThreshold}')
-        triggerBothCaughtSample = sample.Filter(f'{anUnprescaledBitPassesCondition(mcBits)} || anomalyScore >= {cicada_tenkHzThreshold} || uGTAnomalyScore >= {axo_tenkHzThreshold}')
+        triggerCICADACaughtSample = sample.Filter(f'{anUnprescaledBitPassesCondition(mcBits)} || anomalyScore >= {cicada_rateThreshold}')
+        triggerAXOCaughtSample = sample.Filter(f'{anUnprescaledBitPassesCondition(mcBits)} || uGTAnomalyScore >= {axo_rateThreshold}')
+        triggerBothCaughtSample = sample.Filter(f'{anUnprescaledBitPassesCondition(mcBits)} || anomalyScore >= {cicada_rateThreshold} || uGTAnomalyScore >= {axo_rateThreshold}')
 
-        triggerCaughtEvents = triggerCaughtSample.Count().GetValue()
-        triggerCICADACaughtEvents = triggerCICADACaughtSample.Count().GetValue()
-        triggerAXOCaughtEvents = triggerAXOCaughtSample.Count().GetValue()
-        triggerBothCaughtEvents = triggerBothCaughtSample.Count().GetValue()
+        # triggerCaughtEvents = triggerCaughtSample.Count().GetValue()
+        # triggerCICADACaughtEvents = triggerCICADACaughtSample.Count().GetValue()
+        # triggerAXOCaughtEvents = triggerAXOCaughtSample.Count().GetValue()
+        # triggerBothCaughtEvents = triggerBothCaughtSample.Count().GetValue()
+        triggerCaughtEvents = triggerCaughtSample.Sum("pileupWeight").GetValue()
+        triggerCICADACaughtEvents = triggerCICADACaughtSample.Sum("pileupWeight").GetValue()
+        triggerAXOCaughtEvents = triggerAXOCaughtSample.Sum("pileupWeight").GetValue()
+        triggerBothCaughtEvents = triggerBothCaughtSample.Sum("pileupWeight").GetValue()
 
         triggerCaughtFrac = triggerCaughtEvents / totalEvents
         triggerCICADACaughtFrac = triggerCICADACaughtEvents / totalEvents
@@ -219,7 +234,7 @@ def main(args):
         textPanel = Panel(
             textGroup,
             title=sampleName,
-            subtitle='10 kHz AD'
+            subtitle=f'{rateString} kHz AD'
         )
         console.print(textPanel)
 
@@ -281,6 +296,14 @@ if __name__ == '__main__':
         help='AD version to pull out of the ntuplizer',
         choices = [1,2],
         nargs='?',
+    )
+    parser.add_argument(
+        '-r',
+        '--rate',
+        default=10.0,
+        type=float,
+        help='Nominal overall rate to make the plot for',
+        nargs='?'
     )
 
     args = parser.parse_args()

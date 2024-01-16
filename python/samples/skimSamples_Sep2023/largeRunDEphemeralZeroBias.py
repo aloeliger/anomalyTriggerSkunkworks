@@ -4,8 +4,8 @@ import os
 basePath = '/hdfs/store/user/aloelige'
 
 filePaths = [
-    f'{basePath}/EphemeralZeroBias0/CICADASkimNtuplization_2023RunD_EZB0_21Sep2023/',
-    f'{basePath}/EphemeralZeroBias1/CICADASkimNtuplization_2023RunD_EZB1_22Sep2023/',
+    '/hdfs/store/user/aloelige/EphemeralZeroBias1/CICADASkimNtuplization_2023RunD_EZB1_25Nov2023/',
+    '/hdfs/store/user/aloelige/EphemeralZeroBias2/CICADASkimNtuplization_2023RunD_EZB2_25Nov2023/',
 ]
 
 theFiles = []
@@ -20,6 +20,7 @@ treeNames = [
     'boostedJetTriggerNtuplizer/boostedJetTrigger',
     'L1TTriggerBitsNtuplizer/L1TTriggerBits',
     'uGTModelNtuplizer/uGTModelOutput',
+    'pileupInformationNtuplizer/pileupInformation',
     'caloStage2EGammaNtuplizer/L1CaloEgammaInformation',
     'caloStage2JetNtuplizer/L1CaloJetInformation',
     'caloStage2TauNtuplizer/L1CaloTauInformation',

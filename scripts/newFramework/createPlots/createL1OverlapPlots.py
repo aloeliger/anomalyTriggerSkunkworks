@@ -84,23 +84,23 @@ def main(args):
     if args.CICADAVersion == 1:
         rateThresholds = {
             'L1Menu_Collisions2023_v1_2_0': OrderedDict({
-                '10kHz (overall)': 5.734,
-                '5kHz (overall)': 5.884,
-                '3kHz (overall)': 5.953,
-                '2kHz (overall)': 6.047,
-                '1kHz (overall)': 6.406,
-                '0p5kHz (overall)': 6.922,
+                '10kHz (overall)': 10.910,
+                '5kHz (overall)': 12.082,
+                '3kHz (overall)': 13.170,
+                '2kHz (overall)': 14.231,
+                '1kHz (overall)': 16.575,
+                '0p5kHz (overall)': 18.975,
             })
         }
     if args.CICADAVersion == 2:
         rateThresholds = {
             'L1Menu_Collisions2023_v1_2_0': OrderedDict({
-                '10kHz (overall)': 11.356,
-                '5kHz (overall)': 11.983,
-                '3kHz (overall)': 12.477,
-                '2kHz (overall)': 13.371,
-                '1kHz (overall)': 15.707,
-                '0p5kHz (overall)': 18.934,
+                '10kHz (overall)': 8.549,
+                '5kHz (overall)': 9.269,
+                '3kHz (overall)': 10.023,
+                '2kHz (overall)': 10.691,
+                '1kHz (overall)': 11.871,
+                '0p5kHz (overall)': 13.856,
             })
         }
 

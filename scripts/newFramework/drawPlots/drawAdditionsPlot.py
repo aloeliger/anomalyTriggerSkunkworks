@@ -12,7 +12,8 @@ def main(args):
 
     console.rule('Loading file')
 
-    theFilename = f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/additionPlotsCICADAv{args.CICADAVersion}.root'
+    rateString = str(args.rate).replace('.', 'p')
+    theFilename = f'/nfs_scratch/aloeliger/anomalyPlotFiles/rootFiles/additionPlots_{rateString}kHz_CICADAv{args.CICADAVersion}.root'
     theFile = ROOT.TFile(theFilename, 'READ')
     if theFile.IsZombie():
         console.log('Failed to load file (found zombie)...', style='bold red')
@@ -98,9 +99,9 @@ def main(args):
     cmsLatex.SetTextAlign(12)
     cmsLatex.SetTextFont(42)
     if args.includeAXOL1TL:
-        cmsLatex.DrawLatex(0.2, 0.92, '10 kHz Overall Rate AD, Each')
+        cmsLatex.DrawLatex(0.2, 0.92, f'{rateString} kHz Overall Rate AD, Each')
     else:
-        cmsLatex.DrawLatex(0.2, 0.92, '10 kHz Overall Rate AD')
+        cmsLatex.DrawLatex(0.2, 0.92, f'{rateString} kHz Overall Rate AD')
 
     theLegend = ROOT.TLegend(0.5, 0.73, 0.9, 0.9)
     theLegend.SetBorderSize(0)
@@ -116,9 +117,9 @@ def main(args):
 
     destinationPath = f'/nfs_scratch/aloeliger/anomalyPlotFiles/pngFiles/additionsPlotsCICADAv{args.CICADAVersion}/'
     if args.includeAXOL1TL:
-        plotName = f'additionsPlotCICADAv{args.CICADAVersion}AndAXOL1TL.png'
+        plotName = f'additionsPlot_{rateString}kHz_CICADAv{args.CICADAVersion}AndAXOL1TL.png'
     else:
-        plotName = f'additionsPlotCICADAv{args.CICADAVersion}.png'
+        plotName = f'additionsPlot_{rateString}kHz_CICADAv{args.CICADAVersion}.png'
     if not os.path.isdir(destinationPath):
         os.makedirs(destinationPath, exist_ok=True)
     finalCanvas.SaveAs(f'{destinationPath}/{plotName}')
@@ -141,6 +142,14 @@ if __name__ == '__main__':
         '--includeAXOL1TL',
         action='store_true',
         help='Use AXOL1TL in the plots'
+    )
+    parser.add_argument(
+        '-r',
+        '--rate',
+        default=10.0,
+        type=float,
+        help='Nominal overall rate to make the plot for',
+        nargs = '?'
     )
 
     args = parser.parse_args()

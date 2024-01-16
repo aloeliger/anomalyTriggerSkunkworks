@@ -42,13 +42,13 @@ def getFramesMinMax(backgroundFrame, signalFrame):
 @cache
 def getEffsForPoint(backgroundFrame, signalFrame, threshold):
     totalBackgroundCount = backgroundFrame.Count().GetValue()
-    totalSignalCount = signalFrame.Count().GetValue()
+    totalSignalCount = signalFrame.Sum("pileupWeight").GetValue()
 
     bfFrame = backgroundFrame.Filter(f'anomalyScore >= {threshold}')
     sfFrame = signalFrame.Filter(f'anomalyScore >= {threshold}')
 
     backgroundEff = bfFrame.Count().GetValue() / totalBackgroundCount
-    signalEff = sfFrame.Count().GetValue() / totalSignalCount
+    signalEff = sfFrame.Sum("pileupWeight").GetValue() / totalSignalCount
 
     return (backgroundEff, signalEff)
 
@@ -150,26 +150,31 @@ def main(args):
         'Hto2LongLivedTo4b': Hto2LongLivedTo4bSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'SUSYGluGlutoBBHtoBB': SUSYGluGlutoBBHtoBBSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'TT': TTSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'VBFHto2C': VBFHto2CSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
         'SUEP': SUEPSample.getNewDataframe(
             [
                 f'CICADAv{args.CICADAVersion}ntuplizer/L1TCaloSummaryOutput',
+                'pileupWeightDirectory/pileupWeightTree',
             ]
         ),
     }
