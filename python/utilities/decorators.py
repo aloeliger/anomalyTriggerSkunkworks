@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 import functools
+import ROOT
 
 def debug_function(func):
     @functools.wraps(func)
@@ -25,3 +26,14 @@ def cache(func):
             return wrapper_cache.cache[cache_key]
     wrapper_cache.cache = dict()
     return wrapper_cache
+
+def quietROOTFunc(func, level = ROOT.kInfo + 1):
+    @functools.wraps(func)
+    def qfunc(*args, **kwargs):
+        oldLevel = ROOT.gErrorIgnoreLevel
+        ROOT.gErrorIgnoreLevel = level
+        try:
+            return func(*args, **kwargs)
+        finally:
+            ROOT.gErrorIgnoreLevel = oldLevel
+    return qfunc
