@@ -64,6 +64,8 @@ private:
   int npv = 0;
   
   bool verboseDebug;
+
+  std::string outputScoreName;
 };
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
@@ -76,6 +78,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   usesResource("TFileService");
   verboseDebug  = iConfig.exists("verboseDebug") ? iConfig.getParameter<bool>("verboseDebug"): false;
   includePUInfo = iConfig.exists("includePUInfo") ? iConfig.getParameter<bool>("includePUInfo"): false;
+  outputScoreName = iConfig.exists("outputScoreName") ? iConfig.getParameter<std::string>("outputScoreName"): "anomalyScore";
 
   //We need to reserve space for the vectors so that the tree 
   //Properly spaces out the entries.
@@ -86,7 +89,7 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
   triggerTree -> Branch("lumi", &lumi);
   triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
-  triggerTree -> Branch("anomalyScore", &anomalyScore);
+  triggerTree -> Branch(outputScoreName.c_str(), &anomalyScore);
   // triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
   // triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
   triggerTree -> Branch("modelInput", &modelInput, "modelInput[18][14]/s");
