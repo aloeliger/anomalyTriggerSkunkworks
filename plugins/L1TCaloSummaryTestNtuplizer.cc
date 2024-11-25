@@ -16,6 +16,7 @@
 #include "DataFormats/HcalDigi/interface/HcalDigiCollections.h"
 #include "DataFormats/L1CaloTrigger/interface/L1CaloCollections.h"
 #include "DataFormats/L1CaloTrigger/interface/L1CaloRegion.h"
+#include "DataFormats/L1CaloTrigger/interface/CICADA.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
@@ -36,7 +37,7 @@ private:
   void endJob() override {};
   
   //Just some stuff to let us actually ntuplize everything
-  edm::EDGetTokenT< float > anomalyToken;
+  edm::EDGetTokenT< l1t::CICADABxCollection > anomalyToken;
 
   edm::EDGetTokenT<std::vector<reco::Vertex>> vertexToken;
   float anomalyScore;
@@ -69,7 +70,7 @@ private:
 };
 
 L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet& iConfig):
-  anomalyToken( consumes< float >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
+  anomalyToken( consumes< l1t::CICADABxCollection >(iConfig.getParameter<edm::InputTag>("scoreSource")) ),
   vertexToken( consumes<std::vector<reco::Vertex>>(iConfig.getParameter<edm::InputTag>("pvSrc"))),
   ecalTPSource(consumes<EcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("ecalToken"))),
   hcalTPSource(consumes<HcalTrigPrimDigiCollection>(iConfig.getParameter<edm::InputTag>("hcalToken"))),
@@ -107,7 +108,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   using namespace edm;
 
   //little bit wordy, but should function?
-  edm::Handle< float > anomalyHandle;
+  edm::Handle< l1t::CICADABxCollection > anomalyHandle;
   edm::Handle< std::vector< reco::Vertex > > vertexHandle;
   iEvent.getByToken(anomalyToken, anomalyHandle);
 
@@ -115,7 +116,7 @@ void L1TCaloSummaryTestNtuplizer::analyze(const edm::Event& iEvent, const edm::E
   lumi = iEvent.id().luminosityBlock();
   evt  = iEvent.id().event();
 
-  anomalyScore = *anomalyHandle;  
+  anomalyScore = anomalyHandle->at(0, 0);  
 
   //figure out primary vertices if that's a thing we want to include
   if(includePUInfo)
