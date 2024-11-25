@@ -43,7 +43,7 @@ def submit_jobid(sample, dryrun=False, verboseInfo={}):
             with open(status_dag2, 'r') as dagfile:
                 submitted = [re.search('STATUS_SUBMITTED', line) for line in dagfile]
         except IOError:
-            print "    Skipping: %s" % sample
+            print("    Skipping: %s" % sample)
             return
 
     # verbose details
@@ -76,21 +76,21 @@ def submit_jobid(sample, dryrun=False, verboseInfo={}):
 
     # Do not try to resubmit jobs if jobs are still running
     if any(submitted):
-        print "    %s not done, try again later" % sample
-        if verbose: print statusString
+        print("    %s not done, try again later" % sample)
+        if verbose: print(statusString)
         return
 
     # if there are any errors, submit the rescue dag files
     if any(errors):
-        print "    Resubmit: %s" % sample
-        if verbose: print statusString
+        print("    Resubmit: %s" % sample)
+        if verbose: print(statusString)
         rescue_dag = max(glob.glob('%s/dags/*dag.rescue[0-9][0-9][0-9]' % sample))
-        if verbose: print '        Rescue file: {0}'.format(rescue_dag)
+        if verbose: print('        Rescue file: {0}'.format(rescue_dag))
         if not dryrun:
             cmd = 'farmoutAnalysisJobs --rescue-dag-file=%s' % rescue_dag
             os.system(cmd)
     else:
-        #print "    %s successful, nothing to do"%sample
+        #print("    %s successful, nothing to do"%sample)
         pass
 
 
@@ -113,7 +113,7 @@ def parse_dag_state(filename):
             elif currentNode['Type'] == "StatusEnd":
                 endStatus = currentNode
             else:
-                print 'Error: unknown type "%s"' % currentNode['Type']
+                print('Error: unknown type "%s"' % currentNode['Type'])
         elif ';' in line: # end of key val pair
             keyvalString += line
             keyvalString = ' '.join(keyvalString.split())
@@ -223,18 +223,18 @@ def main(argv=None):
         #statusString += "\n    Job Errors:"
         #for c in counts:
         #    statusString += "\n        Job Error {0:d}: {1:d} times".format(c[0],c[1])
-        print statusString
+        print(statusString)
 
         doneStatusString = "    Resubmit Total: {0} Done: {1} Failed: {2}".format(verboseInfo["doneTotal"],
                                                                                   verboseInfo["doneDone"],
                                                                                   verboseInfo["doneFailed"])
         if verboseInfo["doneTotal"] and verboseInfo["doneFailed"]:
-            print doneStatusString
-            print "    Samples to resubmit:"
+            print(doneStatusString)
+            print("    Samples to resubmit:")
             for sample in verboseInfo["doneSamples"]:
-                print "        {0}".format(sample)
+                print("        {0}".format(sample))
         else:
-            print "    None can be resubmitted at the moment"
+            print("    None can be resubmitted at the moment")
 
     return 0
 
