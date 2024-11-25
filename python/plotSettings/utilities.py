@@ -15,8 +15,8 @@ def getListOfUniqueEntries(theChain, branchName):
     theChain.SetBranchStatus("*", 1)
     return theList
 
-def convertEffToRate(eff):
-    return eff * (2544.0 * 11425e-3)
+def convertEffToRate(eff, nBunches = 2544):
+    return eff * (float(nBunches) * 11425e-3)
 
-def convertRateToEff(rate):
-    return rate / (2544.0 * 11425e-3)
+def convertRateToEff(rate, nBunches = 2544):
+    return rate / (float(nBunches) * 11425e-3)
