@@ -24,6 +24,7 @@ private:
   void beginJob() override {};
   void analyze(const edm::Event&, const edm::EventSetup&) override;
   void endJob() override {};
+  void fillBX(float& bx_score, const edm::Handle<l1t::CICADABxCollection>& vector, const int bx);
 
   edm::EDGetTokenT<l1t::CICADABxCollection> cicadaToken;
   float BXMinusTwoScore;
@@ -54,13 +55,20 @@ void unpackedCICADAScoreNtuplizer::analyze(const edm::Event& iEvent, const edm::
   edm::Handle<l1t::CICADABxCollection> cicadaScores;
   iEvent.getByToken(cicadaToken, cicadaScores);
 
-  BXMinusTwoScore = cicadaScores->at(-2, 0);
-  BXMinusOneScore = cicadaScores->at(-1, 0);
-  BXZeroScore = cicadaScores->at(0, 0);
-  BXOneScore = cicadaScores->at(1, 0);
-  BXTwoScore = cicadaScores->at(2, 0);
+  fillBX(BXMinusTwoScore, cicadaScores, -2);
+  fillBX(BXMinusOneScore, cicadaScores, -1);
+  fillBX(BXZeroScore, cicadaScores, 0);
+  fillBX(BXOneScore, cicadaScores, 1);
+  fillBX(BXTwoScore, cicadaScores, 2);
 
   theTree->Fill();
+}
+
+void unpackedCICADAScoreNtuplizer::fillBX(float& bx_score, const edm::Handle<l1t::CICADABxCollection>& vector, const int bx){
+  if(vector->isEmpty(bx))
+	       bx_score = 0.0;
+  else
+    bx_score = vector->at(bx, 0);
 }
 
 DEFINE_FWK_MODULE(unpackedCICADAScoreNtuplizer);

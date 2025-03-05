@@ -86,14 +86,14 @@ L1TCaloSummaryTestNtuplizer::L1TCaloSummaryTestNtuplizer(const edm::ParameterSet
 
   //create some ntuplization brickwork
   triggerTree = theFileService->make< TTree >("L1TCaloSummaryOutput","(emulator) L1CaloSummary information");
-  triggerTree -> Branch("run",  &run);
-  triggerTree -> Branch("lumi", &lumi);
-  triggerTree -> Branch("evt",  &evt);
+  //triggerTree -> Branch("run",  &run);
+  //triggerTree -> Branch("lumi", &lumi);
+  //triggerTree -> Branch("evt",  &evt);
   if(includePUInfo) triggerTree -> Branch("npv",  &npv);
   triggerTree -> Branch(outputScoreName.c_str(), &anomalyScore);
   // triggerTree -> Branch("ecalRegionalTPs", &regional_ecalTPData, "ecalRegionalTPs[18][14]/s");
   // triggerTree -> Branch("hcalRegionalTPs", &regional_hcalTPData, "hcalRegionalTPs[18][14]/s");
-  triggerTree -> Branch("modelInput", &modelInput, "modelInput[18][14]/s");
+  //triggerTree -> Branch("modelInput", &modelInput, "modelInput[18][14]/s");
   // triggerTree -> Branch("tauBits", &tauBits, "tauBits[18][14]/O");
   // triggerTree -> Branch("egBits", &egBits, "tauBits[18][14]/O");
 }
